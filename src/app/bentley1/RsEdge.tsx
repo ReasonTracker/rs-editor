@@ -1,7 +1,6 @@
 import React from 'react';
 import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, ReactFlowState, getBezierPath, useStore } from 'reactflow';
-
-const maxStrokeWidth = 25;
+import { halfStroke, maxStrokeWidth } from './config';
 
 // this is a little helper component to render the actual edge label
 function EdgeLabel({ transform, label }: { transform: string; label: string }) {
@@ -12,7 +11,7 @@ function EdgeLabel({ transform, label }: { transform: string; label: string }) {
                 background: 'transparent',
                 padding: 0,
                 color: '#000',
-                fontSize: 30,
+                fontSize: 20,
                 fontWeight: 1000,
                 transform,
             }}
@@ -35,7 +34,7 @@ export default function RsEdge(props: EdgeProps) {
         return {
             length: allSources.length,
             index: index,
-            newTargetY: targetY + (index * maxStrokeWidth) + (maxStrokeWidth / 2) - (allSources.length * maxStrokeWidth / 2),
+            newTargetY: targetY + (index * maxStrokeWidth * (Math.max(1, data.score / 2))),
             newTargetX: targetX - 4,
             newSourceX: sourceX + 4
 
@@ -84,16 +83,16 @@ export default function RsEdge(props: EdgeProps) {
             path={edgePath} />
         <EdgeLabelRenderer>
             <EdgeLabel
-                transform={`translate(-70%, -.7em) translate(${sourceX}px,${sourceY}px)`}
-                label={'🠔'}
+                transform={`translate(-1em, -.65em) translate(${sourceX}px,${sourceY}px)`}
+                label={'◀'}
             />
             {/* <EdgeLabel
                 transform={`translate(-70%, -28px) translate(${labelX}px,${labelY}px)`}
                 label={'🠔'}
             /> */}
             <EdgeLabel
-                transform={`translate(-20%, -.7em) translate(${targetX}px,${sources.newTargetY}px)`}
-                label={'🠔'}
+                transform={`translate(-20%, -.65em) translate(${targetX}px,${sources.newTargetY}px)`}
+                label={'◀'}
             />
         </EdgeLabelRenderer>
 

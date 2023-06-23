@@ -1,9 +1,6 @@
 import { BezierEdge, Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import styles from './rsNode.module.css'
-
-const handleStyle = { left: 10 };
-const maxStrokeWidth = 25;
-
+import { halfStroke, maxStrokeWidth } from './config';
 
 export function RsNode(props: NodeProps) {
     const { data, id } = props
@@ -40,17 +37,17 @@ export function RsNode(props: NodeProps) {
             style={{ fill: `var(--${s.source.data.pol})` }}>
 
             <polygon style={{ opacity: .4 }} points={
-                `0,${(maxStrokeWidth / 2) - ((maxStrokeWidth / 2) * s.source.data.score)}
-                0,${(maxStrokeWidth / 2) + ((maxStrokeWidth / 2) * s.source.data.score)}
-                25,${(maxStrokeWidth / 2) + ((maxStrokeWidth / 2))}
-                25,${(maxStrokeWidth / 2) - ((maxStrokeWidth / 2))}
+                `0,${(halfStroke) - ((halfStroke) * s.source.data.score)}
+                0,${(halfStroke) + ((halfStroke) * s.source.data.score)}
+                25,${(halfStroke) + ((halfStroke))}
+                25,${(halfStroke) - ((halfStroke))}
             `} />
 
             <polygon points={
-                `0,${(maxStrokeWidth / 2) - ((maxStrokeWidth / 2) * s.source.data.score * s.source.data.score)}
-                0,${(maxStrokeWidth / 2) + ((maxStrokeWidth / 2) * s.source.data.score * s.source.data.score)}
-                25,${(maxStrokeWidth / 2) + ((maxStrokeWidth / 2) * s.source.data.score)}
-                25,${(maxStrokeWidth / 2) - ((maxStrokeWidth / 2) * s.source.data.score)}
+                `0,${(halfStroke) - ((halfStroke) * s.source.data.score * s.source.data.score)}
+                0,${(halfStroke) + ((halfStroke) * s.source.data.score * s.source.data.score)}
+                25,${(halfStroke) + ((halfStroke) * s.source.data.score)}
+                25,${(halfStroke) - ((halfStroke) * s.source.data.score)}
             `} />
 
         </svg>)}
@@ -78,17 +75,27 @@ export function RsNode(props: NodeProps) {
 
     return (
         <div className={styles.rsNode} >
-            <Handle type="source" position={Position.Left} />
+            <Handle type="source"
+                position={Position.Left}
+                style={{ top: halfStroke }}
+            />
+
             <div className={styles.rsNodeGrid} style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth }}>
                 <div className={styles.rsContent + " " + styles[data.pol]}>
-                    {data.label}
+                    {data.scoreNumberText} | {data.score.confidence.toFixed(2)} | {data.claim.content}
                 </div>
                 {cancelOut}
                 {scaleTo1}
                 {consolidate}
                 {weightByConfidence}
             </div>
-            <Handle type="target" position={Position.Right} />
+
+            <Handle
+                type="target"
+                position={Position.Right}
+                style={{ top: halfStroke }}
+                isConnectable={true}
+            />
         </div>
     );
 }
