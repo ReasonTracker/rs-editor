@@ -12,7 +12,7 @@ function EdgeLabel({ transform, label }: { transform: string; label: string }) {
                 background: 'transparent',
                 padding: 0,
                 color: '#000',
-                fontSize: 40,
+                fontSize: 30,
                 fontWeight: 1000,
                 transform,
             }}
@@ -42,7 +42,7 @@ export default function RsEdge(props: EdgeProps) {
         };
     });
 
-    const [edgePath] = getBezierPath({
+    const [edgePath, labelX, labelY] = getBezierPath({
         sourceX: sources.newSourceX,
         sourceY,
         sourcePosition,
@@ -84,11 +84,15 @@ export default function RsEdge(props: EdgeProps) {
             path={edgePath} />
         <EdgeLabelRenderer>
             <EdgeLabel
-                transform={`translate(-70%, -28px) translate(${sourceX}px,${sourceY}px)`}
+                transform={`translate(-70%, -.7em) translate(${sourceX}px,${sourceY}px)`}
                 label={'🠔'}
             />
+            {/* <EdgeLabel
+                transform={`translate(-70%, -28px) translate(${labelX}px,${labelY}px)`}
+                label={'🠔'}
+            /> */}
             <EdgeLabel
-                transform={`translate(-20%, -28px) translate(${targetX}px,${sources.newTargetY}px)`}
+                transform={`translate(-20%, -.7em) translate(${targetX}px,${sources.newTargetY}px)`}
                 label={'🠔'}
             />
         </EdgeLabelRenderer>

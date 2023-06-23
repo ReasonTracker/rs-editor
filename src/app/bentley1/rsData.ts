@@ -74,11 +74,14 @@ export const rsData: RsData = {
             "topScoreId": "mainScore",
             "type": "scoreTree"
         },
-        "children": {
-            "content": "Child safety is more important than local shops profit.",
-            "id": "children",
-            "reversible": false,
-            "type": "claim"
+        "payoffEdge": {
+            "affects": "relevance",
+            "childId": "payoff",
+            "id": "payoffEdge",
+            "parentId": "footTraffic",
+            "priority": "",
+            "pro": true,
+            "type": "claimEdge"
         },
         "childrenEdge": {
             "affects": "relevance",
@@ -88,31 +91,6 @@ export const rsData: RsData = {
             "priority": "",
             "pro": true,
             "type": "claimEdge"
-        },
-        "childrenScore": {
-            "affects": "relevance",
-            "childrenAveragingWeight": 1,
-            "childrenConfidenceWeight": 1,
-            "childrenRelevanceWeight": 1,
-            "childrenWeight": 1,
-            "confidence": 1,
-            "content": "",
-            "descendantCount": 0,
-            "fraction": 0,
-            "fractionSimple": 0.5,
-            "generation": 2,
-            "id": "childrenScore",
-            "parentScoreId": "resedentialScore",
-            "percentOfWeight": 1,
-            "priority": "",
-            "pro": true,
-            "relevance": 1,
-            "reversible": false,
-            "scoreTreeId": "ScoreTree",
-            "sourceClaimId": "children",
-            "sourceEdgeId": "childrenEdge",
-            "type": "score",
-            "weight": 1
         },
         "cost": {
             "content": "The conversion will cost 2 Million dollars.",
@@ -234,14 +212,11 @@ export const rsData: RsData = {
             "reversible": false,
             "type": "claim"
         },
-        "payoffEdge": {
-            "affects": "relevance",
-            "childId": "payoff",
-            "id": "payoffEdge",
-            "parentId": "footTraffic",
-            "priority": "",
-            "pro": true,
-            "type": "claimEdge"
+        "children": {
+            "content": "Child safety is more important than local shops profit.",
+            "id": "children",
+            "reversible": false,
+            "type": "claim"
         },
         "payoffScore": {
             "affects": "relevance",
@@ -265,6 +240,31 @@ export const rsData: RsData = {
             "scoreTreeId": "ScoreTree",
             "sourceClaimId": "payoff",
             "sourceEdgeId": "payoffEdge",
+            "type": "score",
+            "weight": 1
+        },
+        "childrenScore": {
+            "affects": "relevance",
+            "childrenAveragingWeight": 1,
+            "childrenConfidenceWeight": 1,
+            "childrenRelevanceWeight": 1,
+            "childrenWeight": 1,
+            "confidence": 1,
+            "content": "",
+            "descendantCount": 0,
+            "fraction": 0,
+            "fractionSimple": 0.5,
+            "generation": 2,
+            "id": "childrenScore",
+            "parentScoreId": "resedentialScore",
+            "percentOfWeight": 1,
+            "priority": "",
+            "pro": true,
+            "relevance": 1,
+            "reversible": false,
+            "scoreTreeId": "ScoreTree",
+            "sourceClaimId": "children",
+            "sourceEdgeId": "childrenEdge",
             "type": "score",
             "weight": 1
         },
