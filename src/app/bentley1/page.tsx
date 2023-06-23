@@ -11,7 +11,7 @@ import ReactFlow, {
 
 import 'reactflow/dist/style.css';
 import './page.css';
-import './rsNode.Module.css';
+import './rsNode.module.css';
 
 //import pageData from './pageData';
 import { RsNode } from './RsNode';
