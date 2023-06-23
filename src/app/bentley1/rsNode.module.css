@@ -1,0 +1,49 @@
+.rsNode {
+  border-radius: 3px;
+  font-size: 12px;
+  color: white;
+  text-align: center;
+  /* border-width: 1px;
+  border-style: solid;
+  border-color: white;
+  border-width-left: 5px; */
+}
+
+.pro {
+  border-color: var(--pro);
+  stroke: var(--pro);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.con {
+  border-color: var(--con);
+  stroke: var(--con);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.rsNodeGrid {
+  display: grid;
+  grid-template-columns: 150px repeat(4, 25px);
+}
+
+.rsContent {
+  padding: 10px;
+}
+
+.rsCalc {
+  border: 1px solid #ffffff50;
+  display: grid;
+  align-content: center;
+}
+
+.react-flow__handle {
+  opacity: 0.2;
+}
+
+.react-flow__attribution a {
+  background: black;
+  display: inline-block;
+  padding: 0.5em;
+}
