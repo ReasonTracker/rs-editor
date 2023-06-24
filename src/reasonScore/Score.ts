@@ -1,7 +1,6 @@
 import { newId } from "./newId";
-import { Affects } from "./Affects";
-import { Item } from "./Item";
-import { ItemTypes } from "./ItemTypes";
+import { Item, ItemTypes } from "./Item";
+import { Affects } from "./ClaimEdge";
 /**
  * Stores the score for a claim. Just a data transfer object. Does not contain any logic.
  */

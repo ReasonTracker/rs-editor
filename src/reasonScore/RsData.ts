@@ -1,7 +1,6 @@
 import { Action } from "./Action";
 import { Claim } from "./Claim";
 import { ClaimEdge } from "./ClaimEdge";
-import { Item } from "./Item";
 import { Score } from "./Score";
 import { ScoreTree } from "./ScoreTree";
 
