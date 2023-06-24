@@ -15,3 +15,8 @@ export class Claim implements Item {
     ) {
     }
 }
+
+
+export function isClaim(item: any): item is Claim {
+    return item.type === "claim"
+}

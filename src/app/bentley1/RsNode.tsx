@@ -93,7 +93,7 @@ export function RsNode(props: NodeProps) {
             <Handle
                 type="target"
                 position={Position.Right}
-                style={{ top: halfStroke }}
+                style={{ top: 0 }}
                 isConnectable={true}
             />
         </div>

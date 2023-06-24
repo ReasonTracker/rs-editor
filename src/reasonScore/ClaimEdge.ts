@@ -27,3 +27,7 @@ export class ClaimEdge {
 export type Affects =
     "confidence" |
     "relevance";
+
+export function isClaimEdge(item: any): item is ClaimEdge {
+    return item.type === "claimEdge"
+}

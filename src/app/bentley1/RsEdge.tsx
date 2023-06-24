@@ -3,10 +3,11 @@ import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, ReactFlowState, get
 import { halfStroke, maxStrokeWidth } from './config';
 
 // this is a little helper component to render the actual edge label
-function EdgeLabel({ transform, label }: { transform: string; label: string }) {
+function EdgeLabel({ transform }: { transform: string }) {
     return (
         <div
             style={{
+
                 position: 'absolute',
                 background: 'transparent',
                 padding: 0,
@@ -17,7 +18,7 @@ function EdgeLabel({ transform, label }: { transform: string; label: string }) {
             }}
             className="nodrag nopan"
         >
-            {label}
+            {'◀'}
         </div>
     );
 }
@@ -26,19 +27,53 @@ export default function RsEdge(props: EdgeProps) {
     const { style, source, data, target, targetY, targetX, sourceX, sourceY, sourcePosition, targetPosition, id } = props
 
     const sources = useStore((s: ReactFlowState) => {
-        const allSources = s.edges.filter(
+        const originalSources = s.edges.filter(
             (e) => e.target === target
         );
-        const index = allSources.map(e => e.source).indexOf(source);
+        let result = {
+            index: 0,
+            newTargetX: targetX,
+            newTargetY: targetY,
+            newSourceX: sourceX,
+            top: 0,
+            bottom: 0
+        }
 
-        return {
-            length: allSources.length,
-            index: index,
-            newTargetY: targetY + (index * maxStrokeWidth * (Math.max(1, data.score / 2))),
-            newTargetX: targetX - 4,
-            newSourceX: sourceX + 4
+        let lastBottom = targetY;
+        for (const [index, s] of originalSources.entries()) {
+            console.log('s.data.score * maxStrokeWidth', s.data.score, maxStrokeWidth, s.data.score * maxStrokeWidth);
 
-        };
+            const newItem = {
+                newTargetX: targetX - 4,
+                newSourceX: sourceX + 4,
+                //source: s,
+                //stackedY: 0,
+                //top: lastBottom,
+                newTargetY: lastBottom + (s.data.score * halfStroke),//targetY,// + (index * maxStrokeWidth * (Math.max(1, data.score / 2))),
+                bottom: lastBottom += Math.max((s.data.score * maxStrokeWidth), maxStrokeWidth),
+                index: index
+            };
+            console.log('newItem', s.data.score, newItem.newTargetY)
+
+
+            if (s.source === source) {
+                result = { ...result, ...newItem };
+            }
+
+        }
+
+        return result
+
+        // const index = allSources.map(e => e.source).indexOf(source);
+
+        // return {
+        //     length: allSources.length,
+        //     index: index,
+        //     newTargetY: targetY + (index * maxStrokeWidth * (Math.max(1, data.score / 2))),
+        //     newTargetX: targetX - 4,
+        //     newSourceX: sourceX + 4
+
+        // };
     });
 
     const [edgePath, labelX, labelY] = getBezierPath({
@@ -64,16 +99,6 @@ export default function RsEdge(props: EdgeProps) {
             sourceX={sources.newSourceX}
         />
 
-        {/* <BezierEdge {...props}
-            style={{
-                ...(props.style),
-                stroke: `var(--${data.pol})`,
-                strokeWidth: maxStrokeWidth * data.score
-            }}
-            targetY={sources.newTargetY}
-            targetX={sources.newTargetX}
-            sourceX={sources.newSourceX}
-        /> */}
         <BaseEdge id={id}
             style={{
                 ...(props.style),
@@ -84,15 +109,9 @@ export default function RsEdge(props: EdgeProps) {
         <EdgeLabelRenderer>
             <EdgeLabel
                 transform={`translate(-1em, -.65em) translate(${sourceX}px,${sourceY}px)`}
-                label={'◀'}
             />
-            {/* <EdgeLabel
-                transform={`translate(-70%, -28px) translate(${labelX}px,${labelY}px)`}
-                label={'🠔'}
-            /> */}
             <EdgeLabel
                 transform={`translate(-20%, -.65em) translate(${targetX}px,${sources.newTargetY}px)`}
-                label={'◀'}
             />
         </EdgeLabelRenderer>
 

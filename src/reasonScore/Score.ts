@@ -11,7 +11,7 @@ export class Score implements Item {
         /** The claim to which this score belongs */
         public sourceClaimId: string,
         /** The top of the tree of scores that this belongs to. Used for indexing */
-        public scoreTreeId: string,
+        public scoreRootId: string,
         /** The parent of this score in the score tree graph */
         public parentScoreId: string | null = null, // Use null because Firestore does not allow undefined
         /** The Edge to which this score belongs */
@@ -61,3 +61,6 @@ export class Score implements Item {
     // public parentFractionSimple: number = 0;
 }
 
+export function isScore(item: any): item is Score {
+    return item.type === "score"
+}

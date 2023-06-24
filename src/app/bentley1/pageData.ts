@@ -1,13 +1,5 @@
 import { rsData } from './rsData';
-import { Claim, Score, ClaimEdge } from './rs';
-
-function isScore(item: any): item is Score {
-    return item.type === "score"
-}
-
-function isClaimEdge(item: any): item is ClaimEdge {
-    return item.type === "claimEdge"
-}
+import { Claim, Score, isClaimEdge, isScore } from './rs';
 
 export const getNodes = () => {
     const nodes: any[] = []
