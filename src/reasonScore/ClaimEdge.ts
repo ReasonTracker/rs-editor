@@ -1,6 +1,6 @@
 import { Affects } from "./Affects"
 import { ItemTypes } from "./ItemTypes";
-import { newId } from "../newId";
+import { newId } from "./newId";
 /**
  * Stores the relationship between a claim and an item (usually another claim).
  * This is directional as the edge points from one claim to it's parent.

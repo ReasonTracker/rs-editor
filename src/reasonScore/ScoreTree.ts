@@ -1,6 +1,6 @@
-import { newId } from "../newId";
+import { newId } from "./newId";
 import { Item } from "./Item";
-import { ItemTypes } from "..";
+import { ItemTypes } from "./ItemTypes";
 /**
  * Represents an intentional top of a tree of scores.
  */

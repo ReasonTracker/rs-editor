@@ -1,5 +1,5 @@
 import { ItemTypes } from "./ItemTypes";
-import { newId } from "../newId";
+import { newId } from "./newId";
 import { Item } from "./Item";
 
 export class Claim implements Item {
