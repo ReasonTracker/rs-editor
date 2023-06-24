@@ -1,8 +1,8 @@
 import { RsData } from "./rs";
 
 export const rsData: RsData = {
-    "ScoreTreeIds": [
-        "ScoreTree"
+    "ScoreRootIds": [
+        "ScoreRoot"
     ],
     "actionsLog": [],
     "childIdsByScoreId": {
@@ -66,13 +66,13 @@ export const rsData: RsData = {
         ]
     },
     "items": {
-        "ScoreTree": {
+        "ScoreRoot": {
             "confidence": 1,
             "descendantCount": 6,
-            "id": "ScoreTree",
+            "id": "ScoreRoot",
             "sourceClaimId": "mainClaim",
             "topScoreId": "mainScore",
-            "type": "scoreTree"
+            "type": "scoreRoot"
         },
         "payoffEdge": {
             "affects": "relevance",
@@ -126,7 +126,7 @@ export const rsData: RsData = {
             "pro": false,
             "relevance": 1,
             "reversible": false,
-            "scoreTreeId": "ScoreTree",
+            "scoreRootId": "ScoreRoot",
             "sourceClaimId": "cost",
             "sourceEdgeId": "costEdge",
             "type": "score",
@@ -166,7 +166,7 @@ export const rsData: RsData = {
             "pro": true,
             "relevance": 2,
             "reversible": false,
-            "scoreTreeId": "ScoreTree",
+            "scoreRootId": "ScoreRoot",
             "sourceClaimId": "footTraffic",
             "sourceEdgeId": "footTrafficEdge",
             "type": "score",
@@ -200,7 +200,7 @@ export const rsData: RsData = {
             "pro": true,
             "relevance": 1,
             "reversible": false,
-            "scoreTreeId": "ScoreTree",
+            "scoreRootId": "ScoreRoot",
             "sourceClaimId": "mainClaim",
             "sourceEdgeId": null,
             "type": "score",
@@ -237,7 +237,7 @@ export const rsData: RsData = {
             "pro": true,
             "relevance": 1,
             "reversible": false,
-            "scoreTreeId": "ScoreTree",
+            "scoreRootId": "ScoreRoot",
             "sourceClaimId": "payoff",
             "sourceEdgeId": "payoffEdge",
             "type": "score",
@@ -262,7 +262,7 @@ export const rsData: RsData = {
             "pro": true,
             "relevance": 1,
             "reversible": false,
-            "scoreTreeId": "ScoreTree",
+            "scoreRootId": "ScoreRoot",
             "sourceClaimId": "children",
             "sourceEdgeId": "childrenEdge",
             "type": "score",
@@ -302,7 +302,7 @@ export const rsData: RsData = {
             "pro": false,
             "relevance": 2,
             "reversible": false,
-            "scoreTreeId": "ScoreTree",
+            "scoreRootId": "ScoreRoot",
             "sourceClaimId": "resedential",
             "sourceEdgeId": "resedentialEdge",
             "type": "score",
@@ -342,7 +342,7 @@ export const rsData: RsData = {
             "pro": false,
             "relevance": 1,
             "reversible": false,
-            "scoreTreeId": "ScoreTree",
+            "scoreRootId": "ScoreRoot",
             "sourceClaimId": "traintracks",
             "sourceEdgeId": "traintracksEdge",
             "type": "score",

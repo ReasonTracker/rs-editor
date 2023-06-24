@@ -11,6 +11,6 @@ export type ItemTypes =
     "claim" |
     "claimEdge" |
     "score" |
-    "scoreTree";
+    "scoreRoot";
 
 

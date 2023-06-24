@@ -2,7 +2,7 @@ import { Action } from "./Action";
 import { Claim } from "./Claim";
 import { ClaimEdge } from "./ClaimEdge";
 import { Score } from "./Score";
-import { ScoreTree } from "./ScoreTree";
+import { ScoreRoot } from "./ScoreRoot";
 
 export interface Index<T> { [searchIndex: string]: T; } //Store the string for the ID
 export interface IndexArray { [searchIndex: string]: string[]; } //Store the string for the ID
@@ -12,7 +12,7 @@ export class RsData {
         public actionsLog: { actions: Action[] }[] = [],
         // Claim data
         /** Stores all the current items */
-        public items: { [id: string]: Score | ScoreTree | ClaimEdge | Claim } = {},
+        public items: { [id: string]: Score | ScoreRoot | ClaimEdge | Claim } = {},
 
         // Claim Indexes - Local
         public claimEdgeIdsByParentId: IndexArray = {},
@@ -21,7 +21,7 @@ export class RsData {
         //Score Indexes - Local
         public scoreIdsBySourceId: IndexArray = {},
         public childIdsByScoreId: IndexArray = {},
-        public ScoreTreeIds: string[] = [],
+        public ScoreRootIds: string[] = [],
     ) {
     }
 }

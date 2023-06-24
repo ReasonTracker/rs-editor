@@ -1,4 +1,4 @@
-import { Action, Claim, ClaimEdge, RsData, Score, ScoreTree } from "../rs";
+import { Action, Claim, ClaimEdge, RsData, Score, ScoreRoot } from "../rs";
 
 
 export class RepositoryLocalBase {
@@ -17,8 +17,8 @@ export class RepositoryLocalBase {
     async getScore(id: string): Promise<Score | undefined> {
         return this.rsData.items[id] as Score;
     }
-    async getScoreTree(id: string): Promise<ScoreTree | undefined> {
-        return this.rsData.items[id] as ScoreTree;
+    async getScoreRoot(id: string): Promise<ScoreRoot | undefined> {
+        return this.rsData.items[id] as ScoreRoot;
     }
     async getClaimEdgesByParentId(parentId: string): Promise<ClaimEdge[]> {
         const claimEdgeIdStrings = this.rsData.claimEdgeIdsByParentId[parentId];

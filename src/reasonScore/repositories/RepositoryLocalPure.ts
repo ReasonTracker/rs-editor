@@ -5,7 +5,7 @@ import { claims } from "./reducers/claims";
 import { claimEdges } from "./reducers/claimEdges";
 import { RepositoryLocalBase } from "./RepositoryLocalBase";
 import { scores } from "./reducers/scores";
-import { scoreTrees } from "./reducers/scoresTrees";
+import { scoreRoots } from "./reducers/scoresTrees";
 
 
 export class RepositoryLocalPure extends RepositoryLocalBase implements iRepository {
@@ -22,7 +22,7 @@ export class RepositoryLocalPure extends RepositoryLocalBase implements iReposit
             this.rsData = claims(this.rsData, action);
             this.rsData = claimEdges(this.rsData, action);
             this.rsData = scores(this.rsData, action);
-            this.rsData = scoreTrees(this.rsData, action);
+            this.rsData = scoreRoots(this.rsData, action);
         }
     }
 

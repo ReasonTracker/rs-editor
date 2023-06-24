@@ -3,7 +3,7 @@ import { Action } from "../Action";
 import { Claim } from "../Claim";
 import { ClaimEdge } from "../ClaimEdge";
 import { Score } from "../Score";
-import { ScoreTree } from "../ScoreTree";
+import { ScoreRoot } from "../ScoreRoot";
 
 export interface iRepository {
     rsData: RsData;
@@ -11,7 +11,7 @@ export interface iRepository {
     getClaim(id: string): Promise<Claim | undefined>
     getClaimEdge(id: string): Promise<ClaimEdge | undefined>
     getScore(id: string): Promise<Score | undefined>
-    getScoreTree(id: string): Promise<ScoreTree | undefined>
+    getScoreRoot(id: string): Promise<ScoreRoot | undefined>
     getClaimEdgesByParentId(parentId: string): Promise<ClaimEdge[]>
     getClaimEdgesByChildId(childId: string): Promise<ClaimEdge[]>
     getScoresBySourceId(sourceClaimId: string): Promise<Score[]>

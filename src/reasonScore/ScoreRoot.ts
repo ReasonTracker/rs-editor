@@ -4,8 +4,8 @@ import { ItemTypes } from "./Item";
 /**
  * Represents an intentional top of a tree of scores.
  */
-export class ScoreTree implements Item {
-    type: ItemTypes = 'scoreTree'
+export class ScoreRoot implements Item {
+    type: ItemTypes = 'scoreRoot'
 
     constructor(
         /** The claim to which this score belongs */

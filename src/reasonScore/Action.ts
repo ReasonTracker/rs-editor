@@ -27,7 +27,7 @@ export type ActionTypes =
     "delete_score" |
     "sync_score" |
 
-    "add_scoreTree" |
-    "modify_scoreTree" |
-    "delete_scoreTree" |
-    "sync_scoreTree" 
+    "add_scoreRoot" |
+    "modify_scoreRoot" |
+    "delete_scoreRoot" |
+    "sync_scoreRoot" 

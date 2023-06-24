@@ -1,16 +1,16 @@
 import { Action } from "../../Action"
 import { RsData } from "../../RsData"
-import { ScoreTree } from "../../ScoreTree";
+import { ScoreRoot } from "../../ScoreRoot";
 import { IndexReducer } from "./IndexReducer";
 
-export function scoreTrees(state: RsData, action: Action, reverse: boolean = false): RsData {
+export function scoreRoots(state: RsData, action: Action, reverse: boolean = false): RsData {
     switch (action.type) {
-        case "add_scoreTree":
-        case "modify_scoreTree":
+        case "add_scoreRoot":
+        case "modify_scoreRoot":
             {
-                let newItem = state.items[action.dataId] as ScoreTree
+                let newItem = state.items[action.dataId] as ScoreRoot
                 if (!newItem) {
-                    newItem = new ScoreTree("", "")
+                    newItem = new ScoreRoot("", "")
                     newItem.id = action.dataId
                 }
                 newItem = { ...newItem, ...action.newData }
@@ -24,7 +24,7 @@ export function scoreTrees(state: RsData, action: Action, reverse: boolean = fal
                 }
 
                 //TODO: Do I need to stop recreating the state so many times in this reducer?
-                state = IndexReducer(state, "ScoreTreeIds", newItem.id, action.dataId);
+                state = IndexReducer(state, "ScoreRootIds", newItem.id, action.dataId);
                 return state as RsData
             }
         default:
