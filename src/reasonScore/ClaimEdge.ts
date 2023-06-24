@@ -1,5 +1,4 @@
-import { Affects } from "./Affects"
-import { ItemTypes } from "./ItemTypes";
+import { ItemTypes } from "./Item";
 import { newId } from "./newId";
 /**
  * Stores the relationship between a claim and an item (usually another claim).
@@ -24,3 +23,7 @@ export class ClaimEdge {
     ) {
     }
 }
+
+export type Affects =
+    "confidence" |
+    "relevance";

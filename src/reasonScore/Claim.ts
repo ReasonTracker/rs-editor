@@ -1,4 +1,4 @@
-import { ItemTypes } from "./ItemTypes";
+import { ItemTypes } from "./Item";
 import { newId } from "./newId";
 import { Item } from "./Item";
 
