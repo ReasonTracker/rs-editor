@@ -1,4 +1,4 @@
-import { RsData } from "@reasonscore/core/src/dataModels/RsData";
+import { RsData } from "./rs";
 
 export const rsData: RsData = {
     "ScoreTreeIds": [

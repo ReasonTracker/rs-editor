@@ -1,5 +1,5 @@
-import { Claim, ClaimEdge, Score } from '@reasonscore/core';
 import { rsData } from './rsData';
+import { Claim, Score, ClaimEdge } from './rs';
 
 function isScore(item: any): item is Score {
     return item.type === "score"
