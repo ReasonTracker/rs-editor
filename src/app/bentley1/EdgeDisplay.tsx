@@ -24,7 +24,7 @@ function EdgeLabel({ transform }: { transform: string }) {
     );
 }
 
-export default function RsEdge(props: EdgeProps<DisplayEdgeData>) {
+export default function EdgeDisplay(props: EdgeProps<DisplayEdgeData>) {
     let { style, source, data, target, targetY, targetX, sourceX, sourceY, sourcePosition, targetPosition, id } = props
     sourceX += 4;
     targetX -= 4;

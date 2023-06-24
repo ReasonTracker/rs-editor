@@ -5,3 +5,8 @@ export * from "./RsData";
 export * from "./ScoreRoot";
 export * from "./Action";
 export * from "./repositories/RepositoryLocalPure";
+export * from "./Item";
+export * from "./hasItemChanged";
+export * from "./calculateScore";
+export * from "./iRepository";
+export * from "./calculateScoreActions";

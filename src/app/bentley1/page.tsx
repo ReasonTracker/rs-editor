@@ -14,12 +14,12 @@ import './page.css';
 import './rsNode.module.css';
 
 //import pageData from './pageData';
-import { DisplayNode } from './RsNode';
-import RsEdge from './RsEdge';
+import { NodeDisplay } from './NodeDisplay';
+import EdgeDisplay from './EdgeDisplay';
 import { DisplayEdgeData, DisplayNodeData, getEdgesAndNodes } from './pageData';
 
-const nodeTypes = { rsNode: DisplayNode };
-const edgeTypes = { rsEdge: RsEdge };
+const nodeTypes = { rsNode: NodeDisplay };
+const edgeTypes = { rsEdge: EdgeDisplay };
 
 //const {nodes, edges} = await getEdgesAndNodes( );
 

@@ -2,7 +2,7 @@ import { BezierEdge, Edge, Handle, NodeProps, Position, ReactFlowState, getBezie
 import styles from './rsNode.module.css'
 import { halfStroke, maxStrokeWidth } from './config';
 
-export function DisplayNode(props: NodeProps) {
+export function NodeDisplay(props: NodeProps) {
     const { data, id } = props
 
     const allSources = useStore((s: ReactFlowState) => {
