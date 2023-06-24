@@ -71,7 +71,7 @@ export const rsData: RsData = {
             "descendantCount": 6,
             "id": "ScoreRoot",
             "sourceClaimId": "mainClaim",
-            "topScoreId": "mainScore",
+            "topScoreId": "mainClaimScore",
             "type": "scoreRoot"
         },
         "payoffEdge": {

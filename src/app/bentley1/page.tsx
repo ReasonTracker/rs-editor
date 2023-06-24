@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -14,16 +14,34 @@ import './page.css';
 import './rsNode.module.css';
 
 //import pageData from './pageData';
-import { RsNode } from './RsNode';
+import { DisplayNode } from './RsNode';
 import RsEdge from './RsEdge';
-import { getEdges, getNodes } from './pageData';
+import { DisplayEdgeData, DisplayNodeData, getEdgesAndNodes } from './pageData';
 
-const nodeTypes = { rsNode: RsNode };
+const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: RsEdge };
 
+//const {nodes, edges} = await getEdgesAndNodes( );
+
 export default function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(getNodes());
-  const [edges, setEdges, onEdgesChange] = useEdgesState(getEdges());
+  const [nodes, setNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<DisplayEdgeData>([]);
+
+  // useEffect call getEdgesAndNodesand put them into setnodes and set edges
+  useEffect(() => {
+
+    async function _getEdgesAndNodes() {
+      const { nodes, edges } = await getEdgesAndNodes();
+      setNodes(nodes);
+      setEdges(edges);
+    }
+
+    _getEdgesAndNodes();
+
+  }, [setNodes, setEdges]);
+
+
+
 
   const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
@@ -39,7 +57,7 @@ export default function App() {
         edgeTypes={edgeTypes}
       >
         <Controls />
-        <MiniMap />
+        <MiniMap maskColor='rgb(240, 240, 240, 0.3)' />
       </ReactFlow>
     </div>
   );

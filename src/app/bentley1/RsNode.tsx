@@ -2,7 +2,7 @@ import { BezierEdge, Edge, Handle, NodeProps, Position, ReactFlowState, getBezie
 import styles from './rsNode.module.css'
 import { halfStroke, maxStrokeWidth } from './config';
 
-export function RsNode(props: NodeProps) {
+export function DisplayNode(props: NodeProps) {
     const { data, id } = props
 
     const allSources = useStore((s: ReactFlowState) => {
@@ -77,12 +77,15 @@ export function RsNode(props: NodeProps) {
         <div className={styles.rsNode} >
             <Handle type="source"
                 position={Position.Left}
-                style={{ top: halfStroke }}
+                style={{ top: 0 }}
             />
 
             <div className={styles.rsNodeGrid} style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth }}>
                 <div className={styles.rsContent + " " + styles[data.pol]}>
-                    {data.scoreNumberText} | {data.score.confidence.toFixed(2)} | {data.claim.content}
+                    {/* {data.scoreNumberText} |
+                    {data.score.confidence.toFixed(2)} |
+                    {id} | */}
+                    {data.claim.content}
                 </div>
                 {cancelOut}
                 {scaleTo1}
