@@ -1,71 +1,91 @@
-import { Edge, Handle, NodeProps, Position, ReactFlowState, useStore } from 'reactflow';
-import { halfStroke, maxStrokeWidth } from './config';
+import { BezierEdge, Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import styles from './rsNode.module.css'
-import { DisplayNodeData } from './pageData';
+import { halfStroke, maxStrokeWidth } from './config';
+import { DisplayEdgeData, DisplayNodeData } from './pageData';
+import { Fragment } from 'react';
 
-export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
+export function NodeDisplay(props: NodeProps) {
     const { data, id } = props
 
     const allSources = useStore((s: ReactFlowState) => {
-        const originalSources = s.edges.filter(
+        const originalSources: Edge<DisplayEdgeData>[] = s.edges.filter(
             (e) => e.target === id
         );
-        const sources: {
-            source: Edge,
-            stackedY: number
-            top: number
-            bottom: number
-            index: number
-        }[] = [];
-        let lastBottom = 0;
-        for (const [index, s] of originalSources.entries()) {
-            sources.push({
-                source: s,
-                stackedY: 0,
-                top: lastBottom,
-                bottom: lastBottom += (s.data.score * maxStrokeWidth),
-                index: index
-            });
 
-        }
-        return sources;
+        return originalSources;
     });
 
     const weightByConfidence = <div className={styles.rsCalc}>
-        {allSources.map(s => <svg key={s.source.id}
-            height={maxStrokeWidth}
-            width={maxStrokeWidth}
-            style={{ fill: `var(--${s.source.data.pol})` }}>
+        {allSources.length > 0 && <>
+            <svg
+                height={(
+                    (allSources[allSources.length - 1]?.data?.targetTop || 1) + (allSources[allSources.length - 1].data?.maxImapct || 0)
+                ) * maxStrokeWidth}
+                width={maxStrokeWidth}>
+                {allSources.map(s => {
+                    const data = s.data;
+                    if (data) {
+                        const maxImpact = data.maxImapct * maxStrokeWidth;
+                        const topMax = data.targetTop * maxStrokeWidth;
+                        const bottomMax = topMax + maxImpact;
 
-            <polygon style={{ opacity: .4 }} points={
-                `0,${(halfStroke) - ((halfStroke) * s.source.data.score)}
-                0,${(halfStroke) + ((halfStroke) * s.source.data.score)}
-                25,${(halfStroke) + ((halfStroke))}
-                25,${(halfStroke) - ((halfStroke))}
-            `} />
+                        const impact = data.impact * maxStrokeWidth;
+                        const impactDiff = (maxImpact - impact) / 2;
+                        const topImpact = topMax + impactDiff;
+                        const bottomImpact = bottomMax - impactDiff;
 
-            <polygon points={
-                `0,${(halfStroke) - ((halfStroke) * s.source.data.score * s.source.data.score)}
-                0,${(halfStroke) + ((halfStroke) * s.source.data.score * s.source.data.score)}
-                25,${(halfStroke) + ((halfStroke) * s.source.data.score)}
-                25,${(halfStroke) - ((halfStroke) * s.source.data.score)}
-            `} />
+                        const reducedImpact = impact * data.sourceScore.confidence;
+                        const reducedImpactDiff = (impact - reducedImpact) / 2;
+                        const topReducedImpact = topMax + impactDiff + reducedImpactDiff;
+                        const bottomReducedImpact = bottomMax - impactDiff - reducedImpactDiff;
 
-        </svg>)}
+                        const reducesMaxImpact = maxImpact * data.sourceScore.confidence;
+                        const reducesMaxImpactDiff = (maxImpact - reducesMaxImpact) / 2;
+                        const topReducedMaxImpact = topMax + reducesMaxImpactDiff;
+                        const bottomReducedMaxImpact = bottomMax - reducesMaxImpactDiff;
+
+                        return <Fragment key={s.id}>
+
+                            <polygon
+                                style={{ opacity: .4, fill: `var(--${s.data?.pol})` }}
+                                points={`
+                                0,${topReducedMaxImpact}
+                                0,${bottomReducedMaxImpact}
+                                25,${bottomMax}
+                                25,${topMax}
+                            `}
+                            />
+
+                            <polygon
+                                style={{ fill: `var(--${s.data?.pol})` }}
+                                points={`
+                            0,${topReducedImpact}
+                            0,${bottomReducedImpact}
+                            25,${bottomImpact}
+                            25,${topImpact}
+                        `}
+                            />
+                        </Fragment>
+                    }
+                }
+
+                )}
+            </svg>
+        </>}
     </div>
 
     const consolidate = <div className={styles.rsCalc}>
-        {/* <svg
+        <svg
             height={(allSources?.length || 1) * maxStrokeWidth}
             width={maxStrokeWidth}>
             {
-                allSources.map(s =>
-                    <path style={{ stroke: `var(--${s.source.data.pol})` }}
-                        key={s.source.id}
-                        d={getBezierPath({ sourceX: 10, sourceY: 10, sourcePosition: Position.Left, targetX: 100, targetY: 200, targetPosition: Position.Right })[0]}></path>
-                )
+                // allSources.map(s =>
+                //     <path style={{ stroke: `var(--${s.source.data.pol})` }}
+                //         key={s.source.id}
+                //         d={getBezierPath({ sourceX: 10, sourceY: 10, sourcePosition: Position.Left, targetX: 100, targetY: 200, targetPosition: Position.Right })[0]}></path>
+                // )
             }
-        </svg> */}
+        </svg>
     </div >
 
     const scaleTo1 = <div className={styles.rsCalc}>
@@ -83,20 +103,19 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
 
             <div className={styles.rsNodeGrid} style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth }}>
                 <div className={styles.rsContent + " " + styles[data.pol]}>
-                    {
-                        [
-                            // data.scoreNumberText,
-                            // data.score.confidence.toFixed(2),
-                            // id,
-                            // data.score.relevance,
-                            data.claim.content
-                        ].join(" | ")
-                    }
+                    {[
+                        // data.scoreNumberText,
+                        // data.score.confidence.toFixed(2),
+                        // id,
+                        data.claim.content
+                    ].join(" | ")}
                 </div>
-                {cancelOut}
-                {scaleTo1}
-                {consolidate}
-                {weightByConfidence}
+                {allSources.length > 0 && <>
+                    {cancelOut}
+                    {scaleTo1}
+                    {consolidate}
+                    {weightByConfidence}
+                </>}
             </div>
 
             <Handle
