@@ -1,6 +1,7 @@
 import { rsData } from './rsData';
 import { Action, Claim, ClaimEdge, RepositoryLocalPure, Score, calculateScoreActions, isClaimEdge, isScore } from './rs';
 import { Edge, Node } from 'reactflow';
+import { maxStrokeWidth } from './config';
 
 export interface DisplayNodeData {
     pol: string;
@@ -42,7 +43,8 @@ export async function getEdgesAndNodes() {
 
     const mainScore = await rsRepo.getScore(mainScoreId || "");
     if (mainScore) scores.unshift(mainScore);
-    const generationItems: { [key: string]: Score[] } = {}
+    const generationItems: { [key: string]: number } = {}
+    const lastBottom = 0
     for (const targetScore of scores) {
         // get the score's edges
         const claimEdges = await rsRepo.getClaimEdgesByParentId(targetScore.sourceClaimId);
@@ -75,8 +77,7 @@ export async function getEdgesAndNodes() {
 
         // get the score's claim
         const claim = await rsRepo.getClaim(targetScore.sourceClaimId);
-        if (!generationItems[targetScore.generation]) generationItems[targetScore.generation] = [];
-        generationItems[targetScore.generation].push(targetScore);
+        if (!generationItems[targetScore.generation]) generationItems[targetScore.generation] = 0;
 
         // TODO: Math and text ---------- move to a central function
         let scoreNumber = 0;
@@ -98,7 +99,7 @@ export async function getEdgesAndNodes() {
                 id: targetScore.id,
                 type: 'rsNode',
                 position: {
-                    y: generationItems[targetScore.generation].length * 150,
+                    y: (generationItems[targetScore.generation]),
                     x: (targetScore.generation * 500) + 100,
                 },
                 data: {
@@ -110,6 +111,8 @@ export async function getEdgesAndNodes() {
                 }
             }
             nodes.push(node);
+            generationItems[targetScore.generation] += (maxStrokeWidth * 2) + ((claim?.content?.length || 0) * .8);
+
         }
 
     }

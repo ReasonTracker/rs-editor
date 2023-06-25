@@ -55,17 +55,17 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
     </div>
 
     const consolidate = <div className={styles.rsCalc}>
-        <svg
+        {/* <svg
             height={(allSources?.length || 1) * maxStrokeWidth}
             width={maxStrokeWidth}>
             {
-                // allSources.map(s =>
-                //     <path style={{ stroke: `var(--${s.source.data.pol})` }}
-                //         key={s.source.id}
-                //         d={getBezierPath({ sourceX: 10, sourceY: 10, sourcePosition: Position.Left, targetX: 100, targetY: 200, targetPosition: Position.Right })[0]}></path>
-                // )
+                allSources.map(s =>
+                    <path style={{ stroke: `var(--${s.source.data.pol})` }}
+                        key={s.source.id}
+                        d={getBezierPath({ sourceX: 10, sourceY: 10, sourcePosition: Position.Left, targetX: 100, targetY: 200, targetPosition: Position.Right })[0]}></path>
+                )
             }
-        </svg>
+        </svg> */}
     </div >
 
     const scaleTo1 = <div className={styles.rsCalc}>

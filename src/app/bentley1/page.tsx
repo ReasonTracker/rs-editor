@@ -62,11 +62,7 @@ export default function App() {
           maskColor='rgb(240, 240, 240, 0.3)'
           pannable
           zoomable
-          nodeColor={(n) => {
-            console.log(n);
-
-            return `var(--${n.data.pol})`
-          }}
+          nodeColor={n => `var(--${n.data.pol})`}
         />
       </ReactFlow>
     </div>
