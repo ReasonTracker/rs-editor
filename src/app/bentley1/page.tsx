@@ -55,9 +55,19 @@ export default function App() {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
+        fitView
       >
         <Controls />
-        <MiniMap maskColor='rgb(240, 240, 240, 0.3)' />
+        <MiniMap
+          maskColor='rgb(240, 240, 240, 0.3)'
+          pannable
+          zoomable
+          nodeColor={(n) => {
+            console.log(n);
+
+            return `var(--${n.data.pol})`
+          }}
+        />
       </ReactFlow>
     </div>
   );

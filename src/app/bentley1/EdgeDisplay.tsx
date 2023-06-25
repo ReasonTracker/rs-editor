@@ -32,60 +32,10 @@ export default function EdgeDisplay(props: EdgeProps<DisplayEdgeData>) {
     let newSourceY = sourceY;
     let width = maxStrokeWidth;
     if (data) {
-        newTargetY += data.targetTop * maxStrokeWidth;
-        newSourceY += data.sourceTop * maxStrokeWidth;
+        newTargetY += (data.targetTop * maxStrokeWidth) + (data.maxImapct * halfStroke);
+        newSourceY += data.maxImapct * halfStroke;
         width = maxStrokeWidth * data.impact;
     }
-
-    // const sources = useStore((s: ReactFlowState) => {
-    //     const originalSources = s.edges.filter(
-    //         (e) => e.target === target
-    //     );
-    //     let result = {
-    //         index: 0,
-    //         newTargetX: targetX,
-    //         newTargetY: targetY,
-    //         newSourceX: sourceX,
-    //         top: 0,
-    //         bottom: 0
-    //     }
-
-    //     let lastBottom = targetY;
-    //     for (const [index, s] of originalSources.entries()) {
-    //         console.log('s.data.score * maxStrokeWidth', s.data.score, maxStrokeWidth, s.data.score * maxStrokeWidth);
-
-    //         const newItem = {
-    //             newTargetX: targetX - 4,
-    //             newSourceX: sourceX + 4,
-    //             //source: s,
-    //             //stackedY: 0,
-    //             //top: lastBottom,
-    //             newTargetY: lastBottom + (s.data.score * halfStroke),//targetY,// + (index * maxStrokeWidth * (Math.max(1, data.score / 2))),
-    //             bottom: lastBottom += Math.max((s.data.score * maxStrokeWidth), maxStrokeWidth),
-    //             index: index
-    //         };
-    //         console.log('newItem', s.data.score, newItem.newTargetY)
-
-
-    //         if (s.source === source) {
-    //             result = { ...result, ...newItem };
-    //         }
-
-    //     }
-
-    //     return result
-
-    //     // const index = allSources.map(e => e.source).indexOf(source);
-
-    //     // return {
-    //     //     length: allSources.length,
-    //     //     index: index,
-    //     //     newTargetY: targetY + (index * maxStrokeWidth * (Math.max(1, data.score / 2))),
-    //     //     newTargetX: targetX - 4,
-    //     //     newSourceX: sourceX + 4
-
-    //     // };
-    // });
 
     const [edgePath, labelX, labelY] = getBezierPath({
         sourceX: sourceX,
@@ -102,7 +52,7 @@ export default function EdgeDisplay(props: EdgeProps<DisplayEdgeData>) {
             style={{
                 ...(props.style),
                 stroke: `var(--${data?.pol})`,
-                strokeWidth: maxStrokeWidth,
+                strokeWidth: (data?.maxImapct || 1) * maxStrokeWidth,
                 strokeOpacity: .4
             }}
             targetY={newTargetY}

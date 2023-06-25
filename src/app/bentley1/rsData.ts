@@ -17,8 +17,8 @@ export const rsData: RsData = {
             "payoffScore"
         ],
         "mainClaimScore": [
-            "footTrafficScore",
             "resedentialScore",
+            "footTrafficScore",
             "costScore"
         ],
         "mainScore": [
@@ -61,8 +61,8 @@ export const rsData: RsData = {
             "costEdge"
         ],
         "resedential": [
-            "childrenEdge",
-            "traintracksEdge"
+            "traintracksEdge",
+            "childrenEdge"
         ]
     },
     "items": {
@@ -218,6 +218,31 @@ export const rsData: RsData = {
             "reversible": false,
             "type": "claim"
         },
+        "traintracksScore": {
+            "affects": "confidence",
+            "childrenAveragingWeight": 1,
+            "childrenConfidenceWeight": 1,
+            "childrenRelevanceWeight": 1,
+            "childrenWeight": 1,
+            "confidence": 1,
+            "content": "",
+            "descendantCount": 0,
+            "fraction": 0,
+            "fractionSimple": 0.5,
+            "generation": 2,
+            "id": "traintracksScore",
+            "parentScoreId": "resedentialScore",
+            "percentOfWeight": 0.5,
+            "priority": "",
+            "pro": false,
+            "relevance": 1,
+            "reversible": false,
+            "scoreRootId": "ScoreRoot",
+            "sourceClaimId": "traintracks",
+            "sourceEdgeId": "traintracksEdge",
+            "type": "score",
+            "weight": 1
+        },
         "payoffScore": {
             "affects": "relevance",
             "childrenAveragingWeight": 1,
@@ -243,6 +268,7 @@ export const rsData: RsData = {
             "type": "score",
             "weight": 1
         },
+
         "childrenScore": {
             "affects": "relevance",
             "childrenAveragingWeight": 1,
@@ -322,31 +348,6 @@ export const rsData: RsData = {
             "priority": "",
             "pro": false,
             "type": "claimEdge"
-        },
-        "traintracksScore": {
-            "affects": "confidence",
-            "childrenAveragingWeight": 1,
-            "childrenConfidenceWeight": 1,
-            "childrenRelevanceWeight": 1,
-            "childrenWeight": 1,
-            "confidence": 1,
-            "content": "",
-            "descendantCount": 0,
-            "fraction": 0,
-            "fractionSimple": 0.5,
-            "generation": 2,
-            "id": "traintracksScore",
-            "parentScoreId": "resedentialScore",
-            "percentOfWeight": 0.5,
-            "priority": "",
-            "pro": false,
-            "relevance": 1,
-            "reversible": false,
-            "scoreRootId": "ScoreRoot",
-            "sourceClaimId": "traintracks",
-            "sourceEdgeId": "traintracksEdge",
-            "type": "score",
-            "weight": 1
         }
     },
     "scoreIdsBySourceId": {

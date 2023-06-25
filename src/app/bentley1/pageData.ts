@@ -2,14 +2,6 @@ import { rsData } from './rsData';
 import { Action, Claim, ClaimEdge, RepositoryLocalPure, Score, calculateScoreActions, isClaimEdge, isScore } from './rs';
 import { Edge, Node } from 'reactflow';
 
-// let rsRepo: RepositoryLocalPure
-// export const getRsRepository = () => {
-//     if (!rsRepo) {
-//         rsRepo = new RepositoryLocalPure(rsData)
-//     }
-//     return rsRepo;
-// }
-
 export interface DisplayNodeData {
     pol: string;
     score: Score;
@@ -22,8 +14,9 @@ export interface DisplayEdgeData {
     pol: string;
     impact: number;
     targetTop: number;
-    sourceTop: number;
     claimEdge: ClaimEdge;
+    sourceScore: Score;
+    maxImapct: number;
 }
 
 export async function getEdgesAndNodes() {
@@ -40,39 +33,12 @@ export async function getEdgesAndNodes() {
         actions: actions, repository: rsRepo
     })
 
-    // const actions2: Action[] = [{
-    //     "newData": {
-    //         sourceClaimId: "mainClaim",
-    //         topScoreId: "mainClaimScore",
-    //         id: "ScoreRoot",
-    //         type: "scoreRoot",
-    //     },
-    //     oldData: {},
-    //     type: "add_scoreRoot",
-    //     dataId: "ScoreRoot"
-    // }]
-    // const newActions = await calculateScoreActions({
-    //     actions: actions2, repository: rsRepo
-    // })
-    // const newActions2 = await calculateScoreActions({
-    //     actions: actions2, repository: rsRepo
-    // })
-
-
-    // newActions0.forEach(a => {
-    //     if (a.newData.id === "resedentialScore")
-    //         console.log(a.newData);
-    // })
-
-
-    // await rsRepo.notify([{ type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
-    // { type: "add_claimEdge", newData: <ClaimEdge>{ id: "testEdge", parentId: "resedential", childId: "test" }, oldData: undefined, dataId: "testEdge" }])
-
-    // await rsRepo.notify([...newActions, ...newActions2])
-
     const mainScoreId = (await rsRepo.getScoreRoot(rsData.ScoreRootIds[0]))?.topScoreId;
-    const scores = await rsRepo.getDescendantScoresById(mainScoreId || "");
+
+    let scores = await rsRepo.getDescendantScoresById(mainScoreId || "");
+    scores.reverse();
     scores.sort((a, b) => a.proMain ? -1 : 1)
+
 
     const mainScore = await rsRepo.getScore(mainScoreId || "");
     if (mainScore) scores.unshift(mainScore);
@@ -85,7 +51,8 @@ export async function getEdgesAndNodes() {
         for (const claimEdge of claimEdges) {
             const sourceScore = (await rsRepo.getScoresBySourceId(claimEdge.childId))[0];
             const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
-            if (lastBottom === 0) lastBottom = Math.max(impact, 1) / 2
+            //if (lastBottom === 0) lastBottom = Math.max(impact, 1) / 2
+            const maxImpact = sourceScore.relevance;
             const edge: Edge<DisplayEdgeData> = {
                 id: claimEdge.id,
                 type: "rsEdge",
@@ -93,13 +60,16 @@ export async function getEdgesAndNodes() {
                 source: sourceScore.id,
                 data: {
                     pol: sourceScore.proMain ? "pro" : "con",
+                    maxImapct: maxImpact,
                     impact: impact,
                     targetTop: lastBottom,
-                    sourceTop: Math.max(impact, 1) / 2,
                     claimEdge: claimEdge,
+                    sourceScore: sourceScore
                 }
             }
-            lastBottom += impact > 1 ? 1 + ((impact - 1) / 2) : 1;
+
+            lastBottom += maxImpact;
+            lastBottom += .25; // Gutter
             edges.push(edge);
         }
 
@@ -128,9 +98,10 @@ export async function getEdgesAndNodes() {
                 id: targetScore.id,
                 type: 'rsNode',
                 position: {
-                    y: generationItems[targetScore.generation].length * 100,
+                    y: generationItems[targetScore.generation].length * 150,
                     x: (targetScore.generation * 500) + 100,
-                }, data: {
+                },
+                data: {
                     pol: targetScore.proMain ? "pro" : "con",
                     score: targetScore,
                     claim: claim,

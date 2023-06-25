@@ -1,8 +1,9 @@
-import { BezierEdge, Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
-import styles from './rsNode.module.css'
+import { Edge, Handle, NodeProps, Position, ReactFlowState, useStore } from 'reactflow';
 import { halfStroke, maxStrokeWidth } from './config';
+import styles from './rsNode.module.css'
+import { DisplayNodeData } from './pageData';
 
-export function NodeDisplay(props: NodeProps) {
+export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
     const { data, id } = props
 
     const allSources = useStore((s: ReactFlowState) => {
@@ -82,10 +83,15 @@ export function NodeDisplay(props: NodeProps) {
 
             <div className={styles.rsNodeGrid} style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth }}>
                 <div className={styles.rsContent + " " + styles[data.pol]}>
-                    {/* {data.scoreNumberText} |
-                    {data.score.confidence.toFixed(2)} |
-                    {id} | */}
-                    {data.claim.content}
+                    {
+                        [
+                            // data.scoreNumberText,
+                            // data.score.confidence.toFixed(2),
+                            // id,
+                            // data.score.relevance,
+                            data.claim.content
+                        ].join(" | ")
+                    }
                 </div>
                 {cancelOut}
                 {scaleTo1}

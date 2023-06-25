@@ -34,7 +34,6 @@ export class RepositoryLocalBase {
     async getClaimEdgesByChildId(childId: string): Promise<ClaimEdge[]> {
         const claimEdges: ClaimEdge[] = [];
         const claimEdgeIdStrings = this.rsData.claimEdgeIdsByChildId[childId];
-        console.log("claimEdgeIdStrings", claimEdgeIdStrings, childId)
         if (claimEdgeIdStrings) {
             for (const claimEdgeIdString of claimEdgeIdStrings) {
                 const claimEdge = await this.getClaimEdge(claimEdgeIdString)
