@@ -1,7 +1,7 @@
-import { BezierEdge, Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
+import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import styles from './rsNode.module.css'
-import { halfStroke, maxStrokeWidth } from './config';
-import { DisplayEdgeData, DisplayNodeData } from './pageData';
+import { maxStrokeWidth } from './config';
+import { DisplayEdgeData } from './pageData';
 import { Fragment } from 'react';
 
 export function NodeDisplay(props: NodeProps) {
@@ -19,51 +19,40 @@ export function NodeDisplay(props: NodeProps) {
         {allSources.length > 0 && <>
             <svg
                 height={(
-                    (allSources[allSources.length - 1]?.data?.targetTop || 1) + (allSources[allSources.length - 1].data?.maxImapct || 0)
+                    (allSources[allSources.length - 1]?.data?.targetTop || 1) + (allSources[allSources.length - 1].data?.maxImpact || 0)
                 ) * maxStrokeWidth}
                 width={maxStrokeWidth}>
                 {allSources.map(s => {
                     const data = s.data;
                     if (data) {
-                        const maxImpact = data.maxImapct * maxStrokeWidth;
-                        const topMax = data.targetTop * maxStrokeWidth;
-                        const bottomMax = topMax + maxImpact;
 
-                        const impact = data.impact * maxStrokeWidth;
-                        const impactDiff = (maxImpact - impact) / 2;
-                        const topImpact = topMax + impactDiff;
-                        const bottomImpact = bottomMax - impactDiff;
-
-                        const reducedImpact = impact * data.sourceScore.confidence;
-                        const reducedImpactDiff = (impact - reducedImpact) / 2;
-                        const topReducedImpact = topMax + impactDiff + reducedImpactDiff;
-                        const bottomReducedImpact = bottomMax - impactDiff - reducedImpactDiff;
-
-                        const reducesMaxImpact = maxImpact * data.sourceScore.confidence;
-                        const reducesMaxImpactDiff = (maxImpact - reducesMaxImpact) / 2;
-                        const topReducedMaxImpact = topMax + reducesMaxImpactDiff;
-                        const bottomReducedMaxImpact = bottomMax - reducesMaxImpactDiff;
+                        const {
+                            maxImpactStacked,
+                            impactStacked,
+                            reducedImpactStacked,
+                            reducedMaxImpactStacked
+                        } = data;
 
                         return <Fragment key={s.id}>
 
                             <polygon
                                 style={{ opacity: .4, fill: `var(--${s.data?.pol})` }}
                                 points={`
-                                0,${topReducedMaxImpact}
-                                0,${bottomReducedMaxImpact}
-                                25,${bottomMax}
-                                25,${topMax}
-                            `}
+                                    0                 , ${reducedMaxImpactStacked.top * maxStrokeWidth}
+                                    0                 , ${reducedMaxImpactStacked.bottom * maxStrokeWidth}
+                                    ${maxStrokeWidth} , ${maxImpactStacked.bottom * maxStrokeWidth}
+                                    ${maxStrokeWidth} , ${maxImpactStacked.top * maxStrokeWidth}
+                                `}
                             />
 
                             <polygon
                                 style={{ fill: `var(--${s.data?.pol})` }}
                                 points={`
-                            0,${topReducedImpact}
-                            0,${bottomReducedImpact}
-                            25,${bottomImpact}
-                            25,${topImpact}
-                        `}
+                                    0                 , ${reducedImpactStacked.top * maxStrokeWidth}
+                                    0                 , ${reducedImpactStacked.bottom * maxStrokeWidth}
+                                    ${maxStrokeWidth} , ${impactStacked.bottom * maxStrokeWidth}
+                                    ${maxStrokeWidth} , ${impactStacked.top * maxStrokeWidth}
+                                `}
                             />
                         </Fragment>
                     }
@@ -74,19 +63,70 @@ export function NodeDisplay(props: NodeProps) {
         </>}
     </div>
 
-    const consolidate = <div className={styles.rsCalc}>
-        <svg
-            height={(allSources?.length || 1) * maxStrokeWidth}
-            width={maxStrokeWidth}>
-            {
-                // allSources.map(s =>
-                //     <path style={{ stroke: `var(--${s.source.data.pol})` }}
-                //         key={s.source.id}
-                //         d={getBezierPath({ sourceX: 10, sourceY: 10, sourcePosition: Position.Left, targetX: 100, targetY: 200, targetPosition: Position.Right })[0]}></path>
-                // )
-            }
-        </svg>
-    </div >
+    const consolidate = <div className={styles.rsCalc} style={{ width: '100px' }}>
+        {allSources.length > 0 && <>
+            <svg
+                height={(
+                    (allSources[allSources.length - 1]?.data?.targetTop || 1) + (allSources[allSources.length - 1].data?.maxImpact || 0)
+                ) * maxStrokeWidth}
+                width={'150px'}>
+                {allSources.map(s => {
+                    const data = s.data;
+                    if (data) {
+
+                        const {
+                            reducedImpactStacked,
+                            consolidatedStacked: ConsolidatedStacked
+                        } = data;
+
+                        const [edgePath, labelX, labelY] = getBezierPath({
+                            sourceX: 100,
+                            sourceY: reducedImpactStacked.center * maxStrokeWidth,
+                            sourcePosition: Position.Left,
+                            targetX: 0,
+                            targetY: ConsolidatedStacked.center * maxStrokeWidth,
+                            targetPosition: Position.Right,
+                        });
+
+                        console.log(edgePath);
+
+
+                        return <Fragment key={s.id}>
+                            <path
+                                style={{
+                                    stroke: `var(--${s.data?.pol})`,
+                                    strokeWidth: (reducedImpactStacked.bottom - reducedImpactStacked.top) * maxStrokeWidth,
+                                }}
+
+                                d={edgePath}
+                            />
+                            {/* <polygon
+                                style={{ opacity: .4, fill: `var(--${s.data?.pol})` }}
+                                points={`
+                                0                 , ${reducedMaxImpactStacked.top * maxStrokeWidth}
+                                0                 , ${reducedMaxImpactStacked.bottom * maxStrokeWidth}
+                                ${maxStrokeWidth} , ${maxImpactStacked.bottom * maxStrokeWidth}
+                                ${maxStrokeWidth} , ${maxImpactStacked.top * maxStrokeWidth}
+                            `}
+                            />
+
+                            <polygon
+                                style={{ fill: `var(--${s.data?.pol})` }}
+                                points={`
+                                0                 , ${reducedImpactStacked.top * maxStrokeWidth}
+                                0                 , ${reducedImpactStacked.bottom * maxStrokeWidth}
+                                ${maxStrokeWidth} , ${impactStacked.bottom * maxStrokeWidth}
+                                ${maxStrokeWidth} , ${impactStacked.top * maxStrokeWidth}
+                            `}
+                            /> */}
+                        </Fragment>
+                    }
+                }
+
+                )}
+            </svg>
+        </>}
+    </div>
 
     const scaleTo1 = <div className={styles.rsCalc}>
     </div>

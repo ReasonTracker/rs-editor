@@ -32,8 +32,8 @@ export default function EdgeDisplay(props: EdgeProps<DisplayEdgeData>) {
     let newSourceY = sourceY;
     let width = maxStrokeWidth;
     if (data) {
-        newTargetY += (data.targetTop * maxStrokeWidth) + (data.maxImapct * halfStroke);
-        newSourceY += data.maxImapct * halfStroke;
+        newTargetY += (data.targetTop * maxStrokeWidth) + (data.maxImpact * halfStroke);
+        newSourceY += data.maxImpact * halfStroke;
         width = maxStrokeWidth * data.impact;
     }
 
@@ -52,7 +52,7 @@ export default function EdgeDisplay(props: EdgeProps<DisplayEdgeData>) {
             style={{
                 ...(props.style),
                 stroke: `var(--${data?.pol})`,
-                strokeWidth: (data?.maxImapct || 1) * maxStrokeWidth,
+                strokeWidth: (data?.maxImpact || 1) * maxStrokeWidth,
                 strokeOpacity: .4
             }}
             targetY={newTargetY}

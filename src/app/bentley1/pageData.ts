@@ -2,6 +2,9 @@ import { rsData } from './rsData';
 import { Action, Claim, ClaimEdge, RepositoryLocalPure, Score, calculateScoreActions, isClaimEdge, isScore } from './rs';
 import { Edge, Node } from 'reactflow';
 import { maxStrokeWidth } from './config';
+import { Stacked, scaleStacked, sizeStacked, stackSpace } from './stackSpace';
+
+const gutter = .25;
 
 export interface DisplayNodeData {
     pol: string;
@@ -12,12 +15,19 @@ export interface DisplayNodeData {
 }
 
 export interface DisplayEdgeData {
-    pol: string;
-    impact: number;
-    targetTop: number;
-    claimEdge: ClaimEdge;
-    sourceScore: Score;
-    maxImapct: number;
+    pol: string
+    claimEdge: ClaimEdge
+    sourceScore: Score
+    maxImpactStacked: Stacked
+    impactStacked: Stacked
+    reducedImpactStacked: Stacked
+    reducedMaxImpactStacked: Stacked
+    consolidatedStacked: Stacked
+
+    // TODO: Remove all below
+    impact: number
+    targetTop: number
+    maxImpact: number
 }
 
 export async function getEdgesAndNodes() {
@@ -50,11 +60,19 @@ export async function getEdgesAndNodes() {
         const claimEdges = await rsRepo.getClaimEdgesByParentId(targetScore.sourceClaimId);
         claimEdges.sort((a, b) => a.proMain ? -1 : 1)
         let lastBottom = 0;
+        const maxImpactStack = stackSpace(gutter);
+        const consolidatedStack = stackSpace();
         for (const claimEdge of claimEdges) {
             const sourceScore = (await rsRepo.getScoresBySourceId(claimEdge.childId))[0];
             const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
             //if (lastBottom === 0) lastBottom = Math.max(impact, 1) / 2
             const maxImpact = sourceScore.relevance;
+            const maxImpactStacked = maxImpactStack(sourceScore.relevance)
+            const impactStacked = sizeStacked(maxImpactStacked, impact)
+            const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence)
+            const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence)
+            const ConsolidatedStacked = consolidatedStack(impact * sourceScore.confidence)
+
             const edge: Edge<DisplayEdgeData> = {
                 id: claimEdge.id,
                 type: "rsEdge",
@@ -62,16 +80,21 @@ export async function getEdgesAndNodes() {
                 source: sourceScore.id,
                 data: {
                     pol: sourceScore.proMain ? "pro" : "con",
-                    maxImapct: maxImpact,
+                    maxImpact,
                     impact: impact,
                     targetTop: lastBottom,
-                    claimEdge: claimEdge,
-                    sourceScore: sourceScore
+                    claimEdge,
+                    sourceScore,
+                    maxImpactStacked,
+                    impactStacked,
+                    reducedImpactStacked,
+                    reducedMaxImpactStacked,
+                    consolidatedStacked: ConsolidatedStacked,
                 }
             }
 
             lastBottom += maxImpact;
-            lastBottom += .25; // Gutter
+            lastBottom += gutter;
             edges.push(edge);
         }
 
