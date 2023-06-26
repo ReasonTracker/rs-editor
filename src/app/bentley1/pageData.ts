@@ -23,6 +23,7 @@ export interface DisplayEdgeData {
     reducedImpactStacked: Stacked
     reducedMaxImpactStacked: Stacked
     consolidatedStacked: Stacked
+    scaledTo1Stacked: Stacked
 
     // TODO: Remove all below
     impact: number
@@ -62,6 +63,7 @@ export async function getEdgesAndNodes() {
         let lastBottom = 0;
         const maxImpactStack = stackSpace(gutter);
         const consolidatedStack = stackSpace();
+        const scaledTo1Stack = stackSpace();
         for (const claimEdge of claimEdges) {
             const sourceScore = (await rsRepo.getScoresBySourceId(claimEdge.childId))[0];
             const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
@@ -71,7 +73,8 @@ export async function getEdgesAndNodes() {
             const impactStacked = sizeStacked(maxImpactStacked, impact)
             const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence)
             const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence)
-            const ConsolidatedStacked = consolidatedStack(impact * sourceScore.confidence)
+            const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence)
+            const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight)
 
             const edge: Edge<DisplayEdgeData> = {
                 id: claimEdge.id,
@@ -89,7 +92,8 @@ export async function getEdgesAndNodes() {
                     impactStacked,
                     reducedImpactStacked,
                     reducedMaxImpactStacked,
-                    consolidatedStacked: ConsolidatedStacked,
+                    consolidatedStacked,
+                    scaledTo1Stacked,
                 }
             }
 

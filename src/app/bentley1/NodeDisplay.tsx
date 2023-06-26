@@ -76,7 +76,7 @@ export function NodeDisplay(props: NodeProps) {
 
                         const {
                             reducedImpactStacked,
-                            consolidatedStacked: ConsolidatedStacked
+                            consolidatedStacked
                         } = data;
 
                         const [edgePath, labelX, labelY] = getBezierPath({
@@ -84,7 +84,7 @@ export function NodeDisplay(props: NodeProps) {
                             sourceY: reducedImpactStacked.center * maxStrokeWidth,
                             sourcePosition: Position.Left,
                             targetX: 0,
-                            targetY: ConsolidatedStacked.center * maxStrokeWidth,
+                            targetY: consolidatedStacked.center * maxStrokeWidth,
                             targetPosition: Position.Right,
                         });
 
@@ -128,7 +128,40 @@ export function NodeDisplay(props: NodeProps) {
         </>}
     </div>
 
-    const scaleTo1 = <div className={styles.rsCalc}>
+    const scaleTo1 = <div className={styles.rsCalc} style={{ width: '50px' }}>
+        {allSources.length > 0 && <>
+            <svg
+                height={(
+                    (allSources[allSources.length - 1]?.data?.targetTop || 1) + (allSources[allSources.length - 1].data?.maxImpact || 0)
+                ) * maxStrokeWidth}
+                width={'50px'}>
+                {allSources.map(s => {
+                    const data = s.data;
+                    if (data) {
+
+                        const {
+                            consolidatedStacked,
+                            scaledTo1Stacked,
+                        } = data;
+
+                        return <Fragment key={s.id}>
+
+                            <polygon
+                                style={{ fill: `var(--${s.data?.pol})` }}
+                                points={`
+                                0                 , ${scaledTo1Stacked.top * maxStrokeWidth}
+                                0                 , ${scaledTo1Stacked.bottom * maxStrokeWidth}
+                                50 , ${consolidatedStacked.bottom * maxStrokeWidth}
+                                50 , ${consolidatedStacked.top * maxStrokeWidth}
+                            `}
+                            />
+                        </Fragment>
+                    }
+                }
+
+                )}
+            </svg>
+        </>}
     </div>
 
     const cancelOut = <div className={styles.rsCalc}>
