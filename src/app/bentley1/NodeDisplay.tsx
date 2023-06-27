@@ -1,10 +1,10 @@
 import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import styles from './rsNode.module.css'
 import { maxStrokeWidth } from './config';
-import { DisplayEdgeData } from './pageData';
+import { DisplayEdgeData, DisplayNodeData } from './pageData';
 import { Fragment } from 'react';
 
-export function NodeDisplay(props: NodeProps) {
+export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
     const { data, id } = props
 
     const allSources = useStore((s: ReactFlowState) => {
@@ -88,9 +88,6 @@ export function NodeDisplay(props: NodeProps) {
                             targetPosition: Position.Right,
                         });
 
-                        console.log(edgePath);
-
-
                         return <Fragment key={s.id}>
                             <path
                                 style={{
@@ -100,25 +97,6 @@ export function NodeDisplay(props: NodeProps) {
 
                                 d={edgePath}
                             />
-                            {/* <polygon
-                                style={{ opacity: .4, fill: `var(--${s.data?.pol})` }}
-                                points={`
-                                0                 , ${reducedMaxImpactStacked.top * maxStrokeWidth}
-                                0                 , ${reducedMaxImpactStacked.bottom * maxStrokeWidth}
-                                ${maxStrokeWidth} , ${maxImpactStacked.bottom * maxStrokeWidth}
-                                ${maxStrokeWidth} , ${maxImpactStacked.top * maxStrokeWidth}
-                            `}
-                            />
-
-                            <polygon
-                                style={{ fill: `var(--${s.data?.pol})` }}
-                                points={`
-                                0                 , ${reducedImpactStacked.top * maxStrokeWidth}
-                                0                 , ${reducedImpactStacked.bottom * maxStrokeWidth}
-                                ${maxStrokeWidth} , ${impactStacked.bottom * maxStrokeWidth}
-                                ${maxStrokeWidth} , ${impactStacked.top * maxStrokeWidth}
-                            `}
-                            /> */}
                         </Fragment>
                     }
                 }
@@ -164,7 +142,49 @@ export function NodeDisplay(props: NodeProps) {
         </>}
     </div>
 
-    const cancelOut = <div className={styles.rsCalc}>
+    const cancelOut = <div className={styles.rsCalc} style={{ width: '50px' }}>
+        {allSources.length > 0 && <>
+            <svg
+                height={(
+                    (allSources[allSources.length - 1]?.data?.targetTop || 1) + (allSources[allSources.length - 1].data?.maxImpact || 0)
+                ) * maxStrokeWidth}
+                width={maxStrokeWidth * 2}>
+
+                <defs><pattern id='a' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' /><path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' /><path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' /></pattern></defs>
+
+                <polygon
+                    style={{ opacity: .4, fill: `var(--${data.pol})` }}
+                    points={`
+                                    0                     , 0
+                                    0                     , ${maxStrokeWidth}
+                                    ${maxStrokeWidth * 2} , ${maxStrokeWidth}
+                                    ${maxStrokeWidth * 2} , 0
+                                `}
+                />
+
+                <polygon
+                    fill='url(#a)'
+                    points={`
+                        ${maxStrokeWidth} , 0
+                        ${maxStrokeWidth}  , ${maxStrokeWidth}
+                        ${maxStrokeWidth * 2} , ${maxStrokeWidth}
+                        ${maxStrokeWidth * 2} , 0
+                    `}
+                />
+
+                {/* <svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><rect width='800%' height='800%' transform='translate(0,0)' fill='url(#a)' /></svg> */}
+
+                <polygon
+                    style={{ fill: `var(--${data.pol})` }}
+                    points={`
+                                    0                 , ${data.cancelOutStacked.top * maxStrokeWidth}
+                                    0                 , ${data.cancelOutStacked.bottom * maxStrokeWidth}
+                                    ${maxStrokeWidth * 2} , ${data.cancelOutStacked.bottom * maxStrokeWidth}
+                                    ${maxStrokeWidth * 2} , ${data.cancelOutStacked.top * maxStrokeWidth}
+                                `}
+                />
+            </svg>
+        </>}
     </div>
 
     return (

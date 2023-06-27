@@ -8,8 +8,9 @@ export interface Stacked {
 export function stackSpace(gutter: number = 0) {
     let notFirst = false;
     let position = 0;
-    return (value: number) => {
+    return (value: number, gap: number = 0) => {
         if (notFirst) position += gutter;
+        position += gap;
         const result = { top: position, center: position + (value / 2), bottom: position + value };
         notFirst = true;
         position = result.bottom;

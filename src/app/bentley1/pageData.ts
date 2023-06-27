@@ -7,11 +7,12 @@ import { Stacked, scaleStacked, sizeStacked, stackSpace } from './stackSpace';
 const gutter = .25;
 
 export interface DisplayNodeData {
-    pol: string;
-    score: Score;
-    claim: Claim;
-    scoreNumberText: string;
-    scoreNumber: number;
+    pol: string
+    score: Score
+    claim: Claim
+    scoreNumberText: string
+    scoreNumber: number
+    cancelOutStacked: Stacked
 }
 
 export interface DisplayEdgeData {
@@ -59,16 +60,18 @@ export async function getEdgesAndNodes() {
     for (const targetScore of scores) {
         // get the score's edges
         const claimEdges = await rsRepo.getClaimEdgesByParentId(targetScore.sourceClaimId);
-        claimEdges.sort((a, b) => a.proMain ? -1 : 1)
+        const confidenceEdges = claimEdges.filter(ce => ce.affects === "confidence");
+        confidenceEdges.sort((a, b) => a.proMain === targetScore.proMain ? -1 : 1)
         let lastBottom = 0;
         const maxImpactStack = stackSpace(gutter);
         const consolidatedStack = stackSpace();
         const scaledTo1Stack = stackSpace();
-        for (const claimEdge of claimEdges) {
-            const sourceScore = (await rsRepo.getScoresBySourceId(claimEdge.childId))[0];
+        // let lastProMain = undefined;
+        for (const confidenceEdge of confidenceEdges) {
+            const sourceScore = (await rsRepo.getScoresBySourceId(confidenceEdge.childId))[0];
             const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
-            //if (lastBottom === 0) lastBottom = Math.max(impact, 1) / 2
             const maxImpact = sourceScore.relevance;
+            // const proChangeGap = lastProMain === true && sourceScore.proMain === false ? 1 : 0
             const maxImpactStacked = maxImpactStack(sourceScore.relevance)
             const impactStacked = sizeStacked(maxImpactStacked, impact)
             const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence)
@@ -77,7 +80,7 @@ export async function getEdgesAndNodes() {
             const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight)
 
             const edge: Edge<DisplayEdgeData> = {
-                id: claimEdge.id,
+                id: confidenceEdge.id,
                 type: "rsEdge",
                 target: targetScore.id,
                 source: sourceScore.id,
@@ -86,7 +89,7 @@ export async function getEdgesAndNodes() {
                     maxImpact,
                     impact: impact,
                     targetTop: lastBottom,
-                    claimEdge,
+                    claimEdge: confidenceEdge,
                     sourceScore,
                     maxImpactStacked,
                     impactStacked,
@@ -99,6 +102,7 @@ export async function getEdgesAndNodes() {
 
             lastBottom += maxImpact;
             lastBottom += gutter;
+            // lastProMain = sourceScore.proMain;
             edges.push(edge);
         }
 
@@ -122,6 +126,11 @@ export async function getEdgesAndNodes() {
         // end TODO
 
         if (claim) {
+
+            const cancelOut = stackSpace();
+
+            const cancelOutStacked = cancelOut(targetScore.confidence)
+
             const node: Node<DisplayNodeData> = {
                 id: targetScore.id,
                 type: 'rsNode',
@@ -135,6 +144,7 @@ export async function getEdgesAndNodes() {
                     claim: claim,
                     scoreNumberText: scoreNumberText,
                     scoreNumber: scoreNumber,
+                    cancelOutStacked
                 }
             }
             nodes.push(node);
