@@ -115,3 +115,7 @@ a {
   --con-l: 42%;
   --con: hsl(var(--con-h), 100%, var(--con-l));
 }
+
+svg {
+  display: block;
+}

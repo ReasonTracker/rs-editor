@@ -11,12 +11,12 @@ import ReactFlow, {
 
 import 'reactflow/dist/style.css';
 import './page.css';
-import './rsNode.module.css';
+import './nodeDisplay.css';
 
 //import pageData from './pageData';
 import { NodeDisplay } from './NodeDisplay';
 import EdgeDisplay from './EdgeDisplay';
-import { DisplayEdgeData, DisplayNodeData, getEdgesAndNodes } from './pageData';
+import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes } from './pageData';
 
 const nodeTypes = { rsNode: NodeDisplay };
 const edgeTypes = { rsEdge: EdgeDisplay };
@@ -25,7 +25,7 @@ const edgeTypes = { rsEdge: EdgeDisplay };
 
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<DisplayEdgeData>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]);
 
   // useEffect call getEdgesAndNodesand put them into setnodes and set edges
   useEffect(() => {
@@ -47,6 +47,7 @@ export default function App() {
 
   return (
     <div style={{ width: '90vw', height: '90vh', margin: 'auto', border: '1px solid grey' }}>
+
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -65,6 +66,15 @@ export default function App() {
           nodeColor={n => `var(--${n.data.pol})`}
         />
       </ReactFlow>
+      <svg>
+        <defs>
+          <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
+            <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />
+            <path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' />
+            <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
+          </pattern>
+        </defs>
+      </svg>
     </div>
   );
 }

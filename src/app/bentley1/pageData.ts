@@ -6,6 +6,14 @@ import { Stacked, scaleStacked, sizeStacked, stackSpace } from './stackSpace';
 
 const gutter = .25;
 
+export function isConfidenceEdgeData(data: ConfidenceEdgeData | RelevenceEdgeData | undefined): data is ConfidenceEdgeData {
+    return data?.type === "confidence";
+}
+
+export function isRelevanceEdgeData(data: ConfidenceEdgeData | RelevenceEdgeData | undefined): data is RelevenceEdgeData {
+    return data?.type === "relevance";
+}
+
 export interface DisplayNodeData {
     pol: string
     score: Score
@@ -15,7 +23,7 @@ export interface DisplayNodeData {
     cancelOutStacked: Stacked
 }
 
-export interface DisplayEdgeData {
+export interface ConfidenceEdgeData {
     pol: string
     claimEdge: ClaimEdge
     sourceScore: Score
@@ -25,6 +33,8 @@ export interface DisplayEdgeData {
     reducedMaxImpactStacked: Stacked
     consolidatedStacked: Stacked
     scaledTo1Stacked: Stacked
+    type: "confidence"
+
 
     // TODO: Remove all below
     impact: number
@@ -32,9 +42,17 @@ export interface DisplayEdgeData {
     maxImpact: number
 }
 
+export interface RelevenceEdgeData {
+    pol: string
+    claimEdge: ClaimEdge
+    sourceScore: Score
+    type: "relevance"
+    maxImpact: number
+}
+
 export async function getEdgesAndNodes() {
     const nodes: Node<DisplayNodeData>[] = []
-    const edges: Edge<DisplayEdgeData>[] = []
+    const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
     const rsRepo = new RepositoryLocalPure(rsData)
     const actions: Action[] = [
         { type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
@@ -58,7 +76,7 @@ export async function getEdgesAndNodes() {
     const generationItems: { [key: string]: number } = {}
     const lastBottom = 0
     for (const targetScore of scores) {
-        // get the score's edges
+        // get the score's confidence edges
         const claimEdges = await rsRepo.getClaimEdgesByParentId(targetScore.sourceClaimId);
         const confidenceEdges = claimEdges.filter(ce => ce.affects === "confidence");
         confidenceEdges.sort((a, b) => a.proMain === targetScore.proMain ? -1 : 1)
@@ -79,10 +97,11 @@ export async function getEdgesAndNodes() {
             const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence)
             const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight)
 
-            const edge: Edge<DisplayEdgeData> = {
+            const edge: Edge<ConfidenceEdgeData> = {
                 id: confidenceEdge.id,
                 type: "rsEdge",
                 target: targetScore.id,
+                targetHandle: 'confidence',
                 source: sourceScore.id,
                 data: {
                     pol: sourceScore.proMain ? "pro" : "con",
@@ -97,12 +116,36 @@ export async function getEdgesAndNodes() {
                     reducedMaxImpactStacked,
                     consolidatedStacked,
                     scaledTo1Stacked,
+                    type: "confidence",
                 }
             }
 
             lastBottom += maxImpact;
             lastBottom += gutter;
             // lastProMain = sourceScore.proMain;
+            edges.push(edge);
+        }
+
+        // Process the Relevance Edges
+        const relevanceEdges = claimEdges.filter(ce => ce.affects === "relevance");
+        for (const relevanceEdge of relevanceEdges) {
+            const sourceScore = (await rsRepo.getScoresBySourceId(relevanceEdge.childId))[0];
+            const maxImpact = sourceScore.relevance;
+            const edge: Edge<RelevenceEdgeData> = {
+                id: relevanceEdge.id,
+                type: "rsEdge",
+                target: targetScore.id,
+                targetHandle: 'relevance',
+                source: sourceScore.id,
+                data: {
+                    pol: sourceScore.proMain ? "pro" : "con",
+                    claimEdge: relevanceEdge,
+                    sourceScore,
+                    maxImpact,
+                    type: "relevance",
+                }
+            }
+
             edges.push(edge);
         }
 

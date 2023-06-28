@@ -1,6 +1,7 @@
 .react-flow__minimap {
   background-color: #000;
   border: 1px solid grey;
+  margin-bottom: 30px;
 }
 
 .react-flow__handle {

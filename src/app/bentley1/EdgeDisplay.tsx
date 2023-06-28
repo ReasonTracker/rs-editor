@@ -1,10 +1,10 @@
 import React from 'react';
 import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { halfStroke, maxStrokeWidth } from './config';
-import { DisplayEdgeData } from './pageData';
+import { ConfidenceEdgeData, RelevenceEdgeData, isConfidenceEdgeData } from './pageData';
 
 // this is a little helper component to render the actual edge label
-function EdgeLabel({ transform }: { transform: string }) {
+function EdgeLabel({ transform, label }: { transform: string, label: string }) {
     return (
         <div
             style={{
@@ -19,23 +19,24 @@ function EdgeLabel({ transform }: { transform: string }) {
             }}
             className="nodrag nopan"
         >
-            {'◀'}
+            {label}
         </div>
     );
 }
 
-export default function EdgeDisplay(props: EdgeProps<DisplayEdgeData>) {
+export default function EdgeDisplay(props: EdgeProps<ConfidenceEdgeData | RelevenceEdgeData>) {
     let { style, source, data, target, targetY, targetX, sourceX, sourceY, sourcePosition, targetPosition, id } = props
     sourceX += 4;
     targetX -= 4;
     let newTargetY = targetY;
     let newSourceY = sourceY;
     let width = maxStrokeWidth;
-    if (data) {
+    if (isConfidenceEdgeData(data)) {
         newTargetY += (data.targetTop * maxStrokeWidth) + (data.maxImpact * halfStroke);
-        newSourceY += data.maxImpact * halfStroke;
         width = maxStrokeWidth * data.impact;
     }
+    if (data) newSourceY += data?.maxImpact * halfStroke;
+
 
     const [edgePath, labelX, labelY] = getBezierPath({
         sourceX: sourceX,
@@ -44,21 +45,19 @@ export default function EdgeDisplay(props: EdgeProps<DisplayEdgeData>) {
         targetX: targetX,
         targetY: newTargetY,
         targetPosition,
+        curvature: 1,
     });
 
     return <g className={'rs-edge ' + data?.pol}>
 
-        <BezierEdge {...props}
+        <BaseEdge {...props}
             style={{
                 ...(props.style),
                 stroke: `var(--${data?.pol})`,
                 strokeWidth: (data?.maxImpact || 1) * maxStrokeWidth,
                 strokeOpacity: .4
             }}
-            targetY={newTargetY}
-            targetX={targetX}
-            sourceX={sourceX}
-            sourceY={newSourceY}
+            path={edgePath}
 
         />
 
@@ -72,10 +71,18 @@ export default function EdgeDisplay(props: EdgeProps<DisplayEdgeData>) {
         <EdgeLabelRenderer>
             <EdgeLabel
                 transform={`translate(-1em, -.65em) translate(${sourceX}px,${newSourceY}px)`}
+                label='◀'
             />
-            <EdgeLabel
-                transform={`translate(.1em, -.65em) translate(${targetX}px,${newTargetY}px)`}
-            />
+            {data?.type === "confidence" ?
+                <EdgeLabel
+                    transform={`translate(.1em, -.65em) translate(${targetX}px,${newTargetY}px)`}
+                    label={'◀'}
+                /> :
+                <EdgeLabel
+                    transform={`translate(-.5em, -1em) translate(${targetX}px,${newTargetY}px)`}
+                    label={`▼`}
+                />
+            }
         </EdgeLabelRenderer>
 
     </g>
