@@ -2,10 +2,9 @@ import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useSt
 import { halfStroke, maxStrokeWidth } from './config';
 import { ConfidenceEdgeData, DisplayNodeData } from './pageData';
 import { Fragment } from 'react';
-import { Hi_Melody } from 'next/font/google';
 
 export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
-    const { data, id } = props
+    const { data, id, xPos, yPos } = props
 
     const allSources = useStore((s: ReactFlowState) => {
         const originalSources: Edge<ConfidenceEdgeData>[] = s.edges.filter(
@@ -14,6 +13,8 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
 
         return originalSources;
     });
+
+    // console.log({ [id]: { x: xPos.toFixed(0), y: yPos.toFixed(0) } })
 
     const relevance = <div className="rsCalc" style={{ gridArea: 'relevance', width: '50px' }}>
         <svg
@@ -31,10 +32,10 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
             <polygon
                 style={{ fill: `var(--${data.pol})` }}
                 points={`
-                        0                 , 0
-                        0                 , ${data.score.confidence * data.score.relevance * maxStrokeWidth}
-                        50 , ${data.score.confidence * maxStrokeWidth}
-                        50 , 0
+                        0                 , ${(data.score.relevance * halfStroke) - (data.score.confidence * maxStrokeWidth)}
+                        0                 , ${(data.score.relevance * halfStroke) + (data.score.confidence * maxStrokeWidth)}
+            50 , ${(data.score.confidence) * maxStrokeWidth}
+            50 , 0
                     `}
             />
         </svg>
@@ -57,15 +58,6 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
 
                 height={maxStrokeWidth}
                 width={maxStrokeWidth * 2}>
-                <polygon
-                    style={{ opacity: .4, fill: `var(--${data.pol})` }}
-                    points={`
-                        0                     , 0
-                        0                     , ${maxStrokeWidth}
-                        ${maxStrokeWidth * 2} , ${maxStrokeWidth}
-                        ${maxStrokeWidth * 2} , 0
-                    `}
-                />
 
                 <polygon
                     fill='url(#cancelOutPattern)'
@@ -229,9 +221,10 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
                 {weightByConfidence}
                 <div style={{ gridArea: "content" }} className={`rsContent ${data.pol}`}>
                     {[
+                        // xPos.toFixed(0), yPos.toFixed(0),
                         // data.scoreNumberText,
                         // data.score.confidence.toFixed(2),
-                        // id,
+                        // "[ " + id + " ]",
                         data.claim.content
                     ].join(" | ")}
                 </div>

@@ -46,7 +46,7 @@ export default function App() {
   const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   return (
-    <div style={{ width: '90vw', height: '90vh', margin: 'auto', border: '1px solid grey' }}>
+    <div style={{ width: '100vw', height: '100vh', margin: 'auto' }}>
 
       <ReactFlow
         nodes={nodes}
@@ -58,15 +58,18 @@ export default function App() {
         edgeTypes={edgeTypes}
         fitView
       >
-        <Controls />
+        <Controls
+          position='top-left'
+        />
         <MiniMap
           maskColor='rgb(240, 240, 240, 0.3)'
           pannable
           zoomable
           nodeColor={n => `var(--${n.data.pol})`}
+          position='bottom-left'
         />
       </ReactFlow>
-      <svg>
+      <svg style={{ height: 0 }}>
         <defs>
           <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
             <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />

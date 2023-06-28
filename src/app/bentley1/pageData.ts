@@ -50,6 +50,51 @@ export interface RelevenceEdgeData {
     maxImpact: number
 }
 
+const positions: { [key: string]: { x: number, y: number } } = {
+    "mainClaim": {
+        "x": 100,
+        "y": 0
+    },
+    "footTraffic": {
+        "x": 600,
+        "y": -130
+    }
+    ,
+    "payoff": {
+        "x": 750,
+        "y": -285
+    }
+    ,
+    "traintracks": {
+        "x": 1100,
+        "y": 203
+    }
+    ,
+    "children": {
+        "x": 750,
+        "y": -14
+    }
+    ,
+    "test": {
+        "x": 1100,
+        "y": 127
+    }
+    ,
+    "test2": {
+        "x": 1100,
+        "y": 49
+    }
+    ,
+    "resedential": {
+        "x": 600,
+        "y": 111
+    },
+    "cost": {
+        "x": 600,
+        "y": 263
+    }
+}
+
 export async function getEdgesAndNodes() {
     const nodes: Node<DisplayNodeData>[] = []
     const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
@@ -174,10 +219,11 @@ export async function getEdgesAndNodes() {
 
             const cancelOutStacked = cancelOut(targetScore.confidence)
 
+            // console.log("position", positions[claim.id])
             const node: Node<DisplayNodeData> = {
                 id: targetScore.id,
                 type: 'rsNode',
-                position: {
+                position: positions[claim.id] || {
                     y: (generationItems[targetScore.generation]),
                     x: (targetScore.generation * 500) + 100,
                 },
