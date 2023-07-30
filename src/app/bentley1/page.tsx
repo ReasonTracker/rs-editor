@@ -80,9 +80,9 @@ function Flow() {
         setEdges((eds) =>
           eds.concat({
             id,
-            source: connectingNodeId.current,
-            sourceHandle: currentHandleId.current,
-            target: id,
+            source: id,
+            targetHandle: currentHandleId.current,
+            target: connectingNodeId.current,
           } as any)
         );
       }
