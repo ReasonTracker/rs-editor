@@ -34,11 +34,13 @@ const edgeTypes = { rsEdge: EdgeDisplay };
 function Flow() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const connectingNodeId = useRef(null);
+  const currentHandleId = useRef(null);
   const { project } = useReactFlow();
 
   // TODO: fix "any" types
-  const onConnectStart = useCallback((_: any, { nodeId }: any) => {
+  const onConnectStart = useCallback((_: any, { nodeId, handleId }: any) => {
     connectingNodeId.current = nodeId;
+    currentHandleId.current = handleId;
   }, []);
 
   let id = 1;
@@ -79,6 +81,7 @@ function Flow() {
           eds.concat({
             id,
             source: connectingNodeId.current,
+            sourceHandle: currentHandleId.current,
             target: id,
           } as any)
         );
