@@ -93,7 +93,7 @@ function Flow() {
     [project]
   );
 
-  const createNode = async () => {
+  const createNode = async (pol: "pro" | "con") => {
     const { clientX, clientY } = currentMouseEvent.current;
     const { top, left } = connectingNodeCoord.current;
 
@@ -174,7 +174,7 @@ function Flow() {
       type: 'claimEdge',
     }
     const confidenceEdgeData: ConfidenceEdgeData = {
-      pol: 'pro',
+      pol,
       claimEdge,
       sourceScore: newScore,
       maxImpactStacked: stacked,
@@ -208,7 +208,7 @@ function Flow() {
       data: {
         claim,
         score: newScore,
-        pol: 'pro',
+        pol,
         scoreNumber: 1,
         scoreNumberText: "score",
         cancelOutStacked: stacked,

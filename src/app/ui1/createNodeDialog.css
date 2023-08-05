@@ -4,15 +4,21 @@
 
 .dialog-box {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  padding: 30px 50px;
+  background-color: #000000;
+  box-shadow: 0px 0px 5px 5px #dedede;
   z-index: 100;
 }
 
+.dialog-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 40px 0;
+  position: relative;
+}
+
 .button-group {
+  padding: 20px 40px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -20,17 +26,49 @@
   width: 100%;
 }
 
-.btn {
-  padding: 10px;
-  margin: 0 10px;
-  font-size: 18px;
-  border-radius: 5px;
-  width: 100%;
+.dialog-title {
+  font-weight: bold;
 }
 
 .close-btn {
+  margin-right: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+.close-btn::after{
+  content: "\00d7";
+  font-size: 24px;
+  line-height: 1;
+}
+.close-btn-wrapper {
   position: absolute;
-  top: 0;
   right: 0;
-  padding: 10px;
+}
+.btn {
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 18px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.pro.btn {
+  background-color: var(--pro);
+}
+
+.con.btn {
+  background-color: var(--con);
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  opacity: 0.5;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.close-btn:hover {
+  opacity: 0.5;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }

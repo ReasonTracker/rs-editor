@@ -1,9 +1,9 @@
 interface NodeDialogProps {
   open: boolean;
   handleClose: () => void;
-  createNode: () => void;
-  clientX: number, 
-  clientY: number,
+  createNode: (pol: "pro" | "con") => void;
+  clientX: number;
+  clientY: number;
 }
 
 const CreateNode: React.FC<NodeDialogProps> = ({
@@ -13,33 +13,34 @@ const CreateNode: React.FC<NodeDialogProps> = ({
   clientX,
   clientY,
 }) => {
-
   return (
-    <div>
+    <div className="dialog-container">
       {open && (
         <div className="dialog-box" style={{ top: clientY, left: clientX }}>
+          <div className="dialog-header">
+            <span className="dialog-title">Add Node</span>
+            <div className="close-btn-wrapper">
+              <button className="close-btn" onClick={handleClose}>
+              </button>
+            </div>
+          </div>
           <div className="button-group">
-            <button onClick={handleClick} className="pro btn">
+            <button onClick={() => handleClick("pro")} className="pro btn">
               Pro
             </button>
-            <span>or</span>
-            <button onClick={handleClick} className="con btn">
+            <button onClick={() => handleClick("con")} className="con btn">
               Con
             </button>
           </div>
-          <button className="close-btn" onClick={handleClose}>
-            X
-          </button>
         </div>
       )}
     </div>
   );
 
-  function handleClick() {
-    createNode();
+  function handleClick(pol: "pro" | "con") {
+    createNode(pol);
     handleClose();
   }
-
 };
 
 export default CreateNode;
