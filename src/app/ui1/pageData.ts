@@ -15,7 +15,7 @@ export function isRelevanceEdgeData(data: ConfidenceEdgeData | RelevenceEdgeData
 }
 
 export interface DisplayNodeData {
-    pol: string
+    pol: "pro" | "con"
     score: Score
     claim: Claim
     scoreNumberText: string
