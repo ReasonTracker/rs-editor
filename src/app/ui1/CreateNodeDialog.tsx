@@ -1,5 +1,3 @@
-
-
 interface NodeDialogProps {
   open: boolean;
   handleClose: () => void;
@@ -7,7 +5,6 @@ interface NodeDialogProps {
   clientX: number, 
   clientY: number,
 }
-
 
 const CreateNode: React.FC<NodeDialogProps> = ({
   open,
