@@ -53,7 +53,8 @@ function Flow() {
 
   // TODO: fix 'any' types
   const onConnectStart = useCallback((_: any, {nodeId, handleId, handleType}: any) => {
-    // console.log(nodeId, handleId, handleType)
+    // console.log(`nodeId: `, nodeId, `| `,`handleId :`,handleId,"| ","handleType: ", handleType)
+    
     connectingNode.current = {
       nodeId,
       handleId,
@@ -62,8 +63,6 @@ function Flow() {
   }, []);
 
   const [showCreateNodeDialog, setCreateNodeDialog] = useState(false);
-
-  
   
   const handleClose = () => {
     setCreateNodeDialog(false);
@@ -97,59 +96,58 @@ function Flow() {
   const createNode = async () => {
     const { clientX, clientY } = currentMouseEvent.current;
     const { top, left } = connectingNodeCoord.current;
-    const id = Math.random().toString(36).substring(2, 15);
 
+    
     const parentScoreId = connectingNode.current.nodeId || "123"
     // console.log(`parentId`, parentId)
-
+    
     // const nodes: Node<DisplayNodeData>[] = []
     // const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
     const rsRepo = new RepositoryLocalPure(rsData)
-
     const getClaimIdBySourceId = await rsRepo.getClaimIdBySourceId(parentScoreId) || "payoff"
-    // console.log(`getClaimIdBySourceId`, getClaimIdBySourceId)
-
-    // console.log(`getScore`, await rsRepo.getScore(parentId))
-    // const actions: Action[] = [
-    //   { type: "add_claim", newData: { id, text: "test" }, oldData: undefined, dataId: "addingClaim" },
-    //   { type: "add_claimEdge", newData: { id: `${id}-edge`, parentId, childId: id, pro: true }, oldData: undefined, dataId: "addingEdge" },
-    // ];
-    // const newActions0 = await calculateScoreActions({
-    //   actions: actions, repository: rsRepo
-    // })
     
-    // console.log(`getScoresBySourceId`, await rsRepo.getScoresBySourceId(getClaimIdBySourceId))
-    // console.log(`actions`, actions)
-    // console.log(`newaction`, newActions0)
+    // const actions: Action[] = [
+      //   { type: "add_claim", newData: { id, text: "test" }, oldData: undefined, dataId: "addingClaim" },
+      //   { type: "add_claimEdge", newData: { id: `${id}-edge`, parentId, childId: id, pro: true }, oldData: undefined, dataId: "addingEdge" },
+      // ];
+      // const newActions0 = await calculateScoreActions({
+        //   actions: actions, repository: rsRepo
+        // })
+        
+    
+    const isTarget = connectingNode.current.handleType === 'target';
 
-    // DUMMY DATA
+    // Generate Mock Data
+    const claimId = "claimId-"+Math.random().toString(36).substring(2, 15);
+    const nodeId = "nodeId-"+Math.random().toString(36).substring(2, 15);
+    const newScoreId = "newScoreId-"+Math.random().toString(36).substring(2, 15);
+    const claimEdgeId = "claimEdgeId"+Math.random().toString(36).substring(2, 15);
+    const newEdgeId = "newEdgeId-"+Math.random().toString(36).substring(2, 15);
+
+    // Mock Data
     const stacked: Stacked = {
       top: 2.5,
       center: 3,
       bottom: 3.5
     }
-
     const claim: Claim = {
-      id,
-      content: `new claim ${id}`,
+      id: claimId,
+      content: `new claim ${claimId}`,
       reversible: false,
       type: `claim`,
-
     }
-
-    const newScoreId = "newScoreId"
     const newScore: Score = {
       type: 'score',
-      sourceClaimId: 'claim1',
-      scoreRootId: 'root1',
+      sourceClaimId: claimId,
+      scoreRootId: 'ScoreRoot',
       parentScoreId,
-      sourceEdgeId: 'edge1',
+      sourceEdgeId: claimEdgeId,
       reversible: true,
       pro: true,
       affects: 'confidence',
       confidence: 0.9,
       relevance: 1.2,
-      id: 'newScoreId',
+      id: newScoreId,
       priority: 'high',
       content: 'why does score have content?  I thought score used claim content?',
       scaledWeight: 0.7,
@@ -165,19 +163,16 @@ function Flow() {
       percentOfWeight: 0.75,
       proMain: true
     }
-
     const claimEdge: ClaimEdge = {
       parentId: getClaimIdBySourceId,
-      childId: id,
+      childId: claimId,
       affects: 'confidence',
       pro: true,
       proMain: true,
-      id: 'claimEdgeId',
+      id: claimEdgeId,
       priority: 'high',
       type: 'claimEdge',
     }
-
-    const newEdgeId = "newEdgeId"
     const confidenceEdgeData: ConfidenceEdgeData = {
       pol: 'pro',
       claimEdge,
@@ -195,20 +190,16 @@ function Flow() {
       targetTop: 0,
       maxImpact: 0,
     }
-    
     const edgeConfidenceEdgeData: Edge<ConfidenceEdgeData> = {
       id: newEdgeId,
       type: "rsEdge",
-      target: parentScoreId,
-      targetHandle: 'confidence',
-      source: newScoreId,
+      target: isTarget ? connectingNode.current.nodeId! : nodeId, // Fix the !
+      targetHandle: isTarget ? connectingNode.current.handleId : 'confidence',
+      source: isTarget ? nodeId : connectingNode.current.nodeId!, // Fix the !
       data: confidenceEdgeData
     }
-
-   
-    
     const node: Node<DisplayNodeData> = {
-      id,
+      id: nodeId,
       type: 'rsNode',
       position: project({
         x: clientX - left - 75,
@@ -223,14 +214,8 @@ function Flow() {
         cancelOutStacked: stacked,
       },
     };
-    console.log(`foot traffic`, edges[0] )
-    console.log(`edgeConfidenceEdgeData`, edgeConfidenceEdgeData)
     setNodes((nds) => nds.concat(node));
-    // const isTarget = connectingNode.current.handleType === 'target';
-    setEdges((eds) =>
-      eds.concat({
-        ...edgeConfidenceEdgeData
-      } as any)
+    setEdges((eds) => eds.concat(edgeConfidenceEdgeData)
     );
   }
 
@@ -244,7 +229,6 @@ function Flow() {
       const { nodes, edges } = await getEdgesAndNodes();
       setNodes(nodes);
       setEdges(edges);
-      console.log(edges)
     }
 
     _getEdgesAndNodes();

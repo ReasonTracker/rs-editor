@@ -213,42 +213,49 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
 
     return (
         <div className="rsNode" >
-            <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth }}>
+            <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth}}>
                 {relevance}
                 {cancelOut}
                 {scaleTo1}
                 {consolidate}
                 {weightByConfidence}
-                <div style={{ gridArea: "content" }} className={`rsContent ${data.pol}`}>
-                    scoreid: {[
+                <div style={{ gridArea: "content", width: 250  }} className={`rsContent ${data.pol}`}>
+                    {[
                         // xPos.toFixed(0), yPos.toFixed(0),
                         // data.scoreNumberText,
                         // data.score.confidence.toFixed(2),
                         // "[ " + id + " ]",
                         // data.claim.content
-                        data.score.id
-                        
-                    ].join(" | ")}<br /> 
-                    claimid: {data.claim.id}
+                    ].join(" | ")}
+                    {/* For Dev/Debugging */}
+                    <p>scoreId: {data.score.id}</p>
+                    <p>nodeId: {id}</p>
+                    <p>claimId: {data.claim.id}</p>
                 </div>
             </div>
 
             <Handle type="target"
                 id="relevance"
                 position={Position.Top}
-                style={{ left: 50 - halfStroke + 'px' }}
-            />
+                style={{ left: 50 - halfStroke + 'px',
+                    height: '25px', color: 'white', width: '25px', backgroundColor: 'white', opacity: 1 // FOR DEV
+                }}
+                />
 
             <Handle type="source"
                 position={Position.Left}
-                style={{ top: 0 }}
-            />
+                style={{ top: 0,
+                    height: '25px', color: 'white', width: '25px', backgroundColor: 'white', opacity: 1 // FOR DEV
+                }}
+                />
 
             <Handle
                 type="target"
                 id="confidence"
                 position={Position.Right}
-                style={{ top: 0 }}
+                style={{ top: 0, 
+                    height: '25px', color: 'white', width: '25px', backgroundColor: 'white', opacity: 1 // FOR DEV
+                }}
                 isConnectable={true}
             />
         </div>

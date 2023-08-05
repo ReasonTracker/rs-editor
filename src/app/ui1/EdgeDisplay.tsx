@@ -1,5 +1,5 @@
 import React from 'react';
-import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, ReactFlowState, getBezierPath, useStore } from 'reactflow';
+import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, EdgeText, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { halfStroke, maxStrokeWidth } from './config';
 import { ConfidenceEdgeData, RelevenceEdgeData, isConfidenceEdgeData } from './pageData';
 
@@ -50,6 +50,20 @@ export default function EdgeDisplay(props: EdgeProps<ConfidenceEdgeData | Releve
 
     return <g className={'rs-edge ' + data?.pol}>
 
+        {/* /For Dev/Debugging */}
+        <EdgeText
+            labelShowBg={false}
+            x={labelX}
+            y={labelY}
+            label={`edgeId: ${props.id}`}
+            labelStyle={{
+                fill: 'white',
+                textAnchor: 'middle',
+                pointerEvents: 'none',
+                fontWeight: 300,
+                strokeWidth: 0,
+            }}
+        />
         <BaseEdge {...props}
             style={{
                 ...(props.style),
