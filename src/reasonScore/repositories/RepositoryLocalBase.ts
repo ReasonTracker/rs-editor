@@ -8,6 +8,15 @@ export class RepositoryLocalBase {
     ) {
     }
 
+    async getClaimIdBySourceId(sourceId: string): Promise<string | undefined> {
+        if (sourceId in this.rsData.items) {
+            const item = this.rsData.items[sourceId];
+            if ('sourceClaimId' in item) {
+                return item.sourceClaimId;
+            }
+        }
+    }
+    
     async getClaim(id: string): Promise<Claim | undefined> {
         return this.rsData.items[id] as Claim;
     }

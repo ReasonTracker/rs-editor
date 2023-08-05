@@ -220,13 +220,16 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
                 {consolidate}
                 {weightByConfidence}
                 <div style={{ gridArea: "content" }} className={`rsContent ${data.pol}`}>
-                    {[
+                    scoreid: {[
                         // xPos.toFixed(0), yPos.toFixed(0),
                         // data.scoreNumberText,
                         // data.score.confidence.toFixed(2),
                         // "[ " + id + " ]",
-                        data.claim.content
-                    ].join(" | ")}
+                        // data.claim.content
+                        data.score.id
+                        
+                    ].join(" | ")}<br /> 
+                    claimid: {data.claim.id}
                 </div>
             </div>
 

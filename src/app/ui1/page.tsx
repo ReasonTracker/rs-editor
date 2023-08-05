@@ -10,6 +10,7 @@ import ReactFlow, {
   addEdge,
   ReactFlowProvider,
   Node,
+  Edge,
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -22,6 +23,9 @@ import { NodeDisplay } from './NodeDisplay';
 import EdgeDisplay from './EdgeDisplay';
 import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes } from './pageData';
 import CreateNodeDialog from './CreateNodeDialog';
+import { Claim, ClaimEdge, RepositoryLocalPure, Score } from './rs';
+import { rsData } from './rsData';
+import { Stacked } from './stackSpace';
 
 const nodeTypes = { rsNode: NodeDisplay };
 const edgeTypes = { rsEdge: EdgeDisplay };
@@ -49,7 +53,7 @@ function Flow() {
 
   // TODO: fix 'any' types
   const onConnectStart = useCallback((_: any, {nodeId, handleId, handleType}: any) => {
-    console.log(nodeId, handleId, handleType)
+    // console.log(nodeId, handleId, handleType)
     connectingNode.current = {
       nodeId,
       handleId,
@@ -83,41 +87,149 @@ function Flow() {
           top,
           left,
         }
-        // if handle type="source", skip dialog and create node of same type as source node
+        // TODO if handle type="source", skip dialog and create node of same type as source node
         setCreateNodeDialog(true)
       }
     },
     [project]
   );
 
-  const createNode = () => {
+  const createNode = async () => {
     const { clientX, clientY } = currentMouseEvent.current;
     const { top, left } = connectingNodeCoord.current;
     const id = Math.random().toString(36).substring(2, 15);
 
-    const newNode: Node<DisplayNodeData> = {
+    const parentScoreId = connectingNode.current.nodeId || "123"
+    // console.log(`parentId`, parentId)
+
+    // const nodes: Node<DisplayNodeData>[] = []
+    // const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
+    const rsRepo = new RepositoryLocalPure(rsData)
+
+    const getClaimIdBySourceId = await rsRepo.getClaimIdBySourceId(parentScoreId) || "payoff"
+    // console.log(`getClaimIdBySourceId`, getClaimIdBySourceId)
+
+    // console.log(`getScore`, await rsRepo.getScore(parentId))
+    // const actions: Action[] = [
+    //   { type: "add_claim", newData: { id, text: "test" }, oldData: undefined, dataId: "addingClaim" },
+    //   { type: "add_claimEdge", newData: { id: `${id}-edge`, parentId, childId: id, pro: true }, oldData: undefined, dataId: "addingEdge" },
+    // ];
+    // const newActions0 = await calculateScoreActions({
+    //   actions: actions, repository: rsRepo
+    // })
+    
+    // console.log(`getScoresBySourceId`, await rsRepo.getScoresBySourceId(getClaimIdBySourceId))
+    // console.log(`actions`, actions)
+    // console.log(`newaction`, newActions0)
+
+    // DUMMY DATA
+    const stacked: Stacked = {
+      top: 2.5,
+      center: 3,
+      bottom: 3.5
+    }
+
+    const claim: Claim = {
       id,
-      // type: 'rsNode',
+      content: `new claim ${id}`,
+      reversible: false,
+      type: `claim`,
+
+    }
+
+    const newScoreId = "newScoreId"
+    const newScore: Score = {
+      type: 'score',
+      sourceClaimId: 'claim1',
+      scoreRootId: 'root1',
+      parentScoreId,
+      sourceEdgeId: 'edge1',
+      reversible: true,
+      pro: true,
+      affects: 'confidence',
+      confidence: 0.9,
+      relevance: 1.2,
+      id: 'newScoreId',
+      priority: 'high',
+      content: 'why does score have content?  I thought score used claim content?',
+      scaledWeight: 0.7,
+      descendantCount: 3,
+      generation: 2,
+      fractionSimple: 0.8,
+      fraction: 0.6,
+      childrenAveragingWeight: 0.7,
+      childrenConfidenceWeight: 0.9,
+      childrenRelevanceWeight: 0.5,
+      childrenWeight: 0.4,
+      weight: 0.6,
+      percentOfWeight: 0.75,
+      proMain: true
+    }
+
+    const claimEdge: ClaimEdge = {
+      parentId: getClaimIdBySourceId,
+      childId: id,
+      affects: 'confidence',
+      pro: true,
+      proMain: true,
+      id: 'claimEdgeId',
+      priority: 'high',
+      type: 'claimEdge',
+    }
+
+    const newEdgeId = "newEdgeId"
+    const confidenceEdgeData: ConfidenceEdgeData = {
+      pol: 'pro',
+      claimEdge,
+      sourceScore: newScore,
+      maxImpactStacked: stacked,
+      impactStacked: stacked,
+      reducedImpactStacked: stacked,
+      reducedMaxImpactStacked: stacked,
+      consolidatedStacked: stacked,
+      scaledTo1Stacked: stacked,
+      type: "confidence",
+
+      // TODO: Remove all below
+      impact: 0,
+      targetTop: 0,
+      maxImpact: 0,
+    }
+    
+    const edgeConfidenceEdgeData: Edge<ConfidenceEdgeData> = {
+      id: newEdgeId,
+      type: "rsEdge",
+      target: parentScoreId,
+      targetHandle: 'confidence',
+      source: newScoreId,
+      data: confidenceEdgeData
+    }
+
+   
+    
+    const node: Node<DisplayNodeData> = {
+      id,
+      type: 'rsNode',
       position: project({
         x: clientX - left - 75,
         y: clientY - top,
       }),
       data: {
-        // TODO Add proper node data
-        label: `Node ${id}`,
-        // pol: 'pro',
-        // score: 1,
-        // claim: 'new claim',
+        claim,
+        score: newScore,
+        pol: 'pro',
+        scoreNumber: 1,
+        scoreNumberText: "score",
+        cancelOutStacked: stacked,
       },
     };
-    setNodes((nds) => nds.concat(newNode));
-    const isTarget = connectingNode.current.handleType === 'target';
+    console.log(`foot traffic`, edges[0] )
+    console.log(`edgeConfidenceEdgeData`, edgeConfidenceEdgeData)
+    setNodes((nds) => nds.concat(node));
+    // const isTarget = connectingNode.current.handleType === 'target';
     setEdges((eds) =>
       eds.concat({
-        id,
-        source: isTarget ? id : connectingNode.current.nodeId,
-        targetHandle: isTarget ? connectingNode.current.handleId : null,
-        target: isTarget ? connectingNode.current.nodeId : id,
+        ...edgeConfidenceEdgeData
       } as any)
     );
   }
@@ -132,6 +244,7 @@ function Flow() {
       const { nodes, edges } = await getEdgesAndNodes();
       setNodes(nodes);
       setEdges(edges);
+      console.log(edges)
     }
 
     _getEdgesAndNodes();
