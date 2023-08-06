@@ -74,8 +74,8 @@ function Flow() {
     // console.log(`nodeId: `, nodeId, `| `,`handleId :`,handleId,"| ","handleType: ", handleType)
     // console.log(`rsData`, rsData)
     if (!rsRepoState) return console.log("no repo state")
-    const scoreId = `{$nodeId}Score}`
-    console.log(`${nodeId} score`, rsRepoState.rsData.items[scoreId])
+    console.log(`rsRepoState`, rsRepoState)
+    console.log(nodeId, rsRepoState.rsData.items[nodeId]) 
 
     connectingNode.current = {
       nodeId,
