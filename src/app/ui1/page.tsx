@@ -74,7 +74,8 @@ function Flow() {
     // console.log(`nodeId: `, nodeId, `| `,`handleId :`,handleId,"| ","handleType: ", handleType)
     // console.log(`rsData`, rsData)
     if (!rsRepoState) return console.log("no repo state")
-    console.log(`${nodeId} score`, rsRepoState.rsData.items[nodeId])
+    const scoreId = `{$nodeId}Score}`
+    console.log(`${nodeId} score`, rsRepoState.rsData.items[scoreId])
 
     connectingNode.current = {
       nodeId,
@@ -139,13 +140,13 @@ function Flow() {
 
     // Generate Mock Data
     const claimId = "claimId"+Math.random().toString(36).substring(2, 5);
-    const nodeId = "nodeId-"+Math.random().toString(36).substring(2, 5);
+    const newScoreId = `${claimId}Score` 
+    const nodeId = newScoreId //"nodeId33-"+Math.random().toString(36).substring(2, 5);
     const claimEdgeId = "claimEdgeId"+Math.random().toString(36).substring(2, 5);
     const newEdgeId = "newEdgeId-"+Math.random().toString(36).substring(2, 5);
     
     const scoreRootId = rsRepoState.rsData.ScoreRootIds[0];
-    const newNodeScore = new Score(claimId, scoreRootId, undefined, undefined, false, true, "confidence", 1, 1, nodeId);
-    const newScoreId = newNodeScore.id
+    const newNodeScore = new Score(claimId, scoreRootId, undefined, undefined, false, true, "confidence", 1, 1, newScoreId);
 
     // Mock Data
     const stacked: Stacked = {
