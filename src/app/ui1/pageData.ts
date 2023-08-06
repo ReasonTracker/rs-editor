@@ -99,13 +99,16 @@ export async function getEdgesAndNodes() {
     const nodes: Node<DisplayNodeData>[] = []
     const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
     const rsRepo = new RepositoryLocalPure(rsData)
+    // console.log(`initial rsRepo`, rsRepo)
+    // console.log(`initial rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)  
+    // console.log(`rsData`, rsData)
     const actions: Action[] = [
         { type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
         { type: "add_claimEdge", newData: <ClaimEdge>{ id: "testEdge", parentId: "resedential", childId: "test", pro: true }, oldData: undefined, dataId: "testEdge" },
         { type: "add_claim", newData: { id: "test2", text: "test" }, oldData: undefined, dataId: "test2" },
         { type: "add_claimEdge", newData: <ClaimEdge>{ id: "test2Edge", parentId: "resedential", childId: "test2", pro: true }, oldData: undefined, dataId: "test2Edge" },
     ];
-    const newActions0 = await calculateScoreActions({
+    await calculateScoreActions({
         actions: actions, repository: rsRepo
     })
 
@@ -122,6 +125,7 @@ export async function getEdgesAndNodes() {
     const lastBottom = 0
     for (const targetScore of scores) {
         // get the score's confidence edges
+        // console.log(`targetScore`, targetScore.id)
         const claimEdges = await rsRepo.getClaimEdgesByParentId(targetScore.sourceClaimId);
         const confidenceEdges = claimEdges.filter(ce => ce.affects === "confidence");
         confidenceEdges.sort((a, b) => a.proMain === targetScore.proMain ? -1 : 1)
@@ -131,6 +135,7 @@ export async function getEdgesAndNodes() {
         const scaledTo1Stack = stackSpace();
         // let lastProMain = undefined;
         for (const confidenceEdge of confidenceEdges) {
+            // console.log(`confidenceEdge`, confidenceEdge)
             const sourceScore = (await rsRepo.getScoresBySourceId(confidenceEdge.childId))[0];
             const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
             const maxImpact = sourceScore.relevance;
@@ -242,6 +247,6 @@ export async function getEdgesAndNodes() {
         }
 
     }
-
-    return { nodes, edges }
+    // console.log(`score calculated`)
+    return { nodes, edges, rsRepo }
 }

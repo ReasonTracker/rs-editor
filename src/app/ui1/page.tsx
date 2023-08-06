@@ -23,7 +23,7 @@ import { NodeDisplay } from './NodeDisplay';
 import EdgeDisplay from './EdgeDisplay';
 import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes } from './pageData';
 import CreateNodeDialog from './CreateNodeDialog';
-import { Claim, ClaimEdge, RepositoryLocalPure, Score } from './rs';
+import { Action, Claim, ClaimEdge, RepositoryLocalPure, RsData, Score, calculateScoreActions } from './rs';
 import { rsData } from './rsData';
 import { Stacked } from './stackSpace';
 
@@ -34,9 +34,27 @@ const edgeTypes = { rsEdge: EdgeDisplay };
 
 function Flow() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]);
+  const [rsRepoState, setRsRepoState] = useState<RepositoryLocalPure | null>(null);
 
-  // is there a better way to do this?
-    const connectingNode = useRef({
+  // useEffect call getEdgesAndNodesand put them into setnodes and set edges
+  useEffect(() => {
+
+    async function _getEdgesAndNodes() {
+      const { nodes, edges, rsRepo } = await getEdgesAndNodes();
+      setNodes(nodes);
+      setEdges(edges);
+      setRsRepoState(rsRepo)
+      console.log(`rsRepoState set`)
+    }
+ 
+    _getEdgesAndNodes();
+
+  }, [setNodes, setEdges]);
+
+  // create Refs
+  const connectingNode = useRef({
     nodeId: null,
     handleId: null,
     handleType: null,
@@ -52,9 +70,12 @@ function Flow() {
   const { project } = useReactFlow();
 
   // TODO: fix 'any' types
-  const onConnectStart = useCallback((_: any, {nodeId, handleId, handleType}: any) => {
+  const onConnectStart = useCallback(async (_: any, {nodeId, handleId, handleType}: any) => {
     // console.log(`nodeId: `, nodeId, `| `,`handleId :`,handleId,"| ","handleType: ", handleType)
-    
+    // console.log(`rsData`, rsData)
+    if (!rsRepoState) return console.log("no repo state")
+    console.log(`${nodeId} score`, rsRepoState.rsData.items[nodeId])
+
     connectingNode.current = {
       nodeId,
       handleId,
@@ -94,35 +115,37 @@ function Flow() {
   );
 
   const createNode = async (pol: "pro" | "con") => {
+    if (!rsRepoState) return console.log("no repo state")
+    if (!connectingNode.current.nodeId) return console.log("no nodeId")
+
+
     const { clientX, clientY } = currentMouseEvent.current;
     const { top, left } = connectingNodeCoord.current;
 
     
-    const parentScoreId = connectingNode.current.nodeId || "123"
     // console.log(`parentId`, parentId)
     
     // const nodes: Node<DisplayNodeData>[] = []
     // const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
-    const rsRepo = new RepositoryLocalPure(rsData)
-    const getClaimIdBySourceId = await rsRepo.getClaimIdBySourceId(parentScoreId) || "payoff"
-    
-    // const actions: Action[] = [
-      //   { type: "add_claim", newData: { id, text: "test" }, oldData: undefined, dataId: "addingClaim" },
-      //   { type: "add_claimEdge", newData: { id: `${id}-edge`, parentId, childId: id, pro: true }, oldData: undefined, dataId: "addingEdge" },
-      // ];
-      // const newActions0 = await calculateScoreActions({
-        //   actions: actions, repository: rsRepo
-        // })
-        
+    console.log(`rsRepoState`, rsRepoState)
+    console.log(`rsRepoState items: `, Object.keys(rsRepoState.rsData.items).length)
+    const parentScoreId = connectingNode.current.nodeId
+    const parentClaimId = await rsRepoState.getClaimIdBySourceId(parentScoreId)
+    if (!parentClaimId) return console.log("no parentScoreId")
+    const parentScore = await rsRepoState.getScoresBySourceId(parentClaimId)
+    console.log(`parentScore`, parentScore)
     
     const isTarget = connectingNode.current.handleType === 'target';
 
     // Generate Mock Data
-    const claimId = "claimId-"+Math.random().toString(36).substring(2, 15);
-    const nodeId = "nodeId-"+Math.random().toString(36).substring(2, 15);
-    const newScoreId = "newScoreId-"+Math.random().toString(36).substring(2, 15);
-    const claimEdgeId = "claimEdgeId"+Math.random().toString(36).substring(2, 15);
-    const newEdgeId = "newEdgeId-"+Math.random().toString(36).substring(2, 15);
+    const claimId = "claimId"+Math.random().toString(36).substring(2, 5);
+    const nodeId = "nodeId-"+Math.random().toString(36).substring(2, 5);
+    const claimEdgeId = "claimEdgeId"+Math.random().toString(36).substring(2, 5);
+    const newEdgeId = "newEdgeId-"+Math.random().toString(36).substring(2, 5);
+    
+    const scoreRootId = rsRepoState.rsData.ScoreRootIds[0];
+    const newNodeScore = new Score(claimId, scoreRootId, undefined, undefined, false, true, "confidence", 1, 1, nodeId);
+    const newScoreId = newNodeScore.id
 
     // Mock Data
     const stacked: Stacked = {
@@ -164,7 +187,7 @@ function Flow() {
       proMain: true
     }
     const claimEdge: ClaimEdge = {
-      parentId: getClaimIdBySourceId,
+      parentId: parentClaimId,
       childId: claimId,
       affects: 'confidence',
       pro: true,
@@ -176,7 +199,7 @@ function Flow() {
     const confidenceEdgeData: ConfidenceEdgeData = {
       pol,
       claimEdge,
-      sourceScore: newScore,
+      sourceScore: parentScore[0],
       maxImpactStacked: stacked,
       impactStacked: stacked,
       reducedImpactStacked: stacked,
@@ -207,41 +230,64 @@ function Flow() {
       }),
       data: {
         claim,
-        score: newScore,
+        score: newNodeScore,
         pol,
         scoreNumber: 1,
         scoreNumberText: "score",
         cancelOutStacked: stacked,
-      },
+      },   
     };
+
+    const actions: Action[] = [
+        { type: "add_claim", newData: { id: claimId, content: "newClaimText" }, oldData: undefined, dataId: `${claimId}` },
+        { type: "add_claimEdge", newData: { id: `${claimId}Edge`, parentId: parentClaimId, childId: claimId, pro: pol === "pro" ? true : false }, oldData: undefined, dataId: `${claimId}Edge` },
+      ];
+    const newActions0 = await calculateScoreActions({
+          actions: actions, repository: rsRepoState
+        })
     setNodes((nds) => nds.concat(node));
-    setEdges((eds) => eds.concat(edgeConfidenceEdgeData)
-    );
+    setEdges((eds) => eds.concat(edgeConfidenceEdgeData));
+    console.log(edgeConfidenceEdgeData)
+    // console.log(`newActions`, newActions0)
   }
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]);
 
-  // useEffect call getEdgesAndNodesand put them into setnodes and set edges
-  useEffect(() => {
 
-    async function _getEdgesAndNodes() {
-      const { nodes, edges } = await getEdgesAndNodes();
-      setNodes(nodes);
-      setEdges(edges);
+
+
+
+  const logRsData = () => {
+    return async () => {
+      if (!rsRepoState) return console.log("no repo state")
+      console.log(`rsRepoState`, rsRepoState)
+    console.log(`rsRepoState items: `, Object.keys(rsRepoState.rsData.items).length)  
+    console.log(`rsData.items`, rsRepoState.rsData.items)
+    }      
+  }
+  const logDescendantScores = () => {
+    return async () => {
+      if (!rsRepoState) return console.log("no repo state")
+      const descendantScores = await rsRepoState.getDescendantScoresById("mainClaimScore")
+      console.log(
+        `descendantScores`,
+        descendantScores.map((score) => {
+          return {
+            id: score.id,
+            score: score,
+          }
+        })
+      );
     }
-
-    _getEdgesAndNodes();
-
-  }, [setNodes, setEdges]);
-
-
-
+  } 
 
   const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   return (
     <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} ref={reactFlowWrapper}>
+      <div style={{position:"absolute",right:"10px",top:"10px", zIndex:"1",display:"flex",flexDirection:"column"}}>
+        <button onClick={logRsData()} style={{margin:10,padding:10}} >rsdata items</button>
+        <button onClick={logDescendantScores()} style={{margin:10,padding:10}}>descendantScores</button>
+      </div>
       <CreateNodeDialog 
         open={showCreateNodeDialog} 
         handleClose={handleClose}
