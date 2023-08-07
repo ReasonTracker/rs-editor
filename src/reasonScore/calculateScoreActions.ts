@@ -168,7 +168,7 @@ export async function calculateScoreActions({ actions = [], repository = new Rep
 
     //TODO: Review this decision: Feed the score actions back into the repository so this repository is up to date in case it is used 
     await repository.notify(scoreActions);
-
+    // console.log(`scoreActions calculated`)
     return scoreActions;
 }
 
@@ -182,7 +182,7 @@ async function createBlankMissingScores(repository: iRepository, currentScoreId:
         if (!score) {
             //Create a new Score and attach it to it's parent
             const u = undefined;
-            score = new Score(edge.childId, scoreRootId, currentScoreId, edge.id, undefined, edge.pro, edge.affects, u, u, u, edge.priority);
+            score = new Score(edge.childId, scoreRootId, currentScoreId, edge.id, undefined, edge.pro, edge.affects, u, u, `${edge.childId}Score`, edge.priority);
             actions.push(new Action(score, undefined, "add_score", score.id));
         }
         //Recurse and through children
