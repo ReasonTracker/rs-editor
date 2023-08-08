@@ -4,7 +4,7 @@ import { Edge, Node } from 'reactflow';
 import { maxStrokeWidth } from './config';
 import { Stacked, scaleStacked, sizeStacked, stackSpace } from './stackSpace';
 
-const gutter = .25;
+export const gutter = .25;
 
 export function isConfidenceEdgeData(data: ConfidenceEdgeData | RelevenceEdgeData | undefined): data is ConfidenceEdgeData {
     return data?.type === "confidence";
@@ -50,7 +50,7 @@ export interface RelevenceEdgeData {
     maxImpact: number
 }
 
-const positions: { [key: string]: { x: number, y: number } } = {
+export const positions: { [key: string]: { x: number, y: number } } = {
     "mainClaim": {
         "x": 100,
         "y": 0
@@ -95,13 +95,13 @@ const positions: { [key: string]: { x: number, y: number } } = {
     }
 }
 
-export async function getEdgesAndNodes() {
+export async function getEdgesAndNodes(rsRepo: RepositoryLocalPure) {
     const nodes: Node<DisplayNodeData>[] = []
     const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
-    const rsRepo = new RepositoryLocalPure(rsData)
     // console.log(`initial rsRepo`, rsRepo)
     // console.log(`initial rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)  
     // console.log(`rsData`, rsData)
+    console.log("----",await rsRepo.getClaim("test"))
     const actions: Action[] = [
         { type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
         { type: "add_claimEdge", newData: <ClaimEdge>{ id: "testEdge", parentId: "resedential", childId: "test", pro: true }, oldData: undefined, dataId: "testEdge" },
@@ -248,5 +248,5 @@ export async function getEdgesAndNodes() {
 
     }
     // console.log(`score calculated`)
-    return { nodes, edges, rsRepo }
+    return { nodes, edges }
 }
