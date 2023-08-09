@@ -72,11 +72,11 @@ function Flow() {
 
   // TODO: fix 'any' types
   const onConnectStart = useCallback(async (_: any, {nodeId, handleId, handleType}: any) => {
+    if (!rsRepo) return console.log("no repo state")
     // console.log(`nodeId: `, nodeId, `| `,`handleId :`,handleId,"| ","handleType: ", handleType)
     // console.log(`rsData`, rsData)
-    if (!rsRepo) return console.log("no repo state")
     // console.log(`rsRepoState`, rsRepo)
-    console.log(`rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)
+    // console.log(`rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)
     // console.log(nodeId, rsRepo.rsData.items[nodeId]) 
 
     connectingNode.current = {
@@ -99,9 +99,7 @@ function Flow() {
         'react-flow__pane'
       );
       if (targetIsPane && reactFlowWrapper.current) {
-        // we need to remove the wrapper bounds, in order to get the correct position
         const { top, left } = reactFlowWrapper.current.getBoundingClientRect();
-        
         currentMouseEvent.current = {
           clientX: e.clientX,
           clientY: e.clientY,
@@ -122,50 +120,49 @@ function Flow() {
     if (!rsRepo) return console.log("no repo state")
     if (!connectingNode.current.nodeId) return console.log("no nodeId")
 
-
+    // Get coordinates
     const { clientX, clientY } = currentMouseEvent.current;
     const { top, left } = connectingNodeCoord.current;
-
+    const position =  {
+      x: clientX - left - 75,
+      y: clientY - top,
+    }
     
-    // console.log(`parentId`, parentId)
-    
-    // const nodes: Node<DisplayNodeData>[] = []
-    // const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
-    console.log(`rsRepoState`, rsRepo)
-    console.log(`rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)
-    const parentScoreId = connectingNode.current.nodeId
-    const parentClaimId = await rsRepo.getClaimIdBySourceId(parentScoreId)
+    // Get parent score
+    const currentNodeId = connectingNode.current.nodeId
+    const parentClaimId = await rsRepo.getClaimIdBySourceId(currentNodeId)
     if (!parentClaimId) return console.log("no parentScoreId")
     const parentScore = await rsRepo.getScoresBySourceId(parentClaimId)
-    console.log(`parentScore`, parentScore)
     
+    // console.log(`parentId`, parentId)
+    // console.log(`rsRepoState`, rsRepo)
+    // console.log(`rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)
+    // console.log(`parentScore`, parentScore)
+    
+    // TODO re-implement
     const isTarget = connectingNode.current.handleType === 'target';
 
-    // Generate Mock Data
-    const claimId = "claimId-" + newId();
-    const newScoreId = `${claimId}Score` 
-    const nodeId = newScoreId
+    // Generate Id's
+    const newClaimId = "claimId-" + newId();
+    const newNodeId = `${newClaimId}Score` 
     
     // const scoreRootId = rsRepo.rsData.ScoreRootIds[0];
     // const newNodeScore = new Score(claimId, scoreRootId, undefined, undefined, false, true, "confidence", 1, 1, newScoreId);
-
-
     const claim: Claim = {
-      id: claimId,
-      content: `new claim ${claimId}`,
+      id: newClaimId,
+      content: `new claim ${newClaimId}`,
       reversible: false,
       type: `claim`,
     }
     
     const actions: Action[] = [
-      { type: "add_claim", newData: { id: claimId, content: "newClaimText" }, oldData: undefined, dataId: `${claimId}` },
-      { type: "add_claimEdge", newData: { id: `${claimId}Edge`, parentId: parentClaimId, childId: claimId, pro: pol === "pro" ? true : false }, oldData: undefined, dataId: `${claimId}Edge` },
+      { type: "add_claim", newData: { id: newClaimId, content: "newClaimText" }, oldData: undefined, dataId: `${newClaimId}` },
+      { type: "add_claimEdge", newData: { id: `${newClaimId}Edge`, parentId: parentClaimId, childId: newClaimId, pro: pol === "pro" ? true : false }, oldData: undefined, dataId: `${newClaimId}Edge` },
     ];
-    const newActions0 = await calculateScoreActions({
-      actions: actions, repository: rsRepo
-    })
+    await calculateScoreActions({actions: actions, repository: rsRepo})
 
-    const scores = await rsRepo.getScoresBySourceId(claimId);
+    // Get ScoreID
+    const scores = await rsRepo.getScoresBySourceId(newClaimId);
     const newNodeScore= scores && scores.length > 0 ? scores[0] : undefined;
     if (!newNodeScore) throw new Error("No score found for the given claimId");
     
@@ -219,11 +216,19 @@ function Flow() {
 
   const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
+  // DEV TESTING
+  async function runItBack() {
+    const { nodes, edges } = await getEdgesAndNodes(rsRepo);
+    setNodes(nodes);
+    setEdges(edges);
+  }
+
   return (
     <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} ref={reactFlowWrapper}>
       <div style={{position:"absolute",right:"10px",top:"10px", zIndex:"1",display:"flex",flexDirection:"column"}}>
         <button onClick={logRsData()} style={{margin:10,padding:10}} >rsdata items</button>
         <button onClick={logDescendantScores()} style={{margin:10,padding:10}}>descendantScores</button>
+        <button onClick={() => runItBack()} style={{margin:10,padding:10}}>getEdgesAndNodes()</button>
       </div>
       <CreateNodeDialog 
         open={showCreateNodeDialog} 

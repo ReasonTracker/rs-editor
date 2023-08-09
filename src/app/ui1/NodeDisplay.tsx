@@ -219,7 +219,9 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
                 {scaleTo1}
                 {consolidate}
                 {weightByConfidence}
-                <div style={{ gridArea: "content", width: 250  }} className={`rsContent ${data.pol}`}>
+                <div style={{ gridArea: "content"
+                    ,width: 250 // FOR DEV
+                    }} className={`rsContent ${data.pol}`}>
                     {[
                         // xPos.toFixed(0), yPos.toFixed(0),
                         // data.scoreNumberText,
