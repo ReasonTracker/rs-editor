@@ -50,7 +50,7 @@ export interface RelevenceEdgeData {
     maxImpact: number
 }
 
-export const positions: { [key: string]: { x: number, y: number } } = {
+export const initialPositions: { [key: string]: { x: number, y: number } } = {
     "mainClaim": {
         "x": 100,
         "y": 0
@@ -95,13 +95,156 @@ export const positions: { [key: string]: { x: number, y: number } } = {
     }
 }
 
+type ProcessEdgesProps = {
+    rsRepo: RepositoryLocalPure,
+    targetScore: Score,
+    edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[]
+   }
+  
+type ProcessRelevanceEdgesProps = ProcessEdgesProps & {
+    claimEdges: ClaimEdge[]
+};
+type ProcessClaimsProps = {
+    rsRepo: RepositoryLocalPure,
+    targetScore: Score,
+    generationItems?: { [key: string]: number },
+    nodes: Node<DisplayNodeData>[],
+    position?: { x: number, y: number }
+  };
+
+export async function processConfidenceEdges({ rsRepo, targetScore, edges }: ProcessEdgesProps): Promise<ClaimEdge[]> {
+    // get the score's confidence edges
+    const claimEdges = await rsRepo.getClaimEdgesByParentId(targetScore.sourceClaimId);
+    const confidenceEdges = claimEdges.filter(ce => ce.affects === "confidence");
+    confidenceEdges.sort((a, b) => a.proMain === targetScore.proMain ? -1 : 1);
+    let lastBottom = 0;
+    const maxImpactStack = stackSpace(gutter);
+    const consolidatedStack = stackSpace();
+    const scaledTo1Stack = stackSpace();
+    // let lastProMain = undefined;
+    for (const confidenceEdge of confidenceEdges) {
+        // console.log(`confidenceEdge`, confidenceEdge)
+        const sourceScore = (await rsRepo.getScoresBySourceId(confidenceEdge.childId))[0];
+        const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
+        const maxImpact = sourceScore.relevance;
+        // const proChangeGap = lastProMain === true && sourceScore.proMain === false ? 1 : 0
+        const maxImpactStacked = maxImpactStack(sourceScore.relevance);
+        const impactStacked = sizeStacked(maxImpactStacked, impact);
+        const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence);
+        const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
+        const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
+        const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight);
+
+        const edge: Edge<ConfidenceEdgeData> = {
+            id: confidenceEdge.id,
+            type: "rsEdge",
+            target: targetScore.id,
+            targetHandle: 'confidence',
+            source: sourceScore.id,
+            data: {
+                pol: sourceScore.proMain ? "pro" : "con",
+                maxImpact,
+                impact: impact,
+                targetTop: lastBottom,
+                claimEdge: confidenceEdge,
+                sourceScore,
+                maxImpactStacked,
+                impactStacked,
+                reducedImpactStacked,
+                reducedMaxImpactStacked,
+                consolidatedStacked,
+                scaledTo1Stacked,
+                type: "confidence",
+            }
+        };
+
+        lastBottom += maxImpact;
+        lastBottom += gutter;
+        // lastProMain = sourceScore.proMain;
+        edges.push(edge);
+    }
+    return claimEdges;
+}
+
+export async function processRelevanceEdges({ claimEdges, rsRepo, targetScore, edges }: ProcessRelevanceEdgesProps): Promise<any[]> {
+    const relevanceEdges = claimEdges.filter(ce => ce.affects === "relevance");
+    for (const relevanceEdge of relevanceEdges) {
+        const sourceScore = (await rsRepo.getScoresBySourceId(relevanceEdge.childId))[0];
+        const maxImpact = sourceScore.relevance;
+        const edge: Edge<RelevenceEdgeData> = {
+            id: relevanceEdge.id,
+            type: "rsEdge",
+            target: targetScore.id,
+            targetHandle: 'relevance',
+            source: sourceScore.id,
+            data: {
+                pol: sourceScore.proMain ? "pro" : "con",
+                claimEdge: relevanceEdge,
+                sourceScore,
+                maxImpact,
+                type: "relevance",
+            }
+        };
+
+        edges.push(edge);
+    }
+    return edges;
+}
+  
+export async function processClaims({
+    rsRepo,
+    targetScore,
+    generationItems = {},
+    nodes,
+    position,
+  }: ProcessClaimsProps) {
+    const claim = await rsRepo.getClaim(targetScore.sourceClaimId);
+    if (!generationItems[targetScore.generation]) generationItems[targetScore.generation] = 0;
+    if (!position && claim) position = initialPositions[claim.id];
+    
+    // TODO: Math and text ---------- move to a central function
+    let scoreNumber = 0;
+    let scoreNumberText = "--";
+    let confidence = targetScore.confidence < 0 ? 0 : targetScore.confidence;
+    scoreNumber = Math.round(confidence * targetScore.relevance * 100);
+    if (targetScore.affects === "relevance") {
+        const sign = targetScore.pro ? "X" : "÷";
+        scoreNumberText = `${sign} ${(targetScore.relevance + 1).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 1 })}`;
+    } else {
+        if (scoreNumber === 100) scoreNumber = 99;
+        scoreNumberText = `${scoreNumber.toString().padStart(2, " ")}%`;
+    }
+    // end TODO
+
+    if (claim) {
+        const cancelOut = stackSpace();
+        const cancelOutStacked = cancelOut(targetScore.confidence);
+        const node: Node<DisplayNodeData> = {
+            id: targetScore.id,
+            type: 'rsNode',
+            position: position || {
+                y: (generationItems[targetScore.generation]),
+                x: (targetScore.generation * 500) + 100,
+            },
+            data: {
+                pol: targetScore.proMain ? "pro" : "con",
+                score: targetScore,
+                claim: claim,
+                scoreNumberText: scoreNumberText,
+                scoreNumber: scoreNumber,
+                cancelOutStacked
+            }
+        };
+        
+        nodes.push(node);
+        generationItems[targetScore.generation] += (maxStrokeWidth * 2) + ((claim?.content?.length || 0) * 1.1);
+    }
+    return nodes;
+}
+
 export async function getEdgesAndNodes(rsRepo: RepositoryLocalPure) {
     const nodes: Node<DisplayNodeData>[] = []
     const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
-    // console.log(`initial rsRepo`, rsRepo)
-    // console.log(`initial rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)  
-    // console.log(`rsData`, rsData)
-    console.log("----",await rsRepo.getClaim("test"))
     const actions: Action[] = [
         { type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
         { type: "add_claimEdge", newData: <ClaimEdge>{ id: "testEdge", parentId: "resedential", childId: "test", pro: true }, oldData: undefined, dataId: "testEdge" },
@@ -111,142 +254,16 @@ export async function getEdgesAndNodes(rsRepo: RepositoryLocalPure) {
     await calculateScoreActions({
         actions: actions, repository: rsRepo
     })
-
     const mainScoreId = (await rsRepo.getScoreRoot(rsData.ScoreRootIds[0]))?.topScoreId;
-
+    const mainScore = await rsRepo.getScore(mainScoreId || "");
     let scores = await rsRepo.getDescendantScoresById(mainScoreId || "");
     scores.reverse();
     scores.sort((a, b) => a.proMain ? -1 : 1)
-
-
-    const mainScore = await rsRepo.getScore(mainScoreId || "");
     if (mainScore) scores.unshift(mainScore);
-    const generationItems: { [key: string]: number } = {}
-    const lastBottom = 0
     for (const targetScore of scores) {
-        // get the score's confidence edges
-        // console.log(`targetScore`, targetScore.id)
-        const claimEdges = await rsRepo.getClaimEdgesByParentId(targetScore.sourceClaimId);
-        const confidenceEdges = claimEdges.filter(ce => ce.affects === "confidence");
-        confidenceEdges.sort((a, b) => a.proMain === targetScore.proMain ? -1 : 1)
-        let lastBottom = 0;
-        const maxImpactStack = stackSpace(gutter);
-        const consolidatedStack = stackSpace();
-        const scaledTo1Stack = stackSpace();
-        // let lastProMain = undefined;
-        for (const confidenceEdge of confidenceEdges) {
-            // console.log(`confidenceEdge`, confidenceEdge)
-            const sourceScore = (await rsRepo.getScoresBySourceId(confidenceEdge.childId))[0];
-            const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
-            const maxImpact = sourceScore.relevance;
-            // const proChangeGap = lastProMain === true && sourceScore.proMain === false ? 1 : 0
-            const maxImpactStacked = maxImpactStack(sourceScore.relevance)
-            const impactStacked = sizeStacked(maxImpactStacked, impact)
-            const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence)
-            const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence)
-            const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence)
-            const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight)
-
-            const edge: Edge<ConfidenceEdgeData> = {
-                id: confidenceEdge.id,
-                type: "rsEdge",
-                target: targetScore.id,
-                targetHandle: 'confidence',
-                source: sourceScore.id,
-                data: {
-                    pol: sourceScore.proMain ? "pro" : "con",
-                    maxImpact,
-                    impact: impact,
-                    targetTop: lastBottom,
-                    claimEdge: confidenceEdge,
-                    sourceScore,
-                    maxImpactStacked,
-                    impactStacked,
-                    reducedImpactStacked,
-                    reducedMaxImpactStacked,
-                    consolidatedStacked,
-                    scaledTo1Stacked,
-                    type: "confidence",
-                }
-            }
-
-            lastBottom += maxImpact;
-            lastBottom += gutter;
-            // lastProMain = sourceScore.proMain;
-            edges.push(edge);
-        }
-
-        // Process the Relevance Edges
-        const relevanceEdges = claimEdges.filter(ce => ce.affects === "relevance");
-        for (const relevanceEdge of relevanceEdges) {
-            const sourceScore = (await rsRepo.getScoresBySourceId(relevanceEdge.childId))[0];
-            const maxImpact = sourceScore.relevance;
-            const edge: Edge<RelevenceEdgeData> = {
-                id: relevanceEdge.id,
-                type: "rsEdge",
-                target: targetScore.id,
-                targetHandle: 'relevance',
-                source: sourceScore.id,
-                data: {
-                    pol: sourceScore.proMain ? "pro" : "con",
-                    claimEdge: relevanceEdge,
-                    sourceScore,
-                    maxImpact,
-                    type: "relevance",
-                }
-            }
-
-            edges.push(edge);
-        }
-
-        // get the score's claim
-        const claim = await rsRepo.getClaim(targetScore.sourceClaimId);
-        if (!generationItems[targetScore.generation]) generationItems[targetScore.generation] = 0;
-
-        // TODO: Math and text ---------- move to a central function
-        let scoreNumber = 0;
-        let scoreNumberText = "--";
-        let confidence = targetScore.confidence < 0 ? 0 : targetScore.confidence;
-
-        scoreNumber = Math.round(confidence * targetScore.relevance * 100)
-        if (targetScore.affects === "relevance") {
-            const sign = targetScore.pro ? "X" : "÷";
-            scoreNumberText = `${sign} ${(targetScore.relevance + 1).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 1 })}`;
-        } else {
-            if (scoreNumber === 100) scoreNumber = 99;
-            scoreNumberText = `${scoreNumber.toString().padStart(2, " ")}%`
-        }
-        // end TODO
-
-        if (claim) {
-
-            const cancelOut = stackSpace();
-
-            const cancelOutStacked = cancelOut(targetScore.confidence)
-
-            // console.log("position", positions[claim.id])
-            const node: Node<DisplayNodeData> = {
-                id: targetScore.id,
-                type: 'rsNode',
-                position: positions[claim.id] || {
-                    y: (generationItems[targetScore.generation]),
-                    x: (targetScore.generation * 500) + 100,
-                },
-                data: {
-                    pol: targetScore.proMain ? "pro" : "con",
-                    score: targetScore,
-                    claim: claim,
-                    scoreNumberText: scoreNumberText,
-                    scoreNumber: scoreNumber,
-                    cancelOutStacked
-                }
-            }
-            nodes.push(node);
-            generationItems[targetScore.generation] += (maxStrokeWidth * 2) + ((claim?.content?.length || 0) * 1.1);
-
-        }
-
+        const claimEdges = await processConfidenceEdges({rsRepo, targetScore, edges});
+        await processRelevanceEdges({claimEdges, rsRepo, targetScore, edges});
+        await processClaims({rsRepo, targetScore, nodes});
     }
-    // console.log(`score calculated`)
     return { nodes, edges }
 }

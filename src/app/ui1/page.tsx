@@ -21,7 +21,7 @@ import './createNodeDialog.css';
 //import pageData from './pageData';
 import { NodeDisplay } from './NodeDisplay';
 import EdgeDisplay from './EdgeDisplay';
-import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes } from './pageData';
+import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes, processClaims, processConfidenceEdges, processRelevanceEdges } from './pageData';
 import CreateNodeDialog from './CreateNodeDialog';
 import { Action, Claim, RepositoryLocalPure, calculateScoreActions } from './rs';
 import { rsData } from './rsData';
@@ -166,26 +166,13 @@ function Flow() {
     const newNodeScore= scores && scores.length > 0 ? scores[0] : undefined;
     if (!newNodeScore) throw new Error("No score found for the given claimId");
     
-    const node: Node<DisplayNodeData> = { 
-      id: nodeId,
-      type: 'rsNode',
-      position: project({
-        x: clientX - left - 75,
-        y: clientY - top,
-      }),
-      data: {
-        claim,
-        score: newNodeScore,
-        pol,
-        scoreNumber: 1,
-        scoreNumberText: "replaceMe",
-        cancelOutStacked: { top: 1, center: 1, bottom: 1 },
-      },   
-    };
+    const claimEdges = await processConfidenceEdges({rsRepo, targetScore: newNodeScore, edges});
+    const newEdges = await processRelevanceEdges({claimEdges, rsRepo, targetScore: newNodeScore, edges});
+    const newNodes = await processClaims({rsRepo, targetScore: newNodeScore, nodes, position});
 
-    setNodes((nodes) => nodes.concat(node));
-    const {nodes, edges} = await getEdgesAndNodes(rsRepo);
-    setEdges(edges);
+    // TODO: NOT WORKING
+    setNodes(newNodes);
+    setEdges(newEdges);
 
   }
 
