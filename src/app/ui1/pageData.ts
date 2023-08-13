@@ -166,7 +166,7 @@ export async function processConfidenceEdges({ rsRepo, targetScore, edges }: Pro
     return claimEdges;
 }
 
-export async function processRelevanceEdges({ claimEdges, rsRepo, targetScore, edges }: ProcessRelevanceEdgesProps): Promise<any[]> {
+export async function processRelevanceEdges({ claimEdges, rsRepo, targetScore, edges }: ProcessRelevanceEdgesProps) {
     const relevanceEdges = claimEdges.filter(ce => ce.affects === "relevance");
     for (const relevanceEdge of relevanceEdges) {
         const sourceScore = (await rsRepo.getScoresBySourceId(relevanceEdge.childId))[0];
@@ -188,7 +188,6 @@ export async function processRelevanceEdges({ claimEdges, rsRepo, targetScore, e
 
         edges.push(edge);
     }
-    return edges;
 }
   
 export async function processClaims({
@@ -242,28 +241,41 @@ export async function processClaims({
     return nodes;
 }
 
-export async function getEdgesAndNodes(rsRepo: RepositoryLocalPure) {
-    const nodes: Node<DisplayNodeData>[] = []
-    const edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
-    const actions: Action[] = [
-        { type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
-        { type: "add_claimEdge", newData: <ClaimEdge>{ id: "testEdge", parentId: "resedential", childId: "test", pro: true }, oldData: undefined, dataId: "testEdge" },
-        { type: "add_claim", newData: { id: "test2", text: "test" }, oldData: undefined, dataId: "test2" },
-        { type: "add_claimEdge", newData: <ClaimEdge>{ id: "test2Edge", parentId: "resedential", childId: "test2", pro: true }, oldData: undefined, dataId: "test2Edge" },
-    ];
-    await calculateScoreActions({
-        actions: actions, repository: rsRepo
-    })
-    const mainScoreId = (await rsRepo.getScoreRoot(rsData.ScoreRootIds[0]))?.topScoreId;
-    const mainScore = await rsRepo.getScore(mainScoreId || "");
-    let scores = await rsRepo.getDescendantScoresById(mainScoreId || "");
-    scores.reverse();
-    scores.sort((a, b) => a.proMain ? -1 : 1)
-    if (mainScore) scores.unshift(mainScore);
-    for (const targetScore of scores) {
-        const claimEdges = await processConfidenceEdges({rsRepo, targetScore, edges});
-        await processRelevanceEdges({claimEdges, rsRepo, targetScore, edges});
-        await processClaims({rsRepo, targetScore, nodes});
-    }
-    return { nodes, edges }
+export async function getEdgesAndNodes(
+    rsRepo: RepositoryLocalPure, 
+    nodes: Node<DisplayNodeData>[] = [],
+    edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = [],
+    ) {
+        const actions: Action[] = [
+            { type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
+            { type: "add_claimEdge", newData: <ClaimEdge>{ id: "testEdge", parentId: "resedential", childId: "test", pro: true }, oldData: undefined, dataId: "testEdge" },
+            { type: "add_claim", newData: { id: "test2", text: "test" }, oldData: undefined, dataId: "test2" },
+            { type: "add_claimEdge", newData: <ClaimEdge>{ id: "test2Edge", parentId: "resedential", childId: "test2", pro: true }, oldData: undefined, dataId: "test2Edge" },
+        ];
+        await calculateScoreActions({
+            actions: actions, repository: rsRepo
+        })
+
+        let scores: Score[] = [];
+
+        if (nodes.length === 0 && edges.length === 0) {
+            const mainScoreId = (await rsRepo.getScoreRoot(rsData.ScoreRootIds[0]))?.topScoreId;
+            const mainScore = await rsRepo.getScore(mainScoreId || "");
+            scores = await rsRepo.getDescendantScoresById(mainScoreId || "");
+            scores.reverse();
+            scores.sort((a, b) => a.proMain ? -1 : 1)
+            if (mainScore) scores.unshift(mainScore);
+        } else {
+            for (const node of nodes) {
+                const nodeId = node.id;
+                const nodeScore = await rsRepo.rsData.items[nodeId] as Score
+                scores = scores.concat(nodeScore);
+            }
+        }
+        for (const targetScore of scores) {
+            const claimEdges = await processConfidenceEdges({rsRepo, targetScore, edges});
+            await processRelevanceEdges({claimEdges, rsRepo, targetScore, edges});
+            await processClaims({rsRepo, targetScore, nodes});
+        }
+        return { nodes, edges }
 }
