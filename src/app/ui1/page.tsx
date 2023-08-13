@@ -123,14 +123,15 @@ function Flow() {
     // Get coordinates
     const { clientX, clientY } = currentMouseEvent.current;
     const { top, left } = connectingNodeCoord.current;
-    const position =  {
+    const position = project({
       x: clientX - left - 75,
       y: clientY - top,
-    }
+    })
     
     // Get parent score
     const currentNodeId = connectingNode.current.nodeId
     const parentClaimId = await rsRepo.getClaimIdBySourceId(currentNodeId)
+    // console.log(`parentClaimId`, parentClaimId)
     if (!parentClaimId) return console.log("no parentScoreId")
     const parentScore = await rsRepo.getScoresBySourceId(parentClaimId)
     
@@ -148,12 +149,12 @@ function Flow() {
     
     // const scoreRootId = rsRepo.rsData.ScoreRootIds[0];
     // const newNodeScore = new Score(claimId, scoreRootId, undefined, undefined, false, true, "confidence", 1, 1, newScoreId);
-    const claim: Claim = {
-      id: newClaimId,
-      content: `new claim ${newClaimId}`,
-      reversible: false,
-      type: `claim`,
-    }
+    // const claim: Claim = {
+    //   id: newClaimId,
+    //   content: `new claim ${newClaimId}`,
+    //   reversible: false,
+    //   type: `claim`,
+    // }
     
     const actions: Action[] = [
       { type: "add_claim", newData: { id: newClaimId, content: "newClaimText" }, oldData: undefined, dataId: `${newClaimId}` },
@@ -166,23 +167,143 @@ function Flow() {
     const newNodeScore= scores && scores.length > 0 ? scores[0] : undefined;
     if (!newNodeScore) throw new Error("No score found for the given claimId");
     
+    // const mainScoreId = (await rsRepo.getScoreRoot(rsData.ScoreRootIds[0]))?.topScoreId;
+    // const mainScore = await rsRepo.getScore(mainScoreId || "");
+    // let scores = await rsRepo.getDescendantScoresById(mainScoreId || "");
+    // scores.reverse();
+    // scores.sort((a, b) => a.proMain ? -1 : 1)
+    // if (mainScore) scores.unshift(mainScore);
+
+
+    // console.log(`edges before`, edges)
+    // console.log(`nodes nodes`, nodes)
     const claimEdges = await processConfidenceEdges({rsRepo, targetScore: newNodeScore, edges});
-    const newEdges = await processRelevanceEdges({claimEdges, rsRepo, targetScore: newNodeScore, edges});
-    const newNodes = await processClaims({rsRepo, targetScore: newNodeScore, nodes, position});
+    // console.log(`edges after processConfidenceEdges`, edges)
+    // console.log(`nodes after processConfidenceEdges`, nodes)
+    await processRelevanceEdges({claimEdges, rsRepo, targetScore: newNodeScore, edges});
+    // console.log(`edges after processRelevanceEdges`, edges)
+    // console.log(`nodes after processRelevanceEdges`, nodes)
+    await processClaims({rsRepo, targetScore: newNodeScore, nodes, position});
+    // console.log(`edges after processClaims`, edges)
+    // console.log(`nodes after processClaims`, nodes)
+    // console.log(`claimEdges`, claimEdges)
+    // const edgeConfidenceEdgeData: Edge<ConfidenceEdgeData> = {
+    //     "id": "claimId-Wf3svP2YoaQaEdge",
+    //     "type": "rsEdge",
+    //     "target": "payoffScore",
+    //     "targetHandle": "confidence",
+    //     "source": "claimId-Wf3svP2YoaQaScore",
+    //     "data": {
+    //         "pol": "pro",
+    //         "maxImpact": 1,
+    //         "impact": 1,
+    //         "targetTop": 0,
+    //         "claimEdge": {
+    //             "parentId": "payoff",
+    //             "childId": "claimId-Wf3svP2YoaQa",
+    //             "affects": "confidence",
+    //             "pro": true,
+    //             "proMain": true,
+    //             "id": "claimId-Wf3svP2YoaQaEdge",
+    //             "priority": "",
+    //             "type": "claimEdge"
+    //         },
+    //         "sourceScore": {
+    //             "sourceClaimId": "claimId-Wf3svP2YoaQa",
+    //             "scoreRootId": "ScoreRoot",
+    //             "parentScoreId": "payoffScore",
+    //             "sourceEdgeId": "claimId-Wf3svP2YoaQaEdge",
+    //             "reversible": false,
+    //             "pro": true,
+    //             "affects": "confidence",
+    //             "confidence": 1,
+    //             "relevance": 1,
+    //             "id": "claimId-Wf3svP2YoaQaScore",
+    //             "priority": "",
+    //             "content": "",
+    //             "scaledWeight": 1,
+    //             "type": "score",
+    //             "descendantCount": 0,
+    //             "generation": 3,
+    //             "fractionSimple": 0.4,
+    //             "fraction": 0.5454545454545455,
+    //             "childrenAveragingWeight": 1,
+    //             "childrenConfidenceWeight": 1,
+    //             "childrenRelevanceWeight": 1,
+    //             "childrenWeight": 1,
+    //             "weight": 1,
+    //             "percentOfWeight": 1,
+    //             "proMain": true
+    //         },
+    //         "maxImpactStacked": {
+    //             "top": 0,
+    //             "center": 0.5,
+    //             "bottom": 1
+    //         },
+    //         "impactStacked": {
+    //             "top": 0,
+    //             "center": 0.5,
+    //             "bottom": 1
+    //         },
+    //         "reducedImpactStacked": {
+    //             "top": 0,
+    //             "center": 0.5,
+    //             "bottom": 1
+    //         },
+    //         "reducedMaxImpactStacked": {
+    //             "top": 0,
+    //             "center": 0.5,
+    //             "bottom": 1
+    //         },
+    //         "consolidatedStacked": {
+    //             "top": 0,
+    //             "center": 0.5,
+    //             "bottom": 1
+    //         },
+    //         "scaledTo1Stacked": {
+    //             "top": 0,
+    //             "center": 0.5,
+    //             "bottom": 1
+    //         },
+    //         "type": "confidence"
+    //     }
+    // }
+    // setEdges((edges) => edges.concat(edgeConfidenceEdgeData));
+    // setEdges((edges) => edges.concat(edgeConfidenceEdgeData));
+
+    // const claimEdges = await processConfidenceEdges({rsRepo, targetScore: newNodeScore, edges});
+    // const newEdge = await processRelevanceEdges({claimEdges, rsRepo, targetScore: newNodeScore, edges});
+    // const newNode = await processClaims({rsRepo, targetScore: newNodeScore, nodes, position});
+    // await getEdgesAndNodes(rsRepo, nodes, edges);
+    // await calculateScoreActions({repository: rsRepo})
+    // setNodes((nodes) => nodes.concat(newNode));
+    // setEdges((edges) => edges.concat(newEdge));
+    // console.log(results)
+    
+    // runItBack();
+    // setNodes(nodes);
+    // setEdges(edges);
+    // setEdges(results.edges);
+    // const results2  = await getEdgesAndNodes(rsRepo, nodes, edges);
+    // setNodes(results2.nodes);
+    // setEdges(results2.edges);
 
     // TODO: NOT WORKING
-    setNodes(newNodes);
-    setEdges(newEdges);
 
   }
 
   // DEV LOGGING
-  const logRsData = () => {
+  const data = () => {
     return async () => {
       if (!rsRepo) return console.log("no repo state")
       console.log(`rsRepoState`, rsRepo)
       console.log(`rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)  
-      console.log(`rsData.items`, rsRepo.rsData.items)
+      console.log(`rsRepoState ScoreRootIds: `, Object.keys(rsRepo.rsData.ScoreRootIds).length)  
+      console.log(`rsRepoState childIdsByScoreId: `, Object.keys(rsRepo.rsData.childIdsByScoreId).length)  
+      console.log(`rsRepoState claimEdgeIdsByChildId: `, Object.keys(rsRepo.rsData.claimEdgeIdsByChildId).length)  
+      console.log(`rsRepoState claimEdgeIdsByParentId: `, Object.keys(rsRepo.rsData.claimEdgeIdsByParentId).length)  
+      console.log(`nodes`, nodes)
+      console.log(`edges`, edges)
     }      
   }
   const logDescendantScores = () => {
@@ -213,9 +334,13 @@ function Flow() {
   return (
     <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} ref={reactFlowWrapper}>
       <div style={{position:"absolute",right:"10px",top:"10px", zIndex:"1",display:"flex",flexDirection:"column"}}>
-        <button onClick={logRsData()} style={{margin:10,padding:10}} >rsdata items</button>
+        <button onClick={data()} style={{margin:10,padding:10}} >data</button>
         <button onClick={logDescendantScores()} style={{margin:10,padding:10}}>descendantScores</button>
         <button onClick={() => runItBack()} style={{margin:10,padding:10}}>getEdgesAndNodes()</button>
+        <button onClick={() => console.log(nodes)} style={{margin:10,padding:10}}>nodes()</button>
+        <button onClick={() => console.log(edges)} style={{margin:10,padding:10}}>edges()</button>
+        <button onClick={() => setNodes(nodes)} style={{margin:10,padding:10}}>setNodes()</button>
+        <button onClick={() => setEdges(edges)} style={{margin:10,padding:10}}>setEdges()</button>
       </div>
       <CreateNodeDialog 
         open={showCreateNodeDialog} 
