@@ -45,6 +45,17 @@ function Flow() {
   useEffect(() => {
 
     async function _getEdgesAndNodes() {
+
+      const actions: Action[] = [
+        { type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
+        { type: "add_claimEdge", newData: { id: "testEdge", parentId: "resedential", childId: "test", pro: true }, oldData: undefined, dataId: "testEdge" },
+        { type: "add_claim", newData: { id: "test2", text: "test" }, oldData: undefined, dataId: "test2" },
+        { type: "add_claimEdge", newData: { id: "test2Edge", parentId: "resedential", childId: "test2", pro: true }, oldData: undefined, dataId: "test2Edge" },
+    ];
+    await calculateScoreActions({
+        actions: actions, repository: rsRepo
+    })
+
       const { nodes, edges } = await getEdgesAndNodes(rsRepo);
       setNodes(nodes);
       setEdges(edges);
@@ -157,7 +168,7 @@ function Flow() {
     // }
     
     const actions: Action[] = [
-      { type: "add_claim", newData: { id: newClaimId, content: "newClaimText" }, oldData: undefined, dataId: `${newClaimId}` },
+      { type: "add_claim", newData: { id: newClaimId, content: "newClaimText", position: position }, oldData: undefined, dataId: `${newClaimId}` },
       { type: "add_claimEdge", newData: { id: `${newClaimId}Edge`, parentId: parentClaimId, childId: newClaimId, pro: pol === "pro" ? true : false }, oldData: undefined, dataId: `${newClaimId}Edge` },
     ];
     await calculateScoreActions({actions: actions, repository: rsRepo})
@@ -177,13 +188,16 @@ function Flow() {
 
     // console.log(`edges before`, edges)
     // console.log(`nodes nodes`, nodes)
-    const claimEdges = await processConfidenceEdges({rsRepo, targetScore: newNodeScore, edges});
+    // const claimEdges = await processConfidenceEdges({rsRepo, targetScore: newNodeScore, edges});
     // console.log(`edges after processConfidenceEdges`, edges)
     // console.log(`nodes after processConfidenceEdges`, nodes)
-    await processRelevanceEdges({claimEdges, rsRepo, targetScore: newNodeScore, edges});
+    // const newEdges = await processRelevanceEdges({claimEdges, rsRepo, targetScore: newNodeScore, edges});
     // console.log(`edges after processRelevanceEdges`, edges)
     // console.log(`nodes after processRelevanceEdges`, nodes)
-    await processClaims({rsRepo, targetScore: newNodeScore, nodes, position});
+    // const newNodes = await processClaims({rsRepo, targetScore: newNodeScore, nodes, position});
+    const { nodes: newNodes, edges: newEdges } = await getEdgesAndNodes(rsRepo, nodes, edges);
+    setNodes(newNodes)
+    setEdges(newEdges)
     // console.log(`edges after processClaims`, edges)
     // console.log(`nodes after processClaims`, nodes)
     // console.log(`claimEdges`, claimEdges)

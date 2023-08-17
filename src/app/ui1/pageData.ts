@@ -135,6 +135,9 @@ export async function processConfidenceEdges({ rsRepo, targetScore, edges }: Pro
         const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
         const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight);
 
+        if (edges.some(edge => edge.id === confidenceEdge.id)) {
+            continue;
+        }
         const edge: Edge<ConfidenceEdgeData> = {
             id: confidenceEdge.id,
             type: "rsEdge",
@@ -171,6 +174,9 @@ export async function processRelevanceEdges({ claimEdges, rsRepo, targetScore, e
     for (const relevanceEdge of relevanceEdges) {
         const sourceScore = (await rsRepo.getScoresBySourceId(relevanceEdge.childId))[0];
         const maxImpact = sourceScore.relevance;
+        if (edges.some(edge => edge.id === relevanceEdge.id)) {
+            continue;
+        }
         const edge: Edge<RelevenceEdgeData> = {
             id: relevanceEdge.id,
             type: "rsEdge",
@@ -188,6 +194,7 @@ export async function processRelevanceEdges({ claimEdges, rsRepo, targetScore, e
 
         edges.push(edge);
     }
+    return edges;
 }
   
 export async function processClaims({
@@ -195,11 +202,10 @@ export async function processClaims({
     targetScore,
     generationItems = {},
     nodes,
-    position,
   }: ProcessClaimsProps) {
     const claim = await rsRepo.getClaim(targetScore.sourceClaimId);
     if (!generationItems[targetScore.generation]) generationItems[targetScore.generation] = 0;
-    if (!position && claim) position = initialPositions[claim.id];
+    const position = (!targetScore.position && claim) ? initialPositions[claim.id] : targetScore.position;
     
     // TODO: Math and text ---------- move to a central function
     let scoreNumber = 0;
@@ -214,7 +220,9 @@ export async function processClaims({
         scoreNumberText = `${scoreNumber.toString().padStart(2, " ")}%`;
     }
     // end TODO
-
+    if (nodes.some(node => node.id === targetScore.id)) {
+        return;
+    }
     if (claim) {
         const cancelOut = stackSpace();
         const cancelOutStacked = cancelOut(targetScore.confidence);
@@ -246,32 +254,13 @@ export async function getEdgesAndNodes(
     nodes: Node<DisplayNodeData>[] = [],
     edges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = [],
     ) {
-        const actions: Action[] = [
-            { type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
-            { type: "add_claimEdge", newData: <ClaimEdge>{ id: "testEdge", parentId: "resedential", childId: "test", pro: true }, oldData: undefined, dataId: "testEdge" },
-            { type: "add_claim", newData: { id: "test2", text: "test" }, oldData: undefined, dataId: "test2" },
-            { type: "add_claimEdge", newData: <ClaimEdge>{ id: "test2Edge", parentId: "resedential", childId: "test2", pro: true }, oldData: undefined, dataId: "test2Edge" },
-        ];
-        await calculateScoreActions({
-            actions: actions, repository: rsRepo
-        })
-
         let scores: Score[] = [];
-
-        if (nodes.length === 0 && edges.length === 0) {
-            const mainScoreId = (await rsRepo.getScoreRoot(rsData.ScoreRootIds[0]))?.topScoreId;
-            const mainScore = await rsRepo.getScore(mainScoreId || "");
-            scores = await rsRepo.getDescendantScoresById(mainScoreId || "");
-            scores.reverse();
-            scores.sort((a, b) => a.proMain ? -1 : 1)
-            if (mainScore) scores.unshift(mainScore);
-        } else {
-            for (const node of nodes) {
-                const nodeId = node.id;
-                const nodeScore = await rsRepo.rsData.items[nodeId] as Score
-                scores = scores.concat(nodeScore);
-            }
-        }
+        const mainScoreId = (await rsRepo.getScoreRoot(rsData.ScoreRootIds[0]))?.topScoreId;
+        const mainScore = await rsRepo.getScore(mainScoreId || "");
+        scores = await rsRepo.getDescendantScoresById(mainScoreId || "");
+        scores.reverse();
+        scores.sort((a, b) => a.proMain ? -1 : 1)
+        if (mainScore) scores.unshift(mainScore);
         for (const targetScore of scores) {
             const claimEdges = await processConfidenceEdges({rsRepo, targetScore, edges});
             await processRelevanceEdges({claimEdges, rsRepo, targetScore, edges});

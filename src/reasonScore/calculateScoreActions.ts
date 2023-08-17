@@ -117,7 +117,16 @@ export async function calculateScoreActions({ actions = [], repository = new Rep
                 missingScoreActions.push(new Action(mainScore, undefined, "add_score"));
             }
 
-            await createBlankMissingScores(repository, scoreRoot.topScoreId, scoreRoot.sourceClaimId || "", missingScoreActions, scoreRootId)
+            const newClaimActions: Action[] = [];
+            if (actions.length > 0) {
+                for (const action of actions) {
+                    if (action.type == 'add_claim') {
+                        newClaimActions.push(action);
+                    }
+                }
+            }
+
+            await createBlankMissingScores(repository, scoreRoot.topScoreId, scoreRoot.sourceClaimId || "", missingScoreActions, scoreRootId, newClaimActions)
             if (missingScoreActions.length > 0) {
                 await repository.notify(missingScoreActions)
             }
@@ -173,7 +182,7 @@ export async function calculateScoreActions({ actions = [], repository = new Rep
 }
 
 //Create Blank Missing Scores
-async function createBlankMissingScores(repository: iRepository, currentScoreId: string, currentClaimId: string, actions: Action[], scoreRootId: string) {
+async function createBlankMissingScores(repository: iRepository, currentScoreId: string, currentClaimId: string, actions: Action[], scoreRootId: string, createClaimActions?: Action[]) {
     const edges = await repository.getClaimEdgesByParentId(currentClaimId)
     const scores = await repository.getChildrenByScoreId(currentScoreId)
     for (const edge of edges) {
@@ -182,11 +191,18 @@ async function createBlankMissingScores(repository: iRepository, currentScoreId:
         if (!score) {
             //Create a new Score and attach it to it's parent
             const u = undefined;
-            score = new Score(edge.childId, scoreRootId, currentScoreId, edge.id, undefined, edge.pro, edge.affects, u, u, `${edge.childId}Score`, edge.priority);
+            let position = undefined;
+            if (createClaimActions) {
+                const claimAction = createClaimActions.find(action => action.newData.id === edge.childId);
+                if (claimAction && claimAction.newData.position) {
+                    position = claimAction.newData.position;
+                }
+            }
+            score = new Score(edge.childId, scoreRootId, currentScoreId, edge.id, undefined, edge.pro, edge.affects, u, u, `${edge.childId}Score`, edge.priority, undefined, undefined, position ? position : undefined);
             actions.push(new Action(score, undefined, "add_score", score.id));
         }
         //Recurse and through children
-        await createBlankMissingScores(repository, score.id, edge.childId, actions, scoreRootId);
+        await createBlankMissingScores(repository, score.id, edge.childId, actions, scoreRootId, createClaimActions);
     }
 }
 
