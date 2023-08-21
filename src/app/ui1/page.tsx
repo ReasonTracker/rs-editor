@@ -54,9 +54,9 @@ function Flow() {
         actions: actions, repository: rsRepo
     })
 
-      const { nodes, edges } = await getEdgesAndNodes(rsRepo);
-      setNodes(nodes);
-      setEdges(edges);
+      const { newNodes, newEdges } = await getEdgesAndNodes(rsRepo);
+      setNodes(newNodes);
+      setEdges(newEdges);
     }
  
     _getEdgesAndNodes();
@@ -155,7 +155,7 @@ function Flow() {
     if (!newNodeScore) throw new Error("No score found for the given claimId");
     
     // TODO: consolidate nodes/newNodes and edges/newEdges
-    const {nodes:nodes2, edges: edges2, newNodes, newEdges } = await getEdgesAndNodes(rsRepo, nodes, edges, position);
+    const {newNodes, newEdges } = await getEdgesAndNodes(rsRepo, nodes, edges, position);
     setNodes((nodes) => nodes.concat(newNodes))
     setEdges((edges) => edges.concat(newEdges)) // TODO: typescript error
 
@@ -195,9 +195,9 @@ function Flow() {
 
   // DEV TESTING
   async function runItBack() {
-    const { nodes, edges } = await getEdgesAndNodes(rsRepo);
-    setNodes(nodes);
-    setEdges(edges);
+    const { newNodes, newEdges } = await getEdgesAndNodes(rsRepo, nodes, edges );
+    setNodes(newNodes);
+    setEdges(newEdges);
   }
 
   return (
