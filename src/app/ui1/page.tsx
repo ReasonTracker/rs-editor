@@ -154,7 +154,6 @@ function Flow() {
     const newNodeScore= scores && scores.length > 0 ? scores[0] : undefined;
     if (!newNodeScore) throw new Error("No score found for the given claimId");
     
-    // TODO: consolidate nodes/newNodes and edges/newEdges
     const {newNodes, newEdges } = await getEdgesAndNodes(rsRepo, nodes, edges, position);
     setNodes((nodes) => nodes.concat(newNodes))
     setEdges((edges) => edges.concat(newEdges)) // TODO: typescript error
