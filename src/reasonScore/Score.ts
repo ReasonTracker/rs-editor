@@ -19,7 +19,7 @@ export class Score implements Item {
 
         public reversible: boolean = false,
         /** Is this score a pro of it's parent (false if it is a con) */
-        public pro: boolean = true,
+        public proParent: boolean = true,
         /** How the child affects the parent score */
         public affects: Affects = "confidence",
         /** how confident we should be in the claim. (AKA True) */

@@ -80,7 +80,7 @@ export const rsData: RsData = {
             "id": "payoffEdge",
             "parentId": "footTraffic",
             "priority": "",
-            "pro": true,
+            "proParent": true,
             "type": "claimEdge"
         },
         "childrenEdge": {
@@ -89,7 +89,7 @@ export const rsData: RsData = {
             "id": "childrenEdge",
             "parentId": "resedential",
             "priority": "",
-            "pro": true,
+            "proParent": true,
             "type": "claimEdge"
         },
         "cost": {
@@ -104,7 +104,7 @@ export const rsData: RsData = {
             "id": "costEdge",
             "parentId": "mainClaim",
             "priority": "",
-            "pro": false,
+            "proParent": false,
             "type": "claimEdge"
         },
         "costScore": {
@@ -123,7 +123,7 @@ export const rsData: RsData = {
             "parentScoreId": "mainClaimScore",
             "percentOfWeight": 0.3333333333333333,
             "priority": "",
-            "pro": false,
+            "proParent": false,
             "relevance": 1,
             "reversible": false,
             "scoreRootId": "ScoreRoot",
@@ -144,7 +144,7 @@ export const rsData: RsData = {
             "id": "footTrafficEdge",
             "parentId": "mainClaim",
             "priority": "",
-            "pro": true,
+            "proParent": true,
             "type": "claimEdge"
         },
         "footTrafficScore": {
@@ -163,7 +163,7 @@ export const rsData: RsData = {
             "parentScoreId": "mainClaimScore",
             "percentOfWeight": 0.6666666666666666,
             "priority": "",
-            "pro": true,
+            "proParent": true,
             "relevance": 2,
             "reversible": false,
             "scoreRootId": "ScoreRoot",
@@ -197,7 +197,7 @@ export const rsData: RsData = {
             "parentScoreId": null,
             "percentOfWeight": 1,
             "priority": "",
-            "pro": true,
+            "proParent": true,
             "relevance": 1,
             "reversible": false,
             "scoreRootId": "ScoreRoot",
@@ -234,7 +234,7 @@ export const rsData: RsData = {
             "parentScoreId": "resedentialScore",
             "percentOfWeight": 0.5,
             "priority": "",
-            "pro": false,
+            "proParent": false,
             "relevance": 1,
             "reversible": false,
             "scoreRootId": "ScoreRoot",
@@ -259,7 +259,7 @@ export const rsData: RsData = {
             "parentScoreId": "footTrafficScore",
             "percentOfWeight": 1,
             "priority": "",
-            "pro": true,
+            "proParent": true,
             "relevance": 1,
             "reversible": false,
             "scoreRootId": "ScoreRoot",
@@ -285,7 +285,7 @@ export const rsData: RsData = {
             "parentScoreId": "resedentialScore",
             "percentOfWeight": 1,
             "priority": "",
-            "pro": true,
+            "proParent": true,
             "relevance": 1,
             "reversible": false,
             "scoreRootId": "ScoreRoot",
@@ -306,7 +306,7 @@ export const rsData: RsData = {
             "id": "resedentialEdge",
             "parentId": "mainClaim",
             "priority": "",
-            "pro": false,
+            "proParent": false,
             "type": "claimEdge"
         },
         "resedentialScore": {
@@ -325,7 +325,7 @@ export const rsData: RsData = {
             "parentScoreId": "mainClaimScore",
             "percentOfWeight": 0,
             "priority": "",
-            "pro": false,
+            "proParent": false,
             "relevance": 2,
             "reversible": false,
             "scoreRootId": "ScoreRoot",
@@ -346,7 +346,7 @@ export const rsData: RsData = {
             "id": "traintracksEdge",
             "parentId": "resedential",
             "priority": "",
-            "pro": false,
+            "proParent": false,
             "type": "claimEdge"
         }
     },

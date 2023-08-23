@@ -44,10 +44,10 @@ function Flow() {
     async function _getEdgesAndNodes() {
 
       const actions: Action[] = [
-        { type: "add_claim", newData: { id: "test", text: "test" }, oldData: undefined, dataId: "test" },
-        { type: "add_claimEdge", newData: { id: "testEdge", parentId: "resedential", childId: "test", pro: true }, oldData: undefined, dataId: "testEdge" },
-        { type: "add_claim", newData: { id: "test2", text: "test" }, oldData: undefined, dataId: "test2" },
-        { type: "add_claimEdge", newData: { id: "test2Edge", parentId: "resedential", childId: "test2", pro: true }, oldData: undefined, dataId: "test2Edge" },
+        { type: "add_claim", newData: { id: "test", content: "test" }, oldData: undefined, dataId: "test" },
+        { type: "add_claimEdge", newData: { id: "testEdge", parentId: "resedential", childId: "test", proParent: true }, oldData: undefined, dataId: "testEdge" },
+        { type: "add_claim", newData: { id: "test2", content: "test" }, oldData: undefined, dataId: "test2" },
+        { type: "add_claimEdge", newData: { id: "test2Edge", parentId: "resedential", childId: "test2", proParent: true }, oldData: undefined, dataId: "test2Edge" },
     ];
     await calculateScoreActions({
         actions: actions, repository: rsRepo
@@ -143,7 +143,7 @@ function Flow() {
     const affects = connectingNode.current.handleId;
 
     const newClaimEdgeData = affects 
-      ? { affects, id: `${newClaimId}Edge`, parentId: parentClaimId, childId: newClaimId, pro: pol === "pro" ? true : false }
+      ? { affects, id: `${newClaimId}Edge`, parentId: parentClaimId, childId: newClaimId, proParent: pol === "pro" ? true : false }
       : { } 
 
     

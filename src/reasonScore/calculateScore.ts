@@ -85,7 +85,7 @@ export function calculateScore({ childScores = [], reversible = true }: {
 
     // Loop through to calculate the final confidence
     for (const childScore of childScores) {
-        const polarity = childScore.pro ? 1 : -1
+        const polarity = childScore.proParent ? 1 : -1
 
         if (childScore.affects === "confidence") {
             if (newScore.childrenWeight === 0) {
@@ -127,7 +127,7 @@ export function calculateScore({ childScores = [], reversible = true }: {
                 newScore.relevance = 1;
             }
 
-            if (childScore.pro) {
+            if (childScore.proParent) {
                 // newScore.relevance = newScore.relevance * 2;
                 newScore.relevance += confidence;
             } else {

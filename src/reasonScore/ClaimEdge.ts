@@ -17,7 +17,7 @@ export class ClaimEdge {
         /** How the child affects the parent score */
         public affects: Affects = 'confidence',
         /** Is the child claim a pro of it's parent (false if it is a con) */
-        public pro: boolean = true,
+        public proParent: boolean = true,
 
         public proMain?: boolean,
 

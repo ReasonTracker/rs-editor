@@ -58,6 +58,7 @@ export async function calculateScoreActions({ actions = [], repository = new Rep
         //TODO: If an edge changes then modify the existing scores to match
         if (action.type == 'modify_claimEdge') {
             let claimEdge = await repository.getClaimEdge(action.dataId)
+            // @ts-ignore
             claimEdge = { ...claimEdge, ...action.newData }
             if (claimEdge) {
                 action.newData as ClaimEdge;
@@ -68,12 +69,12 @@ export async function calculateScoreActions({ actions = [], repository = new Rep
                     //This change should also probably be centralized somewhere to reduce the chance of inconsistent bugs. I think it will happen in multiple paces
                     //Nope, it is an action so it should always be a new object. If it goes into a reactive respoitory then it will modify the actual object
                     //Should I group these actions or just throw them in one at a time like I am doing
-                    if (score.pro != claimEdge.pro
+                    if (score.proParent != claimEdge.proParent
                         || score.affects != claimEdge.affects
                         || score.priority != claimEdge.priority
                     ) {
                         const action = new Action({
-                            pro: claimEdge.pro,
+                            proParent: claimEdge.proParent,
                             affects: claimEdge.affects,
                             priority: claimEdge.priority,
                         }, score, "modify_score", score.id)
@@ -182,7 +183,7 @@ async function createBlankMissingScores(repository: iRepository, currentScoreId:
         if (!score) {
             //Create a new Score and attach it to it's parent
             const u = undefined;
-            score = new Score(edge.childId, scoreRootId, currentScoreId, edge.id, undefined, edge.pro, edge.affects, u, u, `${edge.childId}Score`, edge.priority);
+            score = new Score(edge.childId, scoreRootId, currentScoreId, edge.id, undefined, edge.proParent, edge.affects, u, u, `${edge.childId}Score`, edge.priority);
             actions.push(new Action(score, undefined, "add_score", score.id));
         }
         //Recurse and through children
@@ -247,7 +248,7 @@ async function calculateFractions(repository: iRepository, parentScore: Partial<
         }
 
         for (const oldChildScore of oldChildScores) {
-            const newChildScore: Partial<Score> = {
+            const newChildScore: { id: string } & Partial<Score> = {
                 ...oldChildScore,
                 fractionSimple: (oldChildScore.relevance / totalRelevance) * parentScore.fractionSimple,
                 fraction: parentScore.fraction * oldChildScore.percentOfWeight,
@@ -288,7 +289,7 @@ async function calculateProMain(repository: iRepository, parentScoreId: string, 
             oldClaimEdges = await repository.getClaimEdgesByChildId(oldClaim.id);
         }
 
-        if (oldChildScore.pro === true) {// && oldChildScore.proMain !== proMain) {
+        if (oldChildScore.proParent === true) {// && oldChildScore.proMain !== proMain) {
             actions.push(new Action({ proMain: proMain }, undefined, "modify_score", oldChildScore.id));
             for (const oldClaimEdge of oldClaimEdges) {
                 actions.push(new Action({ proMain: proMain }, undefined, "modify_claimEdge", oldClaimEdge.id));
@@ -297,7 +298,7 @@ async function calculateProMain(repository: iRepository, parentScoreId: string, 
             await calculateProMain(repository, oldChildScore.id, actions, proMain)
         }
 
-        if (oldChildScore.pro === false) {// && oldChildScore.proMain === proMain) {
+        if (oldChildScore.proParent === false) {// && oldChildScore.proMain === proMain) {
             for (const oldClaimEdge of oldClaimEdges) {
                 actions.push(new Action({ proMain: !proMain }, undefined, "modify_claimEdge", oldClaimEdge.id));
             }

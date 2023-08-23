@@ -212,7 +212,7 @@ export async function processClaims({
     let confidence = targetScore.confidence < 0 ? 0 : targetScore.confidence;
     scoreNumber = Math.round(confidence * targetScore.relevance * 100);
     if (targetScore.affects === "relevance") {
-        const sign = targetScore.pro ? "X" : "÷";
+        const sign = targetScore.proParent ? "X" : "÷";
         scoreNumberText = `${sign} ${(targetScore.relevance + 1).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 1 })}`;
     } else {
         if (scoreNumber === 100) scoreNumber = 99;

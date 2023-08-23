@@ -1,11 +1,15 @@
+import { Claim } from "./Claim"
+import { ClaimEdge } from "./ClaimEdge"
+import { Score } from "./Score"
+
 export class Action {
     constructor(
-        public newData: any,
+        public newData: Partial<Claim> | Partial<ClaimEdge> | Partial<Score>,
         public oldData: any,
         public type: ActionTypes,
         public dataId: string = "",
     ) {
-        if (dataId === "") {
+        if (dataId === "" && newData.id) {
             this.dataId = newData.id
         }
     }
