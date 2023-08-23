@@ -7,7 +7,7 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   useReactFlow,
-  addEdge,
+  // addEdge,
   ReactFlowProvider,
 } from 'reactflow';
 
@@ -65,6 +65,7 @@ function Flow() {
   }, []);
 
   // create Refs
+  // Move into onConnectEnd and pass to setCreateNodeDialog ?
   const connectingNode = useRef({
     nodeId: null,
     handleId: null,
@@ -157,7 +158,7 @@ function Flow() {
     
     const {newNodes, newEdges } = await getEdgesAndNodes(rsRepo, nodes, edges, position);
     setNodes((nodes) => nodes.concat(newNodes))
-    setEdges((edges) => edges.concat(newEdges)) // TODO: typescript error
+    setEdges((edges) => edges.concat(newEdges))
 
   }
 
@@ -190,8 +191,9 @@ function Flow() {
       );
     }
   } 
-
-  const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  
+  // TODO: What is this doing?
+  // const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   // DEV TESTING
   async function runItBack() {
@@ -224,7 +226,7 @@ function Flow() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
+        // onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onConnectStart={onConnectStart}
