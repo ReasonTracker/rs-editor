@@ -219,9 +219,7 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
                 {scaleTo1}
                 {consolidate}
                 {weightByConfidence}
-                <div style={{ gridArea: "content"
-                    ,width: 250 // FOR DEV
-                    }} className={`rsContent ${data.pol}`}>
+                <div style={{ gridArea: "content" }} className={`rsContent ${data.pol}`}>
                     {[
                         // xPos.toFixed(0), yPos.toFixed(0),
                         // data.scoreNumberText,
@@ -239,25 +237,19 @@ export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
             <Handle type="target"
                 id="relevance"
                 position={Position.Top}
-                style={{ left: 50 - halfStroke + 'px',
-                    height: '25px', color: 'white', width: '25px', backgroundColor: 'white', opacity: 1 // FOR DEV
-                }}
+                style={{ left: 50 - halfStroke + 'px'}}
                 />
 
             <Handle type="source"
                 position={Position.Left}
-                style={{ top: 0,
-                    height: '25px', color: 'white', width: '25px', backgroundColor: 'white', opacity: 1 // FOR DEV
-                }}
+                style={{ top: 0}}
                 />
 
             <Handle
                 type="target"
                 id="confidence"
                 position={Position.Right}
-                style={{ top: 0, 
-                    height: '25px', color: 'white', width: '25px', backgroundColor: 'white', opacity: 1 // FOR DEV
-                }}
+                style={{ top: 0}}
                 isConnectable={true}
             />
         </div>

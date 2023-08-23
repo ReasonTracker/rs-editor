@@ -13,6 +13,7 @@ import ReactFlow, {
 
 import 'reactflow/dist/style.css';
 import './page.css';
+import './page-dev.css';
 import './nodeDisplay.css';
 import './createNodeDialog.css';
 
@@ -200,7 +201,7 @@ function Flow() {
   }
 
   return (
-    <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} ref={reactFlowWrapper}>
+    <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} ref={reactFlowWrapper} className='dev'>
       <div style={{position:"absolute",right:"10px",top:"10px", zIndex:"1",display:"flex",flexDirection:"column"}}>
         <button onClick={data()} style={{margin:10,padding:10}} >data</button>
         <button onClick={logDescendantScores()} style={{margin:10,padding:10}}>descendantScores</button>
