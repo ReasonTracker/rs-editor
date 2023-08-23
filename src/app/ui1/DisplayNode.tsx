@@ -243,6 +243,7 @@ export function DisplayNode(props: NodeProps<DisplayNodeData>) {
             <Handle type="source"
                 position={Position.Left}
                 style={{ top: 0}}
+                isConnectableStart={false}
                 />
 
             <Handle

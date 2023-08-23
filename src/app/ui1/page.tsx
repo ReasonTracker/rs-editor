@@ -136,16 +136,20 @@ function Flow() {
     const currentNodeId = connectingNode.current.nodeId
     const parentClaimId = await rsRepo.getClaimIdBySourceId(currentNodeId)
     
-    // TODO re-implement
-    // add displayEdge to proper handle
-    // const isTarget = connectingNode.current.handleType === 'target';
-
     // Generate ID
     const newClaimId = "claimId-" + newId();
+
+    // add displayEdge to proper handle
+    const affects = connectingNode.current.handleId;
+
+    const newClaimEdgeData = affects 
+      ? { affects, id: `${newClaimId}Edge`, parentId: parentClaimId, childId: newClaimId, pro: pol === "pro" ? true : false }
+      : { } 
+
     
     const actions: Action[] = [
       { type: "add_claim", newData: { id: newClaimId, content: "newClaimText" }, oldData: undefined, dataId: `${newClaimId}` },
-      { type: "add_claimEdge", newData: { id: `${newClaimId}Edge`, parentId: parentClaimId, childId: newClaimId, pro: pol === "pro" ? true : false }, oldData: undefined, dataId: `${newClaimId}Edge` },
+      { type: "add_claimEdge", newData: newClaimEdgeData, oldData: undefined, dataId: `${newClaimId}Edge` },
     ];
     await calculateScoreActions({actions: actions, repository: rsRepo})
 
