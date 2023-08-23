@@ -24,7 +24,7 @@ function EdgeLabel({ transform, label }: { transform: string, label: string }) {
     );
 }
 
-export default function EdgeDisplay(props: EdgeProps<ConfidenceEdgeData | RelevenceEdgeData>) {
+export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | RelevenceEdgeData>) {
     let { style, source, data, target, targetY, targetX, sourceX, sourceY, sourcePosition, targetPosition, id } = props
     sourceX += 4;
     targetX -= 4;

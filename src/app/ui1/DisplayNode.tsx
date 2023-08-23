@@ -3,7 +3,7 @@ import { halfStroke, maxStrokeWidth } from './config';
 import { ConfidenceEdgeData, DisplayNodeData } from './pageData';
 import { Fragment } from 'react';
 
-export function NodeDisplay(props: NodeProps<DisplayNodeData>) {
+export function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
 
     const allSources = useStore((s: ReactFlowState) => {

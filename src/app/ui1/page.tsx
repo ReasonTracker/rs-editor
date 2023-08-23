@@ -14,27 +14,25 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import './page.css';
 import './page-dev.css';
-import './nodeDisplay.css';
+import './displayNode.css';
 import './createNodeDialog.css';
 
 //import pageData from './pageData';
-import { NodeDisplay } from './NodeDisplay';
-import EdgeDisplay from './EdgeDisplay';
+import { DisplayNode } from './DisplayNode';
+import DisplayEdge from './DisplayEdge';
 import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes} from './pageData';
 import CreateNodeDialog from './CreateNodeDialog';
 import { Action, RepositoryLocalPure, calculateScoreActions } from './rs';
 import { rsData } from './rsData';
 import { newId } from '@/reasonScore/newId';
 
-const nodeTypes = { rsNode: NodeDisplay };
-const edgeTypes = { rsEdge: EdgeDisplay };
-
-//const {nodes, edges} = await getEdgesAndNodes( );
+const nodeTypes = { rsNode: DisplayNode };
+const edgeTypes = { rsEdge: DisplayEdge };
 
 function Flow() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]); 
+  const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
+  const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]); 
   const [rsRepo, setRsRepo] = useState(() => {
     console.log('--------------rsRepo created');
     return new RepositoryLocalPure(rsData) 
@@ -55,9 +53,9 @@ function Flow() {
         actions: actions, repository: rsRepo
     })
 
-      const { newNodes, newEdges } = await getEdgesAndNodes(rsRepo);
-      setNodes(newNodes);
-      setEdges(newEdges);
+      const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo);
+      setDisplayNodes(newDisplayNodes);
+      setDisplayEdges(newDisplayEdges);
     }
  
     _getEdgesAndNodes();
@@ -156,9 +154,9 @@ function Flow() {
     const newNodeScore= scores && scores.length > 0 ? scores[0] : undefined;
     if (!newNodeScore) throw new Error("No score found for the given claimId");
     
-    const {newNodes, newEdges } = await getEdgesAndNodes(rsRepo, nodes, edges, position);
-    setNodes((nodes) => nodes.concat(newNodes))
-    setEdges((edges) => edges.concat(newEdges))
+    const {newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges, position);
+    setDisplayNodes((n) => n.concat(newDisplayNodes))
+    setDisplayEdges((e) => e.concat(newDisplayEdges))
 
   }
 
@@ -172,8 +170,8 @@ function Flow() {
       console.log(`rsRepoState childIdsByScoreId: `, Object.keys(rsRepo.rsData.childIdsByScoreId).length)  
       console.log(`rsRepoState claimEdgeIdsByChildId: `, Object.keys(rsRepo.rsData.claimEdgeIdsByChildId).length)  
       console.log(`rsRepoState claimEdgeIdsByParentId: `, Object.keys(rsRepo.rsData.claimEdgeIdsByParentId).length)  
-      console.log(`nodes`, nodes)
-      console.log(`edges`, edges)
+      console.log(`nodes`, displayNodes)
+      console.log(`edges`, displayEdges)
     }      
   }
   const logDescendantScores = () => {
@@ -197,9 +195,9 @@ function Flow() {
 
   // DEV TESTING
   async function runItBack() {
-    const { newNodes, newEdges } = await getEdgesAndNodes(rsRepo, nodes, edges );
-    setNodes(newNodes);
-    setEdges(newEdges);
+    const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges );
+    setDisplayNodes(newDisplayNodes);
+    setDisplayEdges(newDisplayEdges);
   }
 
   return (
@@ -208,22 +206,21 @@ function Flow() {
         <button onClick={data()} style={{margin:10,padding:10}} >data</button>
         <button onClick={logDescendantScores()} style={{margin:10,padding:10}}>descendantScores</button>
         <button onClick={() => runItBack()} style={{margin:10,padding:10}}>getEdgesAndNodes()</button>
-        <button onClick={() => console.log(nodes)} style={{margin:10,padding:10}}>nodes()</button>
-        <button onClick={() => console.log(edges)} style={{margin:10,padding:10}}>edges()</button>
-        <button onClick={() => setNodes(nodes)} style={{margin:10,padding:10}}>setNodes()</button>
-        <button onClick={() => setEdges(edges)} style={{margin:10,padding:10}}>setEdges()</button>
+        <button onClick={() => console.log(displayNodes)} style={{margin:10,padding:10}}>nodes()</button>
+        <button onClick={() => console.log(displayEdges)} style={{margin:10,padding:10}}>edges()</button>
+        <button onClick={() => setDisplayNodes(displayNodes)} style={{margin:10,padding:10}}>setNodes()</button>
+        <button onClick={() => setDisplayEdges(displayEdges)} style={{margin:10,padding:10}}>setEdges()</button>
       </div>
       <CreateNodeDialog 
         open={showCreateNodeDialog} 
         handleClose={handleClose}
         createNode={createNode}
-        // this seems not optimal
         clientX={currentMouseEvent.current.clientX}
         clientY={currentMouseEvent.current.clientY}
         />
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
+        nodes={displayNodes}
+        edges={displayEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         // onConnect={onConnect}

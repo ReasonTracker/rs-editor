@@ -53,14 +53,14 @@ export interface RelevenceEdgeData {
 type ProcessEdgesProps = {
     rsRepo: RepositoryLocalPure,
     targetScore: Score,
-    existingEdges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[]
+    existingDisplayEdges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[]
    }
   
 type ProcessClaimsProps = {
     rsRepo: RepositoryLocalPure,
     targetScore: Score,
     generationItems?: { [key: string]: number },
-    existingNodes: Node<DisplayNodeData>[],
+    existingDisplayNodes: Node<DisplayNodeData>[],
     position?: { x: number, y: number }
   };
 
@@ -109,7 +109,7 @@ const initialPositions: { [key: string]: { x: number, y: number } } = {
     }
 }
 
-export async function processConfidenceEdges({ rsRepo, targetScore, existingEdges}: ProcessEdgesProps) {
+export async function processConfidenceEdges({ rsRepo, targetScore, existingDisplayEdges}: ProcessEdgesProps) {
     // get the score's confidence edges
     const claimEdges = await rsRepo.getClaimEdgesByParentId(targetScore.sourceClaimId);
     const confidenceEdges = claimEdges.filter(ce => ce.affects === "confidence");
@@ -119,9 +119,8 @@ export async function processConfidenceEdges({ rsRepo, targetScore, existingEdge
     const consolidatedStack = stackSpace();
     const scaledTo1Stack = stackSpace();
     // let lastProMain = undefined;
-    let edgesToAdd: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
+    let displayEdgesToAdd: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
     for (const confidenceEdge of confidenceEdges) {
-        // console.log(`confidenceEdge`, confidenceEdge)
         const sourceScore = (await rsRepo.getScoresBySourceId(confidenceEdge.childId))[0];
         const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
         const maxImpact = sourceScore.relevance;
@@ -133,7 +132,7 @@ export async function processConfidenceEdges({ rsRepo, targetScore, existingEdge
         const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
         const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight);
 
-        if (existingEdges.some(edge => edge.id === confidenceEdge.id)) {
+        if (existingDisplayEdges.some(edge => edge.id === confidenceEdge.id)) {
             continue;
         }
         const edge: Edge<ConfidenceEdgeData> = {
@@ -162,19 +161,19 @@ export async function processConfidenceEdges({ rsRepo, targetScore, existingEdge
         lastBottom += maxImpact;
         lastBottom += gutter;
         // lastProMain = sourceScore.proMain;
-        edgesToAdd.push(edge);
+        displayEdgesToAdd.push(edge);
     }
-    return edgesToAdd
+    return displayEdgesToAdd
 }
 
-export async function processRelevanceEdges({ rsRepo, targetScore, existingEdges }: ProcessEdgesProps) {
+export async function processRelevanceEdges({ rsRepo, targetScore, existingDisplayEdges }: ProcessEdgesProps) {
     const claimEdges = await rsRepo.getClaimEdgesByParentId(targetScore.sourceClaimId);
     const relevanceEdges = claimEdges.filter(ce => ce.affects === "relevance");
-    let edgesToAdd: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
+    let displayEdgesToAdd: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = []
     for (const relevanceEdge of relevanceEdges) {
         const sourceScore = (await rsRepo.getScoresBySourceId(relevanceEdge.childId))[0];
         const maxImpact = sourceScore.relevance;
-        if (existingEdges.some(edge => edge.id === relevanceEdge.id)) {
+        if (existingDisplayEdges.some(edge => edge.id === relevanceEdge.id)) {
             continue;
         }
         const edge: Edge<RelevenceEdgeData> = {
@@ -192,16 +191,16 @@ export async function processRelevanceEdges({ rsRepo, targetScore, existingEdges
             }
         };
 
-        edgesToAdd.push(edge);
+        displayEdgesToAdd.push(edge);
     }
-    return edgesToAdd
+    return displayEdgesToAdd
 }
   
 export async function processClaims({
     rsRepo,
     targetScore,
     generationItems = {},
-    existingNodes,
+    existingDisplayNodes,
     position
   }: ProcessClaimsProps) {
     const claim = await rsRepo.getClaim(targetScore.sourceClaimId);
@@ -220,7 +219,7 @@ export async function processClaims({
         scoreNumberText = `${scoreNumber.toString().padStart(2, " ")}%`;
     }
     // end TODO
-    if (existingNodes.some(node => node.id === targetScore.id)) {
+    if (existingDisplayNodes.some(node => node.id === targetScore.id)) {
         return;
     }
     if (!claim) return
@@ -231,7 +230,7 @@ export async function processClaims({
     };
     const cancelOut = stackSpace();
     const cancelOutStacked = cancelOut(targetScore.confidence);
-    let nodesToAdd:Node<DisplayNodeData>[] = [];
+    let displayNodesToAdd:Node<DisplayNodeData>[] = [];
     const node: Node<DisplayNodeData> = {
         id: targetScore.id,
         type: 'rsNode',
@@ -246,15 +245,15 @@ export async function processClaims({
         }
     };
     
-    nodesToAdd.push(node);
+    displayNodesToAdd.push(node);
     generationItems[targetScore.generation] += (maxStrokeWidth * 2) + ((claim?.content?.length || 0) * 1.1);
-    return nodesToAdd
+    return displayNodesToAdd
 }
 
 export async function getEdgesAndNodes(
     rsRepo: RepositoryLocalPure, 
-    existingNodes: Node<DisplayNodeData>[] = [],
-    existingEdges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = [],
+    existingDisplayNodes: Node<DisplayNodeData>[] = [],
+    existingDisplayEdges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = [],
     position?: { x: number, y: number }
     ) {
         let scores: Score[] = [];
@@ -264,14 +263,14 @@ export async function getEdgesAndNodes(
         scores.reverse();
         scores.sort((a, b) => a.proMain ? -1 : 1)
         if (mainScore) scores.unshift(mainScore);
-        let newNodes:Node<DisplayNodeData>[] = [];
-        let newEdges:Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = [];
+        let newDisplayNodes:Node<DisplayNodeData>[] = [];
+        let newDisplayEdges:Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = [];
         for (const targetScore of scores) {
-            const newEdgesFromConfidence = await processConfidenceEdges({rsRepo, targetScore, existingEdges});
-            const newEdgesFromRelevance = await processRelevanceEdges({rsRepo, targetScore, existingEdges});
-            newEdges.push(...newEdgesFromConfidence, ...newEdgesFromRelevance || [])
-            const nodesToAdd = await processClaims({rsRepo, targetScore, existingNodes: existingNodes, position});
-            newNodes.push(...nodesToAdd || [])
+            const newEdgesFromConfidence = await processConfidenceEdges({rsRepo, targetScore, existingDisplayEdges});
+            const newEdgesFromRelevance = await processRelevanceEdges({rsRepo, targetScore, existingDisplayEdges});
+            newDisplayEdges.push(...newEdgesFromConfidence, ...newEdgesFromRelevance || [])
+            const nodesToAdd = await processClaims({rsRepo, targetScore, existingDisplayNodes: existingDisplayNodes, position});
+            newDisplayNodes.push(...nodesToAdd || [])
         }
-        return { newNodes, newEdges }
+        return { newDisplayNodes, newDisplayEdges }
 }
