@@ -61,7 +61,7 @@ type ProcessClaimsProps = {
     targetScore: Score,
     generationItems?: { [key: string]: number },
     existingDisplayNodes: Node<DisplayNodeData>[],
-    position?: { x: number, y: number }
+    newNodePosition?: {id:String,position:{ x: number, y: number} }
   };
 
 const initialPositions: { [key: string]: { x: number, y: number } } = {
@@ -132,9 +132,6 @@ export async function processConfidenceEdges({ rsRepo, targetScore, existingDisp
         const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
         const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight);
 
-        if (existingDisplayEdges.some(edge => edge.id === confidenceEdge.id)) {
-            continue;
-        }
         const edge: Edge<ConfidenceEdgeData> = {
             id: confidenceEdge.id,
             type: "rsEdge",
@@ -173,9 +170,6 @@ export async function processRelevanceEdges({ rsRepo, targetScore, existingDispl
     for (const relevanceEdge of relevanceEdges) {
         const sourceScore = (await rsRepo.getScoresBySourceId(relevanceEdge.childId))[0];
         const maxImpact = sourceScore.relevance;
-        if (existingDisplayEdges.some(edge => edge.id === relevanceEdge.id)) {
-            continue;
-        }
         const edge: Edge<RelevenceEdgeData> = {
             id: relevanceEdge.id,
             type: "rsEdge",
@@ -201,7 +195,7 @@ export async function processClaims({
     targetScore,
     generationItems = {},
     existingDisplayNodes,
-    position
+    newNodePosition
   }: ProcessClaimsProps) {
     const claim = await rsRepo.getClaim(targetScore.sourceClaimId);
     if (!generationItems[targetScore.generation]) generationItems[targetScore.generation] = 0;
@@ -219,15 +213,29 @@ export async function processClaims({
         scoreNumberText = `${scoreNumber.toString().padStart(2, " ")}%`;
     }
     // end TODO
-    if (existingDisplayNodes.some(node => node.id === targetScore.id)) {
-        return;
-    }
     if (!claim) return
 
-    const positionToSet = position || initialPositions[claim.id] || {
-        y: (generationItems[targetScore.generation]),
-        x: (targetScore.generation * 500) + 100,
-    };
+    // get existing node
+    const existingNode = existingDisplayNodes.find(node => node.id === targetScore.id);
+
+    // set position
+    let positionToSet = null;
+    if (targetScore.id === newNodePosition?.id) {
+        positionToSet = newNodePosition.position;
+    }
+    else if (existingNode) {
+        positionToSet = existingNode?.position;
+    }
+    else if (initialPositions[claim.id]) {
+        positionToSet = initialPositions[claim.id];
+    }
+    else {
+        positionToSet = {
+            y: (generationItems[targetScore.generation]),
+            x: (targetScore.generation * 500) + 100, 
+        };
+    }
+
     const cancelOut = stackSpace();
     const cancelOutStacked = cancelOut(targetScore.confidence);
     let displayNodesToAdd:Node<DisplayNodeData>[] = [];
@@ -254,7 +262,7 @@ export async function getEdgesAndNodes(
     rsRepo: RepositoryLocalPure, 
     existingDisplayNodes: Node<DisplayNodeData>[] = [],
     existingDisplayEdges: Edge<ConfidenceEdgeData | RelevenceEdgeData>[] = [],
-    position?: { x: number, y: number }
+    newNodePosition?: { id: String, position: {x: number, y: number} }
     ) {
         let scores: Score[] = [];
         const mainScoreId = (await rsRepo.getScoreRoot(rsData.ScoreRootIds[0]))?.topScoreId;
@@ -269,7 +277,7 @@ export async function getEdgesAndNodes(
             const newEdgesFromConfidence = await processConfidenceEdges({rsRepo, targetScore, existingDisplayEdges});
             const newEdgesFromRelevance = await processRelevanceEdges({rsRepo, targetScore, existingDisplayEdges});
             newDisplayEdges.push(...newEdgesFromConfidence, ...newEdgesFromRelevance || [])
-            const nodesToAdd = await processClaims({rsRepo, targetScore, existingDisplayNodes: existingDisplayNodes, position});
+            const nodesToAdd = await processClaims({rsRepo, targetScore, existingDisplayNodes: existingDisplayNodes, newNodePosition});
             newDisplayNodes.push(...nodesToAdd || [])
         }
         return { newDisplayNodes, newDisplayEdges }

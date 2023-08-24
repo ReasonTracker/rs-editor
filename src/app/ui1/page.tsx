@@ -120,10 +120,21 @@ function Flow() {
   );
 
   // TODO move into separate file
-  const createNode = async (pol: "pro" | "con") => {
+  const createNode = async (isProMain:boolean) => {
     if (!rsRepo) return console.log("no repo state")
     if (!connectingNode.current.nodeId) return console.log("no nodeId")
 
+    // Get parentClaimId
+    const currentNodeId = connectingNode.current.nodeId
+    const parentClaimId = await rsRepo.getClaimIdBySourceId(currentNodeId)
+
+    // Get parent pol
+    const parentPol = displayNodes.find(node => node.id === currentNodeId)?.data.pol
+    const proParent = parentPol === "pro" ? isProMain : !isProMain
+
+    // Generate ID
+    const newClaimId = "claimId-" + newId();
+    
     // Get coordinates
     const { clientX, clientY } = currentMouseEvent.current;
     const { top, left } = connectingNodeCoord.current;
@@ -132,18 +143,11 @@ function Flow() {
       y: clientY - top,
     })
     
-    // Get parentClaimId
-    const currentNodeId = connectingNode.current.nodeId
-    const parentClaimId = await rsRepo.getClaimIdBySourceId(currentNodeId)
-    
-    // Generate ID
-    const newClaimId = "claimId-" + newId();
-
     // add displayEdge to proper handle
     const affects = connectingNode.current.handleId;
 
     const newClaimEdgeData = affects 
-      ? { affects, id: `${newClaimId}Edge`, parentId: parentClaimId, childId: newClaimId, proParent: pol === "pro" ? true : false }
+      ? { affects, id: `${newClaimId}Edge`, parentId: parentClaimId, childId: newClaimId, proParent }
       : { } 
 
     
@@ -158,9 +162,16 @@ function Flow() {
     const newNodeScore= scores && scores.length > 0 ? scores[0] : undefined;
     if (!newNodeScore) throw new Error("No score found for the given claimId");
     
-    const {newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges, position);
-    setDisplayNodes((n) => n.concat(newDisplayNodes))
-    setDisplayEdges((e) => e.concat(newDisplayEdges))
+    // Set newNodePosition
+    const newNodePosition = 
+    {
+      id: newNodeScore.id,
+      position: position
+    }
+
+    const {newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges, newNodePosition);
+    setDisplayNodes(newDisplayNodes)
+    setDisplayEdges(newDisplayEdges)
 
   }
 

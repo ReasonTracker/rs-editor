@@ -1,7 +1,7 @@
 interface NodeDialogProps {
   open: boolean;
   handleClose: () => void;
-  createNode: (pol: "pro" | "con") => void;
+  createNode: (isProMain: boolean) => void;
   clientX: number;
   clientY: number;
 }
@@ -25,10 +25,10 @@ const CreateNode: React.FC<NodeDialogProps> = ({
             </div>
           </div>
           <div className="button-group">
-            <button onClick={() => handleClick("pro")} className="pro btn">
+            <button onClick={() => handleClick(true)} className="pro btn">
               Pro
             </button>
-            <button onClick={() => handleClick("con")} className="con btn">
+            <button onClick={() => handleClick(false)} className="con btn">
               Con
             </button>
           </div>
@@ -37,8 +37,8 @@ const CreateNode: React.FC<NodeDialogProps> = ({
     </div>
   );
 
-  function handleClick(pol: "pro" | "con") {
-    createNode(pol);
+  function handleClick(isProMain: boolean) {
+    createNode(isProMain);
     handleClose();
   }
 };
