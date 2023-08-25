@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { createContext, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -20,7 +20,7 @@ import './createNodeDialog.css';
 //import pageData from './pageData';
 import { DisplayNode } from './DisplayNode';
 import DisplayEdge from './DisplayEdge';
-import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes} from './pageData';
+import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes } from './pageData';
 import CreateNodeDialog from './CreateNodeDialog';
 import { Action, RepositoryLocalPure, calculateScoreActions } from './rs';
 import { rsData } from './rsData';
@@ -29,13 +29,20 @@ import { newId } from '@/reasonScore/newId';
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };
 
+export const DevContext = createContext<boolean>(false);
+
 function Flow() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
-  const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]); 
+  const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]);
+  
+  const [isDev, setIsDev] = useReducer((state:boolean, action: boolean) => {
+    localStorage.setItem("isDev", !state + "");
+    return !state
+  }, localStorage.getItem("isDev") === "true");
+  
   const [rsRepo, setRsRepo] = useState(() => {
-    console.log('--------------rsRepo created');
-    return new RepositoryLocalPure(rsData) 
+    return new RepositoryLocalPure(rsData)
   })
 
   // useEffect call getEdgesAndNodesand put them into setnodes and set edges
@@ -48,16 +55,16 @@ function Flow() {
         { type: "add_claimEdge", newData: { id: "testEdge", parentId: "resedential", childId: "test", proParent: true }, oldData: undefined, dataId: "testEdge" },
         { type: "add_claim", newData: { id: "test2", content: "test" }, oldData: undefined, dataId: "test2" },
         { type: "add_claimEdge", newData: { id: "test2Edge", parentId: "resedential", childId: "test2", proParent: true }, oldData: undefined, dataId: "test2Edge" },
-    ];
-    await calculateScoreActions({
+      ];
+      await calculateScoreActions({
         actions: actions, repository: rsRepo
-    })
+      })
 
       const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo);
       setDisplayNodes(newDisplayNodes);
       setDisplayEdges(newDisplayEdges);
     }
- 
+
     _getEdgesAndNodes();
 
   }, []);
@@ -80,7 +87,7 @@ function Flow() {
   const { project } = useReactFlow();
 
   // TODO: fix 'any' types
-  const onConnectStart = useCallback(async (_: any, {nodeId, handleId, handleType}: any) => {
+  const onConnectStart = useCallback(async (_: any, { nodeId, handleId, handleType }: any) => {
     if (!rsRepo) return console.log("no repo state")
 
     connectingNode.current = {
@@ -91,7 +98,7 @@ function Flow() {
   }, []);
 
   const [showCreateNodeDialog, setCreateNodeDialog] = useState(false);
-  
+
   const handleClose = () => {
     setCreateNodeDialog(false);
   };
@@ -120,7 +127,7 @@ function Flow() {
   );
 
   // TODO move into separate file
-  const createNode = async (isProMain:boolean) => {
+  const createNode = async (isProMain: boolean) => {
     if (!rsRepo) return console.log("no repo state")
     if (!connectingNode.current.nodeId) return console.log("no nodeId")
 
@@ -134,7 +141,7 @@ function Flow() {
 
     // Generate ID
     const newClaimId = "claimId-" + newId();
-    
+
     // Get coordinates
     const { clientX, clientY } = currentMouseEvent.current;
     const { top, left } = connectingNodeCoord.current;
@@ -142,34 +149,34 @@ function Flow() {
       x: clientX - left - 75,
       y: clientY - top,
     })
-    
+
     // add displayEdge to proper handle
     const affects = connectingNode.current.handleId;
 
-    const newClaimEdgeData = affects 
+    const newClaimEdgeData = affects
       ? { affects, id: `${newClaimId}Edge`, parentId: parentClaimId, childId: newClaimId, proParent }
-      : { } 
+      : {}
 
-    
+
     const actions: Action[] = [
       { type: "add_claim", newData: { id: newClaimId, content: "newClaimText" }, oldData: undefined, dataId: `${newClaimId}` },
       { type: "add_claimEdge", newData: newClaimEdgeData, oldData: undefined, dataId: `${newClaimId}Edge` },
     ];
-    await calculateScoreActions({actions: actions, repository: rsRepo})
+    await calculateScoreActions({ actions: actions, repository: rsRepo })
 
     // Get ScoreID
     const scores = await rsRepo.getScoresBySourceId(newClaimId);
-    const newNodeScore= scores && scores.length > 0 ? scores[0] : undefined;
+    const newNodeScore = scores && scores.length > 0 ? scores[0] : undefined;
     if (!newNodeScore) throw new Error("No score found for the given claimId");
-    
+
     // Set newNodePosition
-    const newNodePosition = 
+    const newNodePosition =
     {
       id: newNodeScore.id,
       position: position
     }
 
-    const {newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges, newNodePosition);
+    const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges, newNodePosition);
     setDisplayNodes(newDisplayNodes)
     setDisplayEdges(newDisplayEdges)
 
@@ -180,14 +187,14 @@ function Flow() {
     return async () => {
       if (!rsRepo) return console.log("no repo state")
       console.log(`rsRepoState`, rsRepo)
-      console.log(`rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)  
-      console.log(`rsRepoState ScoreRootIds: `, Object.keys(rsRepo.rsData.ScoreRootIds).length)  
-      console.log(`rsRepoState childIdsByScoreId: `, Object.keys(rsRepo.rsData.childIdsByScoreId).length)  
-      console.log(`rsRepoState claimEdgeIdsByChildId: `, Object.keys(rsRepo.rsData.claimEdgeIdsByChildId).length)  
-      console.log(`rsRepoState claimEdgeIdsByParentId: `, Object.keys(rsRepo.rsData.claimEdgeIdsByParentId).length)  
+      console.log(`rsRepoState items: `, Object.keys(rsRepo.rsData.items).length)
+      console.log(`rsRepoState ScoreRootIds: `, Object.keys(rsRepo.rsData.ScoreRootIds).length)
+      console.log(`rsRepoState childIdsByScoreId: `, Object.keys(rsRepo.rsData.childIdsByScoreId).length)
+      console.log(`rsRepoState claimEdgeIdsByChildId: `, Object.keys(rsRepo.rsData.claimEdgeIdsByChildId).length)
+      console.log(`rsRepoState claimEdgeIdsByParentId: `, Object.keys(rsRepo.rsData.claimEdgeIdsByParentId).length)
       console.log(`nodes`, displayNodes)
       console.log(`edges`, displayEdges)
-    }      
+    }
   }
   const logDescendantScores = () => {
     return async () => {
@@ -203,36 +210,41 @@ function Flow() {
         })
       );
     }
-  } 
-  
+  }
+
   // TODO: What is this doing?
   // const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   // DEV TESTING
   async function runItBack() {
-    const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges );
+    const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges);
     setDisplayNodes(newDisplayNodes);
     setDisplayEdges(newDisplayEdges);
   }
 
   return (
-    <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} ref={reactFlowWrapper} className='dev'>
-      <div style={{position:"absolute",right:"10px",top:"10px", zIndex:"1",display:"flex",flexDirection:"column"}}>
-        <button onClick={data()} style={{margin:10,padding:10}} >data</button>
-        <button onClick={logDescendantScores()} style={{margin:10,padding:10}}>descendantScores</button>
-        <button onClick={() => runItBack()} style={{margin:10,padding:10}}>getEdgesAndNodes()</button>
-        <button onClick={() => console.log(displayNodes)} style={{margin:10,padding:10}}>nodes()</button>
-        <button onClick={() => console.log(displayEdges)} style={{margin:10,padding:10}}>edges()</button>
-        <button onClick={() => setDisplayNodes(displayNodes)} style={{margin:10,padding:10}}>setNodes()</button>
-        <button onClick={() => setDisplayEdges(displayEdges)} style={{margin:10,padding:10}}>setEdges()</button>
+    <DevContext.Provider value={isDev}>
+    <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} ref={reactFlowWrapper} className={isDev ? 'dev' : ''}>
+      <div style={{ position: "absolute", right: "20px", top: "20px", zIndex: "1", display: "flex", flexDirection: "column", gap: "20px" }}>
+        <button onClick={() => setIsDev(!isDev)} style={{ padding: 10, opacity: .5 }}>dev</button>
+        {isDev && <>
+          <button onClick={data()} style={{ padding: 10 }} >data</button>
+          <button onClick={logDescendantScores()} style={{ padding: 10 }}>descendantScores</button>
+          <button onClick={() => runItBack()} style={{ padding: 10 }}>getEdgesAndNodes()</button>
+          <button onClick={() => console.log(displayNodes)} style={{ padding: 10 }}>nodes()</button>
+          <button onClick={() => console.log(displayEdges)} style={{ padding: 10 }}>edges()</button>
+          <button onClick={() => setDisplayNodes(displayNodes)} style={{ padding: 10 }}>setNodes()</button>
+          <button onClick={() => setDisplayEdges(displayEdges)} style={{ padding: 10 }}>setEdges()</button>
+        </>
+        }
       </div>
-      <CreateNodeDialog 
-        open={showCreateNodeDialog} 
+      <CreateNodeDialog
+        open={showCreateNodeDialog}
         handleClose={handleClose}
         createNode={createNode}
         clientX={currentMouseEvent.current.clientX}
         clientY={currentMouseEvent.current.clientY}
-        />
+      />
       <ReactFlow
         nodes={displayNodes}
         edges={displayEdges}
@@ -265,7 +277,8 @@ function Flow() {
           </pattern>
         </defs>
       </svg>
-    </div>
+      </div>
+      </DevContext.Provider>
   );
 }
 

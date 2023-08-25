@@ -1,10 +1,13 @@
 import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { halfStroke, maxStrokeWidth } from './config';
 import { ConfidenceEdgeData, DisplayNodeData } from './pageData';
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
+import { DevContext } from './page';
 
 export function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
+    const isDev = useContext(DevContext);
+
 
     const allSources = useStore((s: ReactFlowState) => {
         const originalSources: Edge<ConfidenceEdgeData>[] = s.edges.filter(
@@ -213,44 +216,45 @@ export function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
     return (
         <div className="rsNode" >
-            <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth}}>
+            <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth }}>
                 {relevance}
                 {cancelOut}
                 {scaleTo1}
                 {consolidate}
                 {weightByConfidence}
                 <div style={{ gridArea: "content" }} className={`rsContent ${data.pol}`}>
-                    {[
-                        // xPos.toFixed(0), yPos.toFixed(0),
-                        // data.scoreNumberText,
-                        // data.score.confidence.toFixed(2),
-                        // "[ " + id + " ]",
-                        // data.claim.content
-                    ].join(" | ")}
-                    {/* For Dev/Debugging */}
-                    <p>scoreId: {data.score.id}</p>
-                    <p>nodeId: {id}</p>
-                    <p>claimId: {data.claim.id}</p>
+                    {isDev ? <>
+                        <p>scoreId: {data.score.id}</p>
+                        <p>nodeId: {id}</p>
+                        <p>claimId: {data.claim.id}</p>
+                    </> : <>
+                        {[
+                            // data.scoreNumberText,
+                            // data.score.confidence.toFixed(2),
+                            // "[ " + id + " ]",
+                            data.claim.content
+                        ].join(" | ")}
+                    </>}
                 </div>
             </div>
 
             <Handle type="target"
                 id="relevance"
                 position={Position.Top}
-                style={{ left: 50 - halfStroke + 'px'}}
-                />
+                style={{ left: 50 - halfStroke + 'px' }}
+            />
 
             <Handle type="source"
                 position={Position.Left}
-                style={{ top: 0}}
+                style={{ top: 0 }}
                 isConnectableStart={false}
-                />
+            />
 
             <Handle
                 type="target"
                 id="confidence"
                 position={Position.Right}
-                style={{ top: 0}}
+                style={{ top: 0 }}
                 isConnectable={true}
             />
         </div>

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, EdgeText, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { halfStroke, maxStrokeWidth } from './config';
 import { ConfidenceEdgeData, RelevenceEdgeData, isConfidenceEdgeData } from './pageData';
+import { DevContext } from './page';
 
 // this is a little helper component to render the actual edge label
 function EdgeLabel({ transform, label }: { transform: string, label: string }) {
@@ -26,6 +27,8 @@ function EdgeLabel({ transform, label }: { transform: string, label: string }) {
 
 export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | RelevenceEdgeData>) {
     let { style, source, data, target, targetY, targetX, sourceX, sourceY, sourcePosition, targetPosition, id } = props
+    const isDev = useContext(DevContext);
+
     sourceX += 4;
     targetX -= 4;
     let newTargetY = targetY;
@@ -50,20 +53,22 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releve
 
     return <g className={'rs-edge ' + data?.pol}>
 
-        {/* /For Dev/Debugging */}
-        <EdgeText
-            labelShowBg={false}
-            x={labelX}
-            y={labelY}
-            label={`edgeId: ${props.id}`}
-            labelStyle={{
-                fill: 'white',
-                textAnchor: 'middle',
-                pointerEvents: 'none',
-                fontWeight: 300,
-                strokeWidth: 0,
-            }}
-        />
+        {isDev &&
+            <EdgeText
+                labelShowBg={false}
+                x={labelX}
+                y={labelY}
+                label={`edgeId: ${props.id}`}
+                labelStyle={{
+                    fill: 'white',
+                    textAnchor: 'middle',
+                    pointerEvents: 'none',
+                    fontWeight: 300,
+                    strokeWidth: 0,
+                    zIndex: -1,
+                }}
+            />
+        }
         <BaseEdge {...props}
             style={{
                 ...(props.style),
