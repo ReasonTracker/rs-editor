@@ -39,7 +39,7 @@ function Flow() {
   const [isDev, setIsDev] = useReducer((state:boolean, action: boolean) => {
     localStorage.setItem("isDev", !state + "");
     return !state
-  }, localStorage.getItem("isDev") === "true");
+  }, typeof window !== 'undefined' ? localStorage.getItem("isDev") === "true": false);
   
   const [rsRepo, setRsRepo] = useState(() => {
     return new RepositoryLocalPure(rsData)
