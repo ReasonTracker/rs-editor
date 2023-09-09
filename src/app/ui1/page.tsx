@@ -9,6 +9,7 @@ import ReactFlow, {
   useReactFlow,
   // addEdge,
   ReactFlowProvider,
+  Node
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -16,12 +17,14 @@ import './page.css';
 import './page-dev.css';
 import './displayNode.css';
 import './createNodeDialog.css';
+import './contextMenu.css';
 
 //import pageData from './pageData';
 import { DisplayNode } from './DisplayNode';
 import DisplayEdge from './DisplayEdge';
 import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes } from './pageData';
 import CreateNodeDialog from './CreateNodeDialog';
+// import ContextMenu from './ContextMenu';
 import { Action, RepositoryLocalPure, calculateScoreActions } from './rs';
 import { rsData } from './rsData';
 import { newId } from '@/reasonScore/newId';
@@ -29,13 +32,27 @@ import { newId } from '@/reasonScore/newId';
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };
 
+type MenuData = {
+  id: string;
+  top: number | "false";
+  left: number | "false";
+  right: number | "false";
+  bottom: number | "false";
+};
+
+export type ContextMenuData = MenuData & {
+  onClick: () => void;
+  rsRepo: RepositoryLocalPure;
+};
+
 export const DevContext = createContext<boolean>(false);
 
 function Flow() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
   const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]);
-  
+  const [menu, setMenu] = useState<MenuData|null>(null);
+  const menuRef = useRef(null);
   const [isDev, setIsDev] = useReducer((state:boolean, action: boolean) => {
     localStorage.setItem("isDev", !state + "");
     return !state
@@ -126,6 +143,7 @@ function Flow() {
     [project]
   );
 
+  // Create Node
   // TODO move into separate file
   const createNode = async (isProMain: boolean) => {
     if (!rsRepo) return console.log("no repo state")
@@ -175,12 +193,52 @@ function Flow() {
       id: newNodeScore.id,
       position: position
     }
-
+    
     const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges, newNodePosition);
     setDisplayNodes(newDisplayNodes)
     setDisplayEdges(newDisplayEdges)
 
   }
+
+  // Context Menu
+  // Move Function to ContextMenu.tsx
+  function ContextMenu({ id, top, left, right, bottom, rsRepo, ...props }: ContextMenuData) {
+    const deleteNode =  useCallback(async() => {
+      const actions: Action[] = [
+        { type: "delete_claim", fillThisIn},
+        { type: "delete_claimEdge", fillThisIn},
+        { type: "delete_score", fillThisIn },
+      ];
+      await calculateScoreActions({ actions: actions, repository: rsRepo })
+      const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges);
+      setDisplayNodes(newDisplayNodes);
+      setDisplayEdges(newDisplayEdges);
+    }, [id, setDisplayNodes, setDisplayEdges]);
+    
+      return (
+        <div style={{ top: top, left: left, right: right, bottom: bottom }} className="context-menu"  {...props}>
+          <button onClick={deleteNode} className="context-btn">delete</button>
+        </div>
+      );
+    }
+
+  const onNodeContextMenu = useCallback(
+    (event: React.MouseEvent, displayNode:Node<DisplayNodeData>) => {
+      event.preventDefault();
+      if (!menuRef.current) return console.log("no menuRef")
+      const pane = (menuRef.current as HTMLElement).getBoundingClientRect();
+      setMenu({
+        id: displayNode.id,
+        top: event.clientY < pane.height - 200 && event.clientY || "false",
+        left: event.clientX < pane.width - 200 && event.clientX || "false",
+        right: event.clientX >= pane.width - 200 && pane.width - event.clientX || "false",
+        bottom: event.clientY >= pane.height - 200 && pane.height - event.clientY || "false",
+      });
+      console.log(event.clientY < pane.height - 200 && event.clientY, event.clientX < pane.width - 200 && event.clientX, event.clientX >= pane.width - 200 && pane.width - event.clientX, event.clientY >= pane.height - 200 && pane.height - event.clientY)
+    },
+    [setMenu]
+  );
+  const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
 
   // DEV LOGGING
   const data = () => {
@@ -246,6 +304,7 @@ function Flow() {
         clientY={currentMouseEvent.current.clientY}
       />
       <ReactFlow
+        ref={menuRef}
         nodes={displayNodes}
         edges={displayEdges}
         onNodesChange={onNodesChange}
@@ -255,6 +314,8 @@ function Flow() {
         edgeTypes={edgeTypes}
         onConnectStart={onConnectStart}
         onConnectEnd={onConnectEnd}
+        onPaneClick={onPaneClick}
+        onNodeContextMenu={onNodeContextMenu}
         fitView
       >
         <Controls
@@ -267,6 +328,7 @@ function Flow() {
           nodeColor={n => `var(--${n.data.pol})`}
           position='bottom-left'
         />
+        {menu && <ContextMenu onClick={onPaneClick} {...menu} rsRepo={rsRepo} />}
       </ReactFlow>
       <svg style={{ height: 0 }}>
         <defs>
