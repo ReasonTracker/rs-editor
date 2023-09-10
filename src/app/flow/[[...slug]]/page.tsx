@@ -22,9 +22,8 @@ import { DisplayNode } from './DisplayNode';
 import DisplayEdge from './DisplayEdge';
 import { ConfidenceEdgeData, DisplayNodeData, RelevenceEdgeData, getEdgesAndNodes } from './pageData';
 import CreateNodeDialog from './CreateNodeDialog';
-import { Action, RepositoryLocalPure, calculateScoreActions } from './rs';
 import { rsData } from './rsData';
-import { newId } from '@/reasonScore/newId';
+import { Action, RepositoryLocalPure, calculateScoreActions, newId } from '@/reasonScore/rs';
 
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };

@@ -1,4 +1,4 @@
-import { RsData } from "./rs";
+import { RsData } from "@/reasonScore/rs";
 
 export const rsData: RsData = {
     "ScoreRootIds": [

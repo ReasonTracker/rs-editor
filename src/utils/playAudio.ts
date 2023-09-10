@@ -8,4 +8,4 @@ async function PlayAudio(filePath: string, pause = true) {
     sampleSource.connect(audioContext.destination)
     sampleSource.start();
     return audioBuffer.duration + (pause ? .5 : 0);
-  }
+}

@@ -1,8 +1,8 @@
 import { rsData } from './rsData';
-import { Action, Claim, ClaimEdge, RepositoryLocalPure, Score, calculateScoreActions, isClaimEdge, isScore } from './rs';
 import { Edge, Node } from 'reactflow';
 import { maxStrokeWidth } from './config';
 import { Stacked, scaleStacked, sizeStacked, stackSpace } from './stackSpace';
+import { Claim, ClaimEdge, RepositoryLocalPure, Score } from '@/reasonScore/rs';
 
 const gutter = .25;
 
