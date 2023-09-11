@@ -205,9 +205,9 @@ function Flow({slug}: { slug: string[] }) {
   function ContextMenu({ id, top, left, right, bottom, rsRepo, ...props }: ContextMenuData) {
     const deleteNode =  useCallback(async() => {
       const actions: Action[] = [
-        { type: "delete_claim", fillThisIn},
-        { type: "delete_claimEdge", fillThisIn},
-        { type: "delete_score", fillThisIn },
+        // { type: "delete_claim", fillThisIn},
+        // { type: "delete_claimEdge", fillThisIn},
+        // { type: "delete_score", fillThisIn },
       ];
       await calculateScoreActions({ actions: actions, repository: rsRepo })
       const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges);
