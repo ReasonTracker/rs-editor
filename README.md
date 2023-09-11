@@ -2,6 +2,7 @@
 
 - [NEXT.js](https://nextjs.org/)
 - [React Flow](https://reactflow.dev/)
+- [React Firebase Hooks - Cloud Firestore](https://github.com/CSFrequency/react-firebase-hooks/tree/master/firestore#react-firebase-hooks---cloud-firestore)
 
 ## Deploy
 deployed to https://rseditor.netlify.app/
