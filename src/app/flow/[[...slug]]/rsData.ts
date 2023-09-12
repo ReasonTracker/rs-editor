@@ -349,7 +349,7 @@ export const rsData: RsData = {
             "costScore",
         ],
         "costEdge": [
-            "Y1ZYuT0q7JV6"
+            "costScore"
         ],
         "footTraffic": [
             "footTrafficScore",
