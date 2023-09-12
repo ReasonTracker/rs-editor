@@ -6,13 +6,6 @@ export const rsData: RsData = {
     ],
     "actionsLog": [],
     "childIdsByScoreId": {
-        "Y1ZYuT1ozBD8": [
-            "Y1ZYuT0bKI5U",
-            "Y1ZYuT0Zkwlc"
-        ],
-        "Y1ZYuT2nraY0": [
-            "Y1ZYuT1V7BaV"
-        ],
         "footTrafficScore": [
             "payoffScore"
         ],
@@ -20,11 +13,6 @@ export const rsData: RsData = {
             "resedentialScore",
             "footTrafficScore",
             "costScore"
-        ],
-        "mainScore": [
-            "Y1ZYuT2nraY0",
-            "Y1ZYuT1ozBD8",
-            "Y1ZYuT0q7JV6"
         ],
         "resedentialScore": [
             "childrenScore",
@@ -353,27 +341,21 @@ export const rsData: RsData = {
     "scoreIdsBySourceId": {
         "children": [
             "childrenScore",
-            "Y1ZYuT0bKI5U"
         ],
         "childrenEdge": [
             "childrenScore",
-            "Y1ZYuT0bKI5U"
         ],
         "cost": [
             "costScore",
-            "Y1ZYuT0q7JV6"
         ],
         "costEdge": [
-            "costScore",
             "Y1ZYuT0q7JV6"
         ],
         "footTraffic": [
             "footTrafficScore",
-            "Y1ZYuT2nraY0"
         ],
         "footTrafficEdge": [
             "footTrafficScore",
-            "Y1ZYuT2nraY0"
         ],
         "mainClaim": [
             "mainClaimScore",
@@ -381,27 +363,21 @@ export const rsData: RsData = {
         ],
         "payoff": [
             "payoffScore",
-            "Y1ZYuT1V7BaV"
         ],
         "payoffEdge": [
             "payoffScore",
-            "Y1ZYuT1V7BaV"
         ],
         "resedential": [
             "resedentialScore",
-            "Y1ZYuT1ozBD8"
         ],
         "resedentialEdge": [
             "resedentialScore",
-            "Y1ZYuT1ozBD8"
         ],
         "traintracks": [
             "traintracksScore",
-            "Y1ZYuT0Zkwlc"
         ],
         "traintracksEdge": [
             "traintracksScore",
-            "Y1ZYuT0Zkwlc"
         ]
     }
 }
