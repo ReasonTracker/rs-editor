@@ -204,10 +204,11 @@ function Flow({slug}: { slug: string[] }) {
   // Move Function to ContextMenu.tsx
   function ContextMenu({ id, top, left, right, bottom, rsRepo, ...props }: ContextMenuData) {
     const deleteNode =  useCallback(async() => {
+      const sourceEdge = await rsRepo.getSourceEdgeIdBySourceId(id)
+      if (!sourceEdge) return console.log("no sourceEdge")
+      const existingClaimEdge = await rsRepo.getClaimEdge(sourceEdge)
       const actions: Action[] = [
-        // { type: "delete_claim", fillThisIn},
-        // { type: "delete_claimEdge", fillThisIn},
-        // { type: "delete_score", fillThisIn },
+        { type: "delete_claimEdge", newData: {}, oldData: existingClaimEdge, dataId: sourceEdge },
       ];
       await calculateScoreActions({ actions: actions, repository: rsRepo })
       const { newDisplayNodes, newDisplayEdges } = await getEdgesAndNodes(rsRepo, displayNodes, displayEdges);

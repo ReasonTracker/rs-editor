@@ -40,6 +40,14 @@ export class RepositoryLocalBase {
         }
         return claimEdges
     }
+    async getSourceEdgeIdBySourceId(sourceId: string): Promise<string | undefined > {
+        if (sourceId in this.rsData.items) {
+            const item = this.rsData.items[sourceId];
+            if ('sourceEdgeId' in item) {
+                return item.sourceEdgeId ? item.sourceEdgeId : undefined;
+            }
+        }
+    }
     async getClaimEdgesByChildId(childId: string): Promise<ClaimEdge[]> {
         const claimEdges: ClaimEdge[] = [];
         const claimEdgeIdStrings = this.rsData.claimEdgeIdsByChildId[childId];
