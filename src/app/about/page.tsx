@@ -2,11 +2,15 @@ export default function Page() {
     return <article >
         <h2>To Do&apos;s</h2>
         <ul >
-            <li>routes have different data</li>
+            <li>Refactor so that:</li>
+            <ul>
+                <li>separate calculable data (scores and indexes) from non-calculable data (claims and connectors)</li>
+                <li>Do we want to separate the data by type to make it easier to mass delete or is the separation of the calculable enough</li>
+            </ul>
             <li>create a new debate</li>
             <li>save data to a local file</li>
             <li>load data from a local file</li>
-            <li>Save data t the cloud</li>
+            <li>Save data to the cloud</li>
             <li>Load data from the cloud</li>
             <li>separate data into calculable, historical, and real(?)</li>
             <li>add video scripting</li>
