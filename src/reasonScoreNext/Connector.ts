@@ -2,7 +2,9 @@ import { newId } from "./newId";
 import { Item } from "./Item";
 
 /**
- * A connector connects two claims in an attack or support of either confidence or relevance.
+ * A connector establishes a relationship between two distinct claims (target and source).
+ * A source claim can either attack or support the confidence or relevance of a target claim.
+ * A connector can only appear in one graph and only once in that graph.
  */
 export interface Connector extends ConnectorRequired, Item {
     type: 'connector'

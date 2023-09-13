@@ -3,7 +3,7 @@ import { Item } from "./Item";
 
 /**
  * A claim is a statement about reality that can be true or false.
- * It is not statement someone has made at a point in time but is instead a claim about reality.
+ * It is usually not a statement someone has made at a point in time but is instead a claim about reality.
  */
 export interface Claim extends Item {
     type: 'claim'
