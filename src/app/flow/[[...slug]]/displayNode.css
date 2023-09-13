@@ -43,3 +43,17 @@
   align-content: start;
   /* outline: 1px solid hsl(0deg 0% 42% / 30%); */
 }
+
+.invisible-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  resize: none;
+  overflow: hidden;
+}
+
+.invisible-input:focus {
+  border-bottom: 1px solid #ccc;
+}

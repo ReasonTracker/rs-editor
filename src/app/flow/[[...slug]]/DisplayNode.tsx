@@ -1,13 +1,20 @@
 import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { halfStroke, maxStrokeWidth } from './config';
 import { ConfidenceEdgeData, DisplayNodeData } from './pageData';
-import { Fragment, useContext } from 'react';
+import { Fragment, useContext, useState } from 'react';
 import { DevContext } from './page';
+import { TextArea } from '@blueprintjs/core';
+import { RsRepoContext } from './page';
 
 export function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
     const isDev = useContext(DevContext);
-
+    const rsRepo = useContext(RsRepoContext)
+    const [nodeText, setNodeText] = useState(data.claim.content);
+    const handleChangeText = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
+        setNodeText(e.target.value);
+        rsRepo.updateClaim(id, e.target.value);
+      };
 
     const allSources = useStore((s: ReactFlowState) => {
         const originalSources: Edge<ConfidenceEdgeData>[] = s.edges.filter(
@@ -228,12 +235,13 @@ export function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         <p>nodeId: {id}</p>
                         <p>claimId: {data.claim.id}</p>
                     </> : <>
-                        {[
-                            // data.scoreNumberText,
-                            // data.score.confidence.toFixed(2),
-                            // "[ " + id + " ]",
-                            data.claim.content
-                        ].join(" | ")}
+                        <TextArea 
+                            className="invisible-input"
+                            value={nodeText} 
+                            onChange={(e) => handleChangeText(e, data.claim.id)}
+                            autoResize
+                            asyncControl
+                        />
                     </>}
                 </div>
             </div>
