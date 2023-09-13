@@ -20,6 +20,10 @@ export class RepositoryLocalBase {
     async getClaim(id: string): Promise<Claim | undefined> {
         return this.rsData.items[id] as Claim;
     }
+    async updateClaim(id:string, text: string): Promise<void> {
+        const claim = this.rsData.items[id] as Claim;
+        if (claim)claim.content = text;
+    }
     async getClaimEdge(id: string): Promise<ClaimEdge | undefined> {
         return this.rsData.items[id] as ClaimEdge;
     }

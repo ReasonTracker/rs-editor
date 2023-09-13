@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { createContext, useCallback, useEffect, useReducer, useRef, useState, useContext } from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -45,6 +45,7 @@ export type ContextMenuData = MenuData & {
 };
 
 export const DevContext = createContext<boolean>(false);
+export const RsRepoContext = createContext<RepositoryLocalPure>(new RepositoryLocalPure(rsData));
 
 function Flow({slug}: { slug: string[] }) {
   console.log(slug)
@@ -58,9 +59,7 @@ function Flow({slug}: { slug: string[] }) {
     return !state
   }, typeof window !== 'undefined' ? localStorage.getItem("isDev") === "true": false);
   
-  const [rsRepo, setRsRepo] = useState(() => {
-    return new RepositoryLocalPure(rsData)
-  })
+  const rsRepo = useContext(RsRepoContext);
 
   // useEffect call getEdgesAndNodesand put them into setnodes and set edges
   useEffect(() => {
@@ -287,6 +286,7 @@ function Flow({slug}: { slug: string[] }) {
         <button onClick={() => setIsDev(!isDev)} style={{ padding: 10, opacity: .5 }}>dev</button>
         {isDev && <>
           <button onClick={data()} style={{ padding: 10 }} >data</button>
+          <button onClick={() => console.log(rsRepo.rsData.items)} style={{ padding: 10 }} >items</button>
           <button onClick={logDescendantScores()} style={{ padding: 10 }}>descendantScores</button>
           <button onClick={() => runItBack()} style={{ padding: 10 }}>getEdgesAndNodes()</button>
           <button onClick={() => console.log(displayNodes)} style={{ padding: 10 }}>nodes()</button>
@@ -345,9 +345,13 @@ function Flow({slug}: { slug: string[] }) {
 }
 
 export default function App({ params }: { params: { slug: string[] } }) {
+  const rsRepo = useContext(RsRepoContext);
+
   return (
     <ReactFlowProvider>
-      <Flow slug={params.slug} />
+      <RsRepoContext.Provider value={rsRepo}>
+        <Flow slug={params.slug} />
+      </RsRepoContext.Provider>
     </ReactFlowProvider>
   );
 }
