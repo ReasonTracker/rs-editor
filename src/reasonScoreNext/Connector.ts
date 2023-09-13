@@ -9,7 +9,7 @@ import { Item } from "./Item";
 export interface Connector extends ConnectorRequired, Item {
     type: 'connector'
     /** indicates if the source claim is attacking (pro:false) or supporting (pro:true) */
-    pro: boolean
+    proTarget: boolean
 
     /** indicates if the source claim is affecting the target claim's confidence or relevance */
     affects: Affects
@@ -33,7 +33,7 @@ export function newConnector(partialItem: Partial<Connector> & ConnectorRequired
         ...partialItem,
         ...itemType,
         id: partialItem.id ?? newId(),
-        pro: partialItem.pro ?? true,
+        proTarget: partialItem.proTarget ?? true,
         affects: partialItem.affects ?? "confidence",
     };
     return newItem

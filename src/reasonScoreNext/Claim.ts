@@ -4,6 +4,7 @@ import { Item } from "./Item";
 /**
  * A claim is a statement about reality that can be true or false.
  * It is usually not a statement someone has made at a point in time but is instead a claim about reality.
+ * A claim can exist only once in a single debate (for now) it can be a source for multiple connectors.
  */
 export interface Claim extends Item {
     type: 'claim'
