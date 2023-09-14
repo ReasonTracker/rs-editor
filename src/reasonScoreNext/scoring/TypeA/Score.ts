@@ -13,11 +13,7 @@ export interface Score extends ScoreRequired, Omit<Item, 'type'> {
 
 }
 
-export interface ScoreRequired extends ScoreBase {
-    /** pro field from the connector */
-    pro: boolean
-
-}
+export interface ScoreRequired extends ScoreBase {} // TODO: nothing reqired yet. consider removing
 
 /** Populates defaults */
 export function getNewScore(partialItem: Partial<Score> & ScoreRequired): Score {

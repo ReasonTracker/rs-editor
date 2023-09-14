@@ -15,7 +15,7 @@ export interface Connector extends ConnectorRequired, Item {
     affects: Affects
 }
 
-interface ConnectorRequired {
+export interface ConnectorRequired {
     /** the id of the claim that is being attacked or supported. */
     target: string
 
