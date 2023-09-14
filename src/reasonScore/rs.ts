@@ -8,6 +8,6 @@ export * from "./repositories/RepositoryLocalPure";
 export * from "./Item";
 export * from "./hasItemChanged";
 export * from "./calculateScore";
-export * from "./iRepository";
+export * from "./repositories/iRepository";
 export * from "./calculateScoreActions";
 export * from "./newId";

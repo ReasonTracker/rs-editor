@@ -99,22 +99,5 @@ export class RepositoryLocalBase {
         }
         return scores
     }
-    async getLeafScoresById(mainScoreId: string): Promise<Score[]> {
-        // TODO: This assumes no loops in the tree
-        const scores: Score[] = [];
-        const scoresToProcess = await this.getChildrenByScoreId(mainScoreId);
-        while (scoresToProcess.length > 0) {
-            const currentScore = scoresToProcess.pop();
-            if (currentScore) {
-                const children = await this.getChildrenByScoreId(currentScore.id);
-                if (children.length === 0) {
-                    scores.push(currentScore);
-                }
-                scoresToProcess.push(...children)
-            }
-        }
-        return scores
-    }
-    public readonly log: Action[][] = [];
 
 }

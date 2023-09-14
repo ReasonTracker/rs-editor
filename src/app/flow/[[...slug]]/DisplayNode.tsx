@@ -14,7 +14,7 @@ export function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const handleChangeText = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
         setNodeText(e.target.value);
         rsRepo.updateClaim(id, e.target.value);
-      };
+    };
 
     const allSources = useStore((s: ReactFlowState) => {
         const originalSources: Edge<ConfidenceEdgeData>[] = s.edges.filter(
@@ -235,9 +235,9 @@ export function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         <p>nodeId: {id}</p>
                         <p>claimId: {data.claim.id}</p>
                     </> : <>
-                        <TextArea 
+                        <TextArea
                             className="invisible-input"
-                            value={nodeText} 
+                            value={nodeText}
                             onChange={(e) => handleChangeText(e, data.claim.id)}
                             autoResize
                             asyncControl
