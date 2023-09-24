@@ -8,42 +8,35 @@ import ReactFlow, {
   Controls,
   Edge,
   Node,
+  useEdges,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
 import Sidebar from "./Sidebar";
 
 import "./style.css";
+import { FlowProvider, useEdgesDispatch, useNodes, useNodesDispatch } from "./FlowContext";
 
-const initialNodes: Node[] = [
-  {
-    id: "provider-1",
-    type: "input",
-    data: { label: "Node 1" },
-    position: { x: 250, y: 5 },
-  },
-  { id: "provider-2", data: { label: "Node 2" }, position: { x: 100, y: 100 } },
-  { id: "provider-3", data: { label: "Node 3" }, position: { x: 400, y: 100 } },
-  { id: "provider-4", data: { label: "Node 4" }, position: { x: 400, y: 200 } },
-];
 
-const initialEdges: Edge[] = [
-  {
-    id: "provider-e1-2",
-    source: "provider-1",
-    target: "provider-2",
-    animated: true,
-  },
-  { id: "provider-e1-3", source: "provider-1", target: "provider-3" },
-];
 
 const ProviderFlow = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const onConnect = useCallback(
-    (params: any) => setEdges((els) => addEdge(params, els)),
-    []
-  );
+    const [nodes2, setNewEdges, OnEdgesChange] = useEdgesState<Edge[]>([]);
+    const [edges2, setNewNodes, OnNodesChange] = useNodesState<Node[]>([]);
+    const nodes = useNodes();
+    const edges = useEdges();
+    const nodesDispatch = useNodesDispatch();
+    const edgesDispatch = useEdgesDispatch();
+
+    useEffect(() => {
+    setNewEdges(edges)
+    setNewNodes(nodes)
+    },[])
+    
+    const onConnect = useCallback(
+        (params) => edgesDispatch({ type: "addEdge", payload: params }),
+        [edgesDispatch]
+      );
+
   const [nodeName, setNodeName] = useState("Node 1");
   const [nodeBg, setNodeBg] = useState("#eee");
   const [nodeHidden, setNodeHidden] = useState(false);
@@ -51,62 +44,62 @@ const ProviderFlow = () => {
   //
   // Updating a node
   //
-  useEffect(() => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        // @ts-ignore
-        if (node.data.label === nodeName) {
-          // it's important that you create a new object here
-          // in order to notify react flow about the change
-          node.data = {
-            ...node.data,
-            // @ts-ignore
-            label: nodeName,
-          };
-        }
+//   useEffect(() => {
+//     setNodes((nds) =>
+//       nds.map((node) => {
+//         // @ts-ignore
+//         if (node.data.label === nodeName) {
+//           // it's important that you create a new object here
+//           // in order to notify react flow about the change
+//           node.data = {
+//             ...node.data,
+//             // @ts-ignore
+//             label: nodeName,
+//           };
+//         }
 
-        return node;
-      })
-    );
-  }, [nodeName, setNodes]);
+//         return node;
+//       })
+//     );
+//   }, [nodeName, setNodes]);
 
-  useEffect(() => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        // @ts-ignore
-        if (node.data.label === nodeName) {
-          // it's important that you create a new object here
-          // in order to notify react flow about the change
-          node.style = { ...node.style, backgroundColor: nodeBg };
-        }
+//   useEffect(() => {
+//     setNodes((nds) =>
+//       nds.map((node) => {
+//         // @ts-ignore
+//         if (node.data.label === nodeName) {
+//           // it's important that you create a new object here
+//           // in order to notify react flow about the change
+//           node.style = { ...node.style, backgroundColor: nodeBg };
+//         }
 
-        return node;
-      })
-    );
-  }, [nodeBg, setNodes]);
+//         return node;
+//       })
+//     );
+//   }, [nodeBg, setNodes]);
 
-  useEffect(() => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        // @ts-ignore
-        if (node.data.label === nodeName) {
-          // when you update a simple type you can just update the value
-          node.hidden = nodeHidden;
-        }
+//   useEffect(() => {
+//     setNodes((nds) =>
+//       nds.map((node) => {
+//         // @ts-ignore
+//         if (node.data.label === nodeName) {
+//           // when you update a simple type you can just update the value
+//           node.hidden = nodeHidden;
+//         }
 
-        return node;
-      })
-    );
-    setEdges((eds) =>
-      eds.map((edge) => {
-        if (edge.id === "e1-2") {
-          edge.hidden = nodeHidden;
-        }
+//         return node;
+//       })
+//     );
+//     setEdges((eds) =>
+//       eds.map((edge) => {
+//         if (edge.id === "e1-2") {
+//           edge.hidden = nodeHidden;
+//         }
 
-        return edge;
-      })
-    );
-  }, [nodeHidden, setNodes, setEdges]);
+//         return edge;
+//       })
+//     );
+//   }, [nodeHidden, setNodes, setEdges]);
 
   return (
     <div className="providerflow">
@@ -115,8 +108,8 @@ const ProviderFlow = () => {
           <ReactFlow
             nodes={nodes}
             edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
+            onNodesChange={OnNodesChange}
+            onEdgesChange={OnEdgesChange}
             onConnect={onConnect}
             fitView
           >
@@ -124,6 +117,8 @@ const ProviderFlow = () => {
           </ReactFlow>
         </div>
         <div className="updatenode__controls">
+            <label>addNode:</label>
+            <button onClick={() => nodesDispatch({ type: "addNode" })}>add node</button>
           <label className="updatenode__bglabel">background:</label>
 
           <label>label:</label>
@@ -146,10 +141,21 @@ const ProviderFlow = () => {
             />
           </div>
         </div>
-        <Sidebar nodes={nodes} setNodes={setNodes} />
+        {/* <Sidebar nodes={nodes} setNodes={setNodes} /> */}
       </ReactFlowProvider>
     </div>
   );
 };
 
-export default ProviderFlow;
+export default function App({ params }: { params: { slug: string[] } }) {
+  
+    return (
+      <ReactFlowProvider>
+        <FlowProvider>
+          <ProviderFlow />
+        </FlowProvider>
+      </ReactFlowProvider>
+    );
+  }
+
+
