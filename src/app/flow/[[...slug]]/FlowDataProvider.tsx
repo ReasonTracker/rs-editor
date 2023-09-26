@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useReducer, useState } from 'react';
-import { useEdgesState, useNodesState } from 'reactflow';
+import { useEdgesState, useNodesState, useReactFlow } from 'reactflow';
 import { DisplayNodeData, ConfidenceEdgeData, RelevenceEdgeData } from './pageData';
 import { ActionTypes } from '@/reasonScoreNext/ActionTypes';
 import { flowDataReducer } from './flowDataReducer';
@@ -10,16 +10,16 @@ const FlowDataContext = createContext<FlowDataState | undefined>(initialArg);
 
 
 export function FlowDataProvider({ children }: { children: ReactNode[] }) {
-  const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
-  const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]);
+
+  const { setNodes, setEdges } = useReactFlow();
   const [debateData, setDebateData] = useState<DebateData>({claims:{}, connectors:{} })
 
   async function dispatch(actions: ActionTypes[]) {
-    flowDataReducer({ actions, setDisplayNodes, setDisplayEdges, setDebateData })
+    flowDataReducer({ actions, setDebateData })
   }
 
   return (
-    <FlowDataContext.Provider value={{ dispatch, displayNodes, displayEdges, onNodesChange, onEdgesChange }}>
+    <FlowDataContext.Provider value={dispatch}>
       {children}
     </FlowDataContext.Provider>
   );

@@ -1,0 +1,37 @@
+.react-flow {
+  height: 100vh !important;
+  background-color: lightgray;
+}
+.providerflow aside {
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  border-left: 1px solid #eee;
+  padding: 15px 10px;
+  font-size: 12px;
+  background: #fff;
+  width: 100%;
+  color: black;
+}
+
+.providerflow aside .description {
+  margin-bottom: 10px;
+}
+
+.providerflow aside .title {
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.providerflow aside .transform {
+  margin-bottom: 20px;
+}
+
+.providerflow .selectall {
+  margin-top: 10px;
+}
+
+.providerflow .buttons button {
+  margin: 5px;
+  padding: 5px;
+}
