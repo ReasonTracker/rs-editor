@@ -20,7 +20,7 @@ export function flowDataReducer({ actions, setDisplayNodes, setDisplayEdges, set
         const newDebateData = rsReducer(actions, oldDebateData);
         console.log(`newDebateData`, newDebateData);
         const newScores = calculateScores(newDebateData);
-console.log(`newScores`, newScores);
+        console.log(`newScores`, newScores);
         // TODO: Figure out new nodes and new edges
         setDisplayNodes((oldNodes) => oldNodes);
         setDisplayEdges((oldEdges) => oldEdges);
