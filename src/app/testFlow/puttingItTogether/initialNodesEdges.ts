@@ -36,7 +36,7 @@ import { Connector, newConnector } from "@/reasonScoreNext/Connector";
 //   ];
   
 
-  export const initialDebateData = {
+export const initialDebateData = {
     claims: [
         newClaim({
             content: "Cats are better pets than dogs."
@@ -48,7 +48,6 @@ import { Connector, newConnector } from "@/reasonScoreNext/Connector";
     connectors: [] as Connector[]
 };
 
-// Establish a relationship using a Connector
 const claim1Id = initialDebateData.claims[0].id;
 const claim2Id = initialDebateData.claims[1].id;
 
@@ -79,8 +78,8 @@ export const initialNodes = [
 export const initialEdges = [
   {
     id: "edge-" + connector.id,
-    source: claim1Id,  // This will be the ID of the claim that is doing the attacking or supporting
-    target: claim2Id,  // This will be the ID of the claim that is being attacked or supported
+    source: claim1Id,
+    target: claim2Id,
     animated: true,
   }
 ];
