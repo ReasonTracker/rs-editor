@@ -1,5 +1,5 @@
 'use client';
-import { FlowDataProvider } from '../flow/[[...slug]]/FlowDataProvider'
+import { FlowDataProvider } from './FlowDataProvider'
 import SubCom from './SubCom';
 
 export default function Home() {

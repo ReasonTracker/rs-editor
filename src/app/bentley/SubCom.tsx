@@ -1,6 +1,6 @@
 'use client';
 import ReactFlow from 'reactflow';
-import { FlowDataContext } from '../flow/[[...slug]]/FlowDataProvider'
+import { FlowDataContext } from './FlowDataProvider'
 import { useContext } from 'react';
 import { DisplayNode } from '../flow/[[...slug]]/DisplayNode';
 import DisplayEdge from '../flow/[[...slug]]/DisplayEdge';
@@ -13,7 +13,6 @@ export default function SubCom() {
 
   const x = useContext(FlowDataContext);
 
-  console.log(x);
 
   return (<>
     {x && <>
