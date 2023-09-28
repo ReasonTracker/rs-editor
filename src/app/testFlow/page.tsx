@@ -5,11 +5,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <h1>Tests</h1>
-      <Link href="/testFlow/reactFlowProvider">reactFlowProvider</Link>
-      <Link href="/testFlow/dataProvider">dataProvider</Link>
-      <Link href="/testFlow/testFlow">testFlow</Link>
-      <Link href="/testFlow/puttingItTogether">puttingItTogether</Link>
-
+      <Link href="/testFlow/working">working</Link>
     </main>
   )
 }
