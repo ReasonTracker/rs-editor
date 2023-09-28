@@ -47,18 +47,18 @@ export type ContextMenuData = MenuData & {
 export const DevContext = createContext<boolean>(false);
 export const RsRepoContext = createContext<RepositoryLocalPure>(new RepositoryLocalPure(rsData));
 
-function Flow({slug}: { slug: string[] }) {
+function Flow({ slug }: { slug: string[] }) {
   console.log(slug)
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
   const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]);
-  const [menu, setMenu] = useState<MenuData|null>(null);
+  const [menu, setMenu] = useState<MenuData | null>(null);
   const menuRef = useRef(null);
-  const [isDev, setIsDev] = useReducer((state:boolean, action: boolean) => {
+  const [isDev, setIsDev] = useReducer((state: boolean, action: boolean) => {
     localStorage.setItem("isDev", !state + "");
     return !state
-  }, typeof window !== 'undefined' ? localStorage.getItem("isDev") === "true": false);
-  
+  }, typeof window !== 'undefined' ? localStorage.getItem("isDev") === "true" : false);
+
   const rsRepo = useContext(RsRepoContext);
 
   // useEffect call getEdgesAndNodesand put them into setnodes and set edges
@@ -202,7 +202,7 @@ function Flow({slug}: { slug: string[] }) {
   // Context Menu
   // Move Function to ContextMenu.tsx
   function ContextMenu({ id, top, left, right, bottom, rsRepo, ...props }: ContextMenuData) {
-    const deleteNode =  useCallback(async() => {
+    const deleteNode = useCallback(async () => {
       const sourceEdge = await rsRepo.getSourceEdgeIdBySourceId(id)
       if (!sourceEdge) return console.log("no sourceEdge")
       const existingClaimEdge = await rsRepo.getClaimEdge(sourceEdge)
@@ -214,16 +214,16 @@ function Flow({slug}: { slug: string[] }) {
       setDisplayNodes(newDisplayNodes);
       setDisplayEdges(newDisplayEdges);
     }, [id, setDisplayNodes, setDisplayEdges]);
-    
-      return (
-        <div style={{ top: top, left: left, right: right, bottom: bottom }} className="context-menu"  {...props}>
-          <button onClick={deleteNode} className="context-btn">delete</button>
-        </div>
-      );
-    }
+
+    return (
+      <div style={{ top: top, left: left, right: right, bottom: bottom }} className="context-menu"  {...props}>
+        <button onClick={deleteNode} className="context-btn">delete</button>
+      </div>
+    );
+  }
 
   const onNodeContextMenu = useCallback(
-    (event: React.MouseEvent, displayNode:Node<DisplayNodeData>) => {
+    (event: React.MouseEvent, displayNode: Node<DisplayNodeData>) => {
       event.preventDefault();
       if (!menuRef.current) return console.log("no menuRef")
       const pane = (menuRef.current as HTMLElement).getBoundingClientRect();
@@ -281,66 +281,66 @@ function Flow({slug}: { slug: string[] }) {
 
   return (
     <DevContext.Provider value={isDev}>
-    <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} ref={reactFlowWrapper} className={isDev ? 'dev' : ''}>
-      <div style={{ position: "absolute", right: "20px", top: "20px", zIndex: "1", display: "flex", flexDirection: "column", gap: "20px" }}>
-        <button onClick={() => setIsDev(!isDev)} style={{ padding: 10, opacity: .5 }}>dev</button>
-        {isDev && <>
-          <button onClick={data()} style={{ padding: 10 }} >data</button>
-          <button onClick={() => console.log(rsRepo.rsData.items)} style={{ padding: 10 }} >items</button>
-          <button onClick={logDescendantScores()} style={{ padding: 10 }}>descendantScores</button>
-          <button onClick={() => runItBack()} style={{ padding: 10 }}>getEdgesAndNodes()</button>
-          <button onClick={() => console.log(displayNodes)} style={{ padding: 10 }}>nodes()</button>
-          <button onClick={() => console.log(displayEdges)} style={{ padding: 10 }}>edges()</button>
-          <button onClick={() => setDisplayNodes(displayNodes)} style={{ padding: 10 }}>setNodes()</button>
-          <button onClick={() => setDisplayEdges(displayEdges)} style={{ padding: 10 }}>setEdges()</button>
-        </>
-        }
-      </div>
-      <CreateNodeDialog
-        open={showCreateNodeDialog}
-        handleClose={handleClose}
-        createNode={createNode}
-        clientX={currentMouseEvent.current.clientX}
-        clientY={currentMouseEvent.current.clientY}
-      />
-      <ReactFlow
-        ref={menuRef}
-        nodes={displayNodes}
-        edges={displayEdges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        // onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        onConnectStart={onConnectStart}
-        onConnectEnd={onConnectEnd}
-        onPaneClick={onPaneClick}
-        onNodeContextMenu={onNodeContextMenu}
-        fitView
-      >
-        <Controls
-          position='top-left'
+      <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} ref={reactFlowWrapper} className={isDev ? 'dev' : ''}>
+        <div style={{ position: "absolute", right: "20px", top: "20px", zIndex: "1", display: "flex", flexDirection: "column", gap: "20px" }}>
+          <button onClick={() => setIsDev(!isDev)} style={{ padding: 10, opacity: .5 }}>dev</button>
+          {isDev && <>
+            <button onClick={data()} style={{ padding: 10 }} >data</button>
+            <button onClick={() => console.log(rsRepo.rsData.items)} style={{ padding: 10 }} >items</button>
+            <button onClick={logDescendantScores()} style={{ padding: 10 }}>descendantScores</button>
+            <button onClick={() => runItBack()} style={{ padding: 10 }}>getEdgesAndNodes()</button>
+            <button onClick={() => console.log(displayNodes)} style={{ padding: 10 }}>nodes()</button>
+            <button onClick={() => console.log(displayEdges)} style={{ padding: 10 }}>edges()</button>
+            <button onClick={() => setDisplayNodes(displayNodes)} style={{ padding: 10 }}>setNodes()</button>
+            <button onClick={() => setDisplayEdges(displayEdges)} style={{ padding: 10 }}>setEdges()</button>
+          </>
+          }
+        </div>
+        <CreateNodeDialog
+          open={showCreateNodeDialog}
+          handleClose={handleClose}
+          createNode={createNode}
+          clientX={currentMouseEvent.current.clientX}
+          clientY={currentMouseEvent.current.clientY}
         />
-        <MiniMap
-          maskColor='rgb(240, 240, 240, 0.3)'
-          pannable
-          zoomable
-          nodeColor={n => `var(--${n.data.pol})`}
-          position='bottom-left'
-        />
-        {menu && <ContextMenu onClick={onPaneClick} {...menu} rsRepo={rsRepo} />}
-      </ReactFlow>
-      <svg style={{ height: 0 }}>
-        <defs>
-          <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
-            <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />
-            <path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' />
-            <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
-          </pattern>
-        </defs>
-      </svg>
+        <ReactFlow
+          ref={menuRef}
+          nodes={displayNodes}
+          edges={displayEdges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          // onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          onConnectStart={onConnectStart}
+          onConnectEnd={onConnectEnd}
+          onPaneClick={onPaneClick}
+          onNodeContextMenu={onNodeContextMenu}
+          fitView
+        >
+          <Controls
+            position='top-left'
+          />
+          <MiniMap
+            maskColor='rgb(240, 240, 240, 0.3)'
+            pannable
+            zoomable
+            nodeColor={n => `var(--${n.data.pol})`}
+            position='bottom-left'
+          />
+          {menu && <ContextMenu onClick={onPaneClick} {...menu} rsRepo={rsRepo} />}
+        </ReactFlow>
+        <svg style={{ height: 0 }}>
+          <defs>
+            <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
+              <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />
+              <path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' />
+              <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
+            </pattern>
+          </defs>
+        </svg>
       </div>
-      </DevContext.Provider>
+    </DevContext.Provider>
   );
 }
 
