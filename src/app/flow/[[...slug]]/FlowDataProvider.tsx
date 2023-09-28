@@ -18,11 +18,11 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
   const [debateData, setDebateData] = useState<DebateData>({claims:{}, connectors:{} })
 
   async function dispatch(actions: ActionTypes[]) {
-    flowDataReducer({ actions, setDebateData })
+    flowDataReducer({ actions, setDisplayNodes, setDisplayEdges, setDebateData })
   }
 
   return (
-    <FlowDataContext.Provider value={{ dispatch }}>
+    <FlowDataContext.Provider value={{ dispatch, displayNodes, displayEdges, onNodesChange, onEdgesChange }}>
       {children}
     </FlowDataContext.Provider>
   );
@@ -35,5 +35,3 @@ export type FlowDataState = {
   onNodesChange: OnChange<NodeChange>,
   onEdgesChange: OnChange<EdgeChange>,
 }
-
-
