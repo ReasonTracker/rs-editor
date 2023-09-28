@@ -47,3 +47,8 @@
   font-weight: bolder;
   cursor: pointer; /* changes the cursor to a hand on hover */
 }
+
+.context-container {
+  max-height: 250px;
+  overflow-y: auto;
+}

@@ -1,143 +1,137 @@
 "use client";
-import React, { useCallback, useContext, useState } from "react";
-import { useStore, Node, useReactFlow } from "reactflow";
+import React, { useContext, useEffect, useState } from "react";
+import { useReactFlow } from "reactflow";
 import { FlowDataContext } from "./DataProvider";
+import { newClaim } from "@/reasonScoreNext/Claim";
+import generateSimpleAnimalClaim from "./utils/generateClaimContent";
+import { ClaimActions } from "@/reasonScoreNext/ActionTypes";
+import { DebateData } from "@/reasonScoreNext/DebateData";
 
 type transformSelector = (state: any) => any;
 const transformSelector: transformSelector = (state) => state.transform;
 
 export const Sidebar = () => {
-  const { getNodes, setNodes } = useReactFlow();
+  const [selectedClaim, setSelectedClaim] = useState("");
+  const [claimContent, setClaimContent] = useState("");
+
+  const { getNodes, getViewport } = useReactFlow();
   const nodes = getNodes();
-  console.log("nodes", nodes)
 
-  const [selectedNode, setSelectedNode] = useState(
-    nodes.length > 0 ? nodes[0].id : ""
+  const { dispatch, debateData } = useContext(FlowDataContext);
+  const [displayDebateData, setDisplayDebateData] = useState<DebateData | null>(
+    null
   );
-  const [label, setLabel] = useState(
-    nodes.length > 0 ? nodes[0].data.label : ""
-  );
-  const { dispatch } = useContext(FlowDataContext);
-  const [claim, setClaim] = useState("");
 
-  const updateContextAndLabel = () => {
-    // Update node label
-    setNodes((currentNodes) =>
-      currentNodes.map((node) => {
-        if (node.id === selectedNode) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              label: label,
-            },
-          };
-        }
-        return node;
-      })
-    );
-    console.log("updateContextAndLabel", selectedNode, label);
+  useEffect(() => {
+    setDisplayDebateData(debateData);
+  }, [debateData]);
 
-    // Update context
-    // const updatedContext = { ...context };
+  const updateClaim = () => {
+    dispatch([
+      {
+        type: "modify",
+        newData: {
+          type: "claim",
+          id: selectedClaim,
+          content: claimContent,
+        },
+      },
+    ]);
+  };
+  const addNode = () => {
+    const newClaimData = newClaim({ content: generateSimpleAnimalClaim() });
+    const claimAction = {
+      type: "add",
+      newData: newClaimData,
+    };
 
-    // if (updatedContext[selectedNode]) {
-    //   updatedContext[selectedNode].claim = claim;
-    // } else {
-    //   updatedContext[selectedNode] = { claim: claim };
-    // }
-
-    // setContext(updatedContext);
+    dispatch([claimAction]);
   };
 
   return (
     <aside className="internalState">
-      <div className="description">
-        <div>
-          This is an example of how you can access additional context and the
-          internal state outside of the ReactFlow component.
-        </div>
-      </div>
-
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "space-evenly",
           alignItems: "center",
         }}
       >
         {/* Nodes */}
-        <div>
-          <div className="title">Nodes</div>
-          {nodes.map((node) => (
-            <div key={node.id}>
-              <span>{node.id}: </span>
-              <span>{node.data.label}</span>
-            </div>
-          ))}
+        <div className="context-container">
+          <div className="title">React Nodes {Object.keys(nodes).length}</div>
+          <pre>{JSON.stringify(nodes, null, 2)}</pre>
         </div>
 
-        {/* Context */}
-        <div>
-          {" "}
-          <div className="title">Context</div>
+        <div className="context-container">
+          <div className="title">
+            Debate Data{" "}
+            {
+              Object.keys(displayDebateData ? displayDebateData.claims : {})
+                .length
+            }
+          </div>
           <div>
-            {/* context: <pre>{JSON.stringify(context, null, 2)}</pre> */}
+            {displayDebateData ? (
+              <pre>{JSON.stringify(displayDebateData, null, 2)}</pre>
+            ) : null}
           </div>
         </div>
 
-        {/* Update Nodes Form */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          <select
-            value={selectedNode}
-            onChange={(e) => {
-              setSelectedNode(e.target.value);
-              const node = nodes.find((n) => n.id === e.target.value);
-              if (node) {
-                setLabel(node.data.label);
-              }
-              // if (context[e.target.value]) {
-              //   setClaim(context[e.target.value].claim);
-              // } else {
-              //   setClaim("");
-              // }
+        {/* Update Nodes */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <button
+            onClick={addNode}
+            style={{ width: "150px", marginBottom: "50px", padding: "10px" }}
+          >
+            Add Node
+          </button>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            {nodes.map((node) => (
-              <option key={node.id} value={node.id}>
-                {node.data.label}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            value={label}
-            placeholder="Update label"
-            onChange={(e) => setLabel(e.target.value)}
-          />
-          <input
-            type="text"
-            value={claim}
-            placeholder="Enter a claim"
-            onChange={(e) => setClaim(e.target.value)}
-          />
-          <button onClick={updateContextAndLabel}>UPDATE</button>
+            {/* Update Nodes Form */}
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+            >
+              <select
+                value={selectedClaim}
+                onChange={(e) => {
+                  setSelectedClaim(e.target.value);
+                  const claim = debateData.claims[e.target.value];
+                  if (claim) {
+                    setClaimContent(claim.content);
+                  }
+                }}
+              >
+                <option value="" disabled>
+                  Select a node
+                </option>
+                {nodes.map((node) => (
+                  <option key={node.id} value={node.id}>
+                    {node.data.label}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={claimContent}
+                placeholder="Enter a claim"
+                onChange={(e) => setClaimContent(e.target.value)}
+              />
+              <button onClick={updateClaim}>UPDATE CLAIM</button>
+            </div>
+          </div>
         </div>
-
-        {/* Buttons */}
-        {/* <div className="buttons">
-          <div>
-            <button onClick={() => console.log(getNodes())}>
-              console getNodes()
-            </button>
-          </div>
-          <div>
-            <button onClick={() => console.log(context)}>
-              console context
-            </button>
-          </div>
-        </div> */}
-        
       </div>
     </aside>
   );

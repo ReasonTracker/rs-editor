@@ -19,6 +19,7 @@ function ApplyItemActions<T extends Item>(index: { [id: string]: T }, actions: g
     if (actions.length === 0) return index;
     const newIndex = { ...index };
     actions.forEach(action => {
+        console.log(`action: ${JSON.stringify(action)}`);
         if (action.type === `add`) {
             newIndex[action.newData.id] = action.newData;
         } else if (action.type === `modify`) {
