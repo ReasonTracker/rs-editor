@@ -1,3 +1,4 @@
+import { log } from "console";
 import { ActionTypes, ClaimActions, ConnectorActions, ItemAction, generateItemActionType, hasItemData } from "./ActionTypes";
 import { Claim, isClaim } from "./Claim";
 import { Connector, isConnector } from "./Connector";
@@ -8,11 +9,9 @@ export function rsReducer(actions: ActionTypes[], debateData: DebateData) {
     const newDebateData = { ...debateData }; //TODO: we assume a change will happen, should we?
 
     const claimActions = actions.filter((action): action is ClaimActions => hasItemData(action) && isClaim(action.newData));
-    debateData.claims = ApplyItemActions<Claim>(debateData.claims, claimActions);
-
+    newDebateData.claims = ApplyItemActions<Claim>(debateData.claims, claimActions);
     const connectorActions = actions.filter((action): action is ConnectorActions => hasItemData(action) && isConnector(action.newData));
-    debateData.connectors = ApplyItemActions<Connector>(debateData.connectors, connectorActions);
-
+    newDebateData.connectors = ApplyItemActions<Connector>(debateData.connectors, connectorActions);
     return newDebateData;
 }
 
