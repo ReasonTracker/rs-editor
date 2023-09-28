@@ -1,19 +1,19 @@
 import { ReactNode, createContext, useContext, useReducer, useState } from 'react';
 import { useEdgesState, useNodesState } from 'reactflow';
-import { DisplayNodeData, ConfidenceEdgeData, RelevenceEdgeData } from './pageData';
+// import { DisplayNodeData, ConfidenceEdgeData, RelevenceEdgeData } from './pageData';
 import { ActionTypes } from '@/reasonScoreNext/ActionTypes';
-import { flowDataReducer } from './flowDataReducer';
+import { dataReducer } from './dataReducer';
 import { DebateData } from '@/reasonScoreNext/DebateData';
+import { initialDebateData } from './initialNodesEdges';
 
-const initialArg: FlowDataState = undefined;
-export const FlowDataContext = createContext<FlowDataState | undefined>(initialArg);
+export const FlowDataContext = createContext<FlowDataState | undefined>(initialDebateData);
 
 
 export function FlowDataProvider({ children }: { children: ReactNode[] }) {
-  const [debateData, setDebateData] = useState<DebateData>({claims:{}, connectors:{} })
+  const [_debateData, setDebateData] = useState<DebateData>({claims:{}, connectors:{} })
 
   async function dispatch(actions: ActionTypes[]) {
-    flowDataReducer({ actions, setDebateData })
+    dataReducer({ actions, setDebateData })
   }
 
   return (

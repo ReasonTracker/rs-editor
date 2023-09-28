@@ -8,6 +8,7 @@ export default function Home() {
       <Link href="/testFlow/reactFlowProvider">reactFlowProvider</Link>
       <Link href="/testFlow/dataProvider">dataProvider</Link>
       <Link href="/testFlow/testFlow">testFlow</Link>
+      <Link href="/testFlow/puttingItTogether">puttingItTogether</Link>
 
     </main>
   )

@@ -1,13 +1,13 @@
 import { ActionTypes } from "@/reasonScoreNext/ActionTypes";
 import { Dispatch, SetStateAction } from "react";
 import { Node, Edge, useReactFlow } from "reactflow";
-import { DisplayNodeData, ConfidenceEdgeData, RelevenceEdgeData } from "./pageData";
+// import { DisplayNodeData, ConfidenceEdgeData, RelevenceEdgeData } from "./pageData";
 import { rsReducer } from "@/reasonScoreNext/rsReducer";
 import { DebateData } from "@/reasonScoreNext/DebateData";
 import { calculateScores } from "@/reasonScoreNext/scoring/TypeA/calculateScores";
 
 
-export function flowDataReducer({ actions, setDebateData }: {
+export function dataReducer({ actions, setDebateData }: {
     actions: ActionTypes[],
     setDebateData: Dispatch<SetStateAction<DebateData>>
 }) {
@@ -19,6 +19,8 @@ export function flowDataReducer({ actions, setDebateData }: {
         const newScores = calculateScores(newDebateData);
 
         // TODO: Figure out new nodes and new edges
+
+        
         let newNodes:Node[] = [];
         let newEdges:Edge[] = [];
         setNodes(newNodes)
