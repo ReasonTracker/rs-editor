@@ -27,7 +27,7 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
   }
 
   return (
-    <FlowDataContext.Provider value={{ dispatch, displayNodes, displayEdges, onNodesChange, onEdgesChange }}>
+    <FlowDataContext.Provider value={{ dispatch, displayNodes, displayEdges, onNodesChange, onEdgesChange, debateData }}>
       <DevContext.Provider value={{isDev, setDevMode}}>
       {children}
       </DevContext.Provider>
@@ -41,6 +41,7 @@ export type FlowDataState = {
   displayEdges: Edge<DisplayEdgeData>[],
   onNodesChange: OnChange<NodeChange>,
   onEdgesChange: OnChange<EdgeChange>,
+  debateData: DebateData
 }
 
 

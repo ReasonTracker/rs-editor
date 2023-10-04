@@ -1,8 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { DevContext, FlowDataContext } from "./FlowDataProvider";
-import { Drawer, Button } from "@blueprintjs/core";
-import { Claim, newClaim } from "@/reasonScoreNext/Claim";
+import { Drawer, Button, IconName } from "@blueprintjs/core";
+import { newClaim } from "@/reasonScoreNext/Claim";
 import generateSimpleAnimalClaim from "../utils/generateClaimContent";
+import { newConnector } from "@/reasonScoreNext/Connector";
+import { ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
 
 const DevPanel = () => {
   const x = useContext(FlowDataContext);
@@ -16,15 +18,64 @@ const DevPanel = () => {
 
   const addNode = () => {
     const newClaimData = newClaim({ content: generateSimpleAnimalClaim() });
-    const claimAction: {
-      type: "add";
-      newData: Claim;
-    } = {
+    const claimAction: ClaimActions = {
       type: "add",
       newData: newClaimData,
     };
 
     x.dispatch([claimAction]);
+  };
+
+  // WIP
+  const addEdge = () => {
+    const { source, target } = getRandomSourceAndTarget();
+    const proTarget = Math.random() < 0.5;
+    const affects = Math.random() < 0.5 ? "confidence" : "relevance";
+
+    const newConnectorData = newConnector({
+      source,
+      target,
+      proTarget,
+      affects,
+    });
+
+    const connectorAction: ConnectorActions = {
+      type: "add",
+      newData: newConnectorData,
+    };
+
+    x.dispatch([connectorAction]);
+  };
+
+  const getRandomSourceAndTarget = () => {
+    const nodes = x.displayNodes;
+    const sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
+    let targetNode = nodes[Math.floor(Math.random() * nodes.length)];
+    while (targetNode === sourceNode) {
+      targetNode = nodes[Math.floor(Math.random() * nodes.length)];
+    }
+
+    return { source: sourceNode.id, target: targetNode.id };
+  };
+
+  const DevButton = ({
+    label,
+    icon,
+    onClick,
+  }: {
+    label: string;
+    icon: IconName;
+    onClick: () => void;
+  }) => {
+    return (
+      <Button
+        className="w-full justify-start"
+        onClick={onClick}
+        icon={icon}
+        minimal
+        text={label}
+      />
+    );
   };
 
   return (
@@ -52,10 +103,31 @@ const DevPanel = () => {
         enforceFocus={false}
         autoFocus={false}
       >
-        <div className="p-4">
-          <Button className="mb-4" onClick={addNode}>
-            Add node
-          </Button>
+        <div className="flex flex-col space-y-2 mt-4">
+          <DevButton
+            icon={"send-to-graph"}
+            onClick={addNode}
+            label={"Add Node"}
+          />
+          <DevButton 
+            icon={"one-to-one"} 
+            onClick={addEdge} 
+            label={"Add Edge"} />
+          <DevButton
+            icon={"console"}
+            onClick={() => console.log(x.displayNodes)}
+            label={"Nodes"}
+          />
+          <DevButton
+            icon={"console"}
+            onClick={() => console.log(x.displayEdges)}
+            label={"Edges"}
+          />
+          <DevButton
+            icon={"console"}
+            onClick={() => console.log(x.debateData)}
+            label={"DebateData"}
+          />
         </div>
       </Drawer>
     </div>

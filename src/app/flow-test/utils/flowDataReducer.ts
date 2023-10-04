@@ -23,7 +23,6 @@ export function flowDataReducer({
   setDebateData: Dispatch<SetStateAction<DebateData>>;
 }) {
   // TODO: Right now all data changes so does a lot of screen updating. Refactor
-
   //  * Apply actions to reasonScore debate data
   setDebateData((oldDebateData) => {
     const newDebateData = rsReducer(actions, oldDebateData);
@@ -45,7 +44,6 @@ export function flowDataReducer({
       });
     }
     setDisplayNodes((oldNodes) => oldNodes.concat(newDisplayNodes));
-    console.log(`newDisplayNodes`, newDisplayNodes);
     //setDisplayEdges((oldEdges) => oldEdges);
 
     return newDebateData;
