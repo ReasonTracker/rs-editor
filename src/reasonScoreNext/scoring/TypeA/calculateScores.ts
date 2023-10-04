@@ -6,7 +6,10 @@ import { calculateRelevance } from "./calculateRelevance";
 import { calculateConfidence } from "./calculateConfidence";
 
 export function calculateScores(debateData: DebateData) {
-    const ids = sortSourceIdsFirst(debateData.connectors);
+    let ids = sortSourceIdsFirst(debateData.connectors);
+    if (ids.length === 0) { // In case no nodes are connected
+        ids = Object.keys(debateData.claims);
+    }
     const scores: { [id: string]: Score } = {};
 
     /** index for quickly finding connectors by source */
