@@ -9,6 +9,7 @@ import {
   NodeArray,
   EdgeArray,
   DispatchType,
+  DisplayEdgeData,
 } from "@/types/types";
 
 export function flowDataReducer({
@@ -27,9 +28,11 @@ export function flowDataReducer({
   setDebateData((oldDebateData) => {
     const newDebateData = rsReducer(actions, oldDebateData);
     const newScores = calculateScores(newDebateData);
+
     // TODO: Figure out new nodes and new edges
-    const newDisplayNodes: Node<DisplayNodeData>[] = [];
+    let newDisplayNodes: Node<DisplayNodeData>[] = [];
     for (const score of Object.values(newScores)) {
+      // if (oldDebateData.claims[score.id]) continue
       newDisplayNodes.push({
         id: score.id,
         type: "rsNode",
@@ -37,15 +40,46 @@ export function flowDataReducer({
         data: {
           pol: "pro",
           score: score,
-          claim: newDebateData.claims[score.id.substring(1)],
+          claim: newDebateData.claims[score.id],
           scoreNumberText: "scoreNumberText",
           scoreNumber: 50,
         },
       });
     }
-    setDisplayNodes((oldNodes) => oldNodes.concat(newDisplayNodes));
-    //setDisplayEdges((oldEdges) => oldEdges);
+    setDisplayNodes(newDisplayNodes);
+    
+    // WIP
+    let newDisplayEdges: Edge<DisplayEdgeData>[] = [];
+    for (const edge of Object.values(newDebateData.connectors)) {
+      // if (oldDebateData.connectors[edge.id]) continue
+      const stacked = {
+        top: 1,
+        bottom: 1,
+        center: 1,
+      };
+      newDisplayEdges.push({
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+        type: "rsEdge",
+        data: {
+          pol: "pro",
+          type: "confidence",
+          maxImpactStacked: stacked,
+          impactStacked: stacked,
+          reducedImpactStacked: stacked,
+          reducedMaxImpactStacked: stacked,
+          consolidatedStacked: stacked,
+          scaledTo1Stacked: stacked,
+          impact: 1,
+          targetTop: 1,
+          maxImpact: 1,
+        },
+      });
+    }
+    setDisplayEdges(newDisplayEdges);
 
     return newDebateData;
   });
+
 }

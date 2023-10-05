@@ -29,6 +29,10 @@ const DevPanel = () => {
   // WIP
   const addEdge = () => {
     const { source, target } = getRandomSourceAndTarget();
+    if (!source || !target) {
+      console.log("Couldn't find a source or target node");
+      return;
+    }
     const proTarget = Math.random() < 0.5;
     const affects = Math.random() < 0.5 ? "confidence" : "relevance";
 
@@ -49,11 +53,17 @@ const DevPanel = () => {
 
   const getRandomSourceAndTarget = () => {
     const nodes = x.displayNodes;
+    if (nodes.length < 2) {
+      console.error("Not enough nodes to get distinct source and target.");
+      return { source: undefined, target: undefined };
+  }
     const sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
     let targetNode = nodes[Math.floor(Math.random() * nodes.length)];
-    while (targetNode === sourceNode) {
+    let loop = 20
+    while (targetNode === sourceNode && loop-- > 0) {
       targetNode = nodes[Math.floor(Math.random() * nodes.length)];
     }
+    if (loop <= 0) console.log("Couldn't find a target node that wasn't the source node")
 
     return { source: sourceNode.id, target: targetNode.id };
   };

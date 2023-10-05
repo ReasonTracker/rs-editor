@@ -16,8 +16,8 @@ export type DisplayNodeData = {
 
 export type ConfidenceEdgeData = {
     pol: string
-    claimEdge: ClaimEdge
-    sourceScore: Score
+    claimEdge?: ClaimEdge
+    sourceScore?: Score
     maxImpactStacked: Stacked
     impactStacked: Stacked
     reducedImpactStacked: Stacked

@@ -9,7 +9,7 @@ import {
   DisplayEdgeData,
   DevContextState
 } from "@/types/types";
-import { initialNodes } from '../data/initialNodesEdges';
+// import { initialNodes } from '../data/initialNodesEdges';
 
 export const FlowDataContext = createContext<FlowDataState | undefined>(undefined);
 export const DevContext = createContext<DevContextState | undefined>(undefined);
@@ -17,7 +17,7 @@ export const DevContext = createContext<DevContextState | undefined>(undefined);
 export type OnChange<ChangesType> = (changes: ChangesType[]) => void;
 
 export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNode }) {
-  const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>(initialNodes);
+  const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
   const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<DisplayEdgeData>([]);
   const [debateData, setDebateData] = useState<DebateData>({claims:{}, connectors:{} })
   const [isDev, setDevMode] = useState<boolean>(false);
