@@ -10,10 +10,6 @@ const DevPanel = () => {
   const x = useContext(FlowDataContext);
   const dev = useContext(DevContext);
   
-  useEffect(() => {
-    if (dev) dev.setDevMode(true);
-  }, [dev]);
-
   if (!x) return null;
   if (!dev) return null;
 

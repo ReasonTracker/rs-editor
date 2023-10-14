@@ -1,8 +1,8 @@
 import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { Fragment, useContext, useState } from 'react';
 import { TextArea } from '@blueprintjs/core';
-import { RsRepoContext } from '@/app/flow/[[...slug]]/page';
-import { DisplayNodeData, ConfidenceEdgeData } from '@/app/flow-test/types/types';
+import { RsRepoContext } from '@/app/flow-old/[[...slug]]/page';
+import { DisplayNodeData, ConfidenceEdgeData } from '@/app/flow/types/types';
 import { DevContext } from './FlowDataProvider';
 
 const maxStrokeWidth = 25;

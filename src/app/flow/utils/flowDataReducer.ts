@@ -10,7 +10,7 @@ import {
   EdgeArray,
   DispatchType,
   DisplayEdgeData,
-} from "@/app/flow-test/types/types";
+} from "@/app/flow/types/types";
 
 export function flowDataReducer({
   actions,
