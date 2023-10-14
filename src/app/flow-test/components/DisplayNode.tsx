@@ -11,7 +11,6 @@ const halfStroke = maxStrokeWidth / 2;
 export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
     const dev = useContext(DevContext);
-    if (!dev) return null;
     // const rsRepo = useContext(RsRepoContext)
     
     // typescript temp fix
@@ -30,6 +29,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
         return originalSources;
     });
+
+    if (!dev) return null;
 
     // console.log({ [id]: { x: xPos.toFixed(0), y: yPos.toFixed(0) } })
 
