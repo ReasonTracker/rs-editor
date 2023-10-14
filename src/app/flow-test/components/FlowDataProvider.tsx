@@ -8,7 +8,7 @@ import {
   DisplayNodeData,
   DisplayEdgeData,
   DevContextState
-} from "@/types/types";
+} from "@/app/flow-test/types/types";
 // import { initialNodes } from '../data/initialNodesEdges';
 
 export const FlowDataContext = createContext<FlowDataState | undefined>(undefined);
