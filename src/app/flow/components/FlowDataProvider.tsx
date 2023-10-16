@@ -23,7 +23,9 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
   const [isDev, setDevMode] = useState<boolean>(false);
 
   async function dispatch(actions: ActionTypes[]) {
-    flowDataReducer({ actions, setDisplayNodes, setDisplayEdges, setDebateData })
+    flowDataReducer({ actions, setDisplayNodes, setDisplayEdges, setDebateData, 
+      displayNodes // TODO: remove this, add position to debateData
+    })
   }
 
   return (

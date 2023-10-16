@@ -35,8 +35,8 @@ export type ConfidenceEdgeData = {
 
 export type RelevanceEdgeData = {
     pol: string
-    claimEdge: ClaimEdge
-    sourceScore: Score
+    claimEdge?: ClaimEdge
+    sourceScore?: Score
     type: "relevance"
     maxImpact: number
 }
