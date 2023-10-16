@@ -1,18 +1,19 @@
 import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { Fragment, useContext, useState } from 'react';
-import { TextArea } from '@blueprintjs/core';
-import { RsRepoContext } from '@/app/flow-old/[[...slug]]/page';
+import { Button, TextArea, Tooltip } from '@blueprintjs/core';
 import { DisplayNodeData, ConfidenceEdgeData } from '@/app/flow/types/types';
-import { DevContext } from './FlowDataProvider';
+import { DevContext, FlowDataContext } from './FlowDataProvider';
+import addNode from '../utils/addNode';
 
 const maxStrokeWidth = 25;
 const halfStroke = maxStrokeWidth / 2;
 
 export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
+    const x = useContext(FlowDataContext);
     const dev = useContext(DevContext);
     // const rsRepo = useContext(RsRepoContext)
-    
+
     // typescript temp fix
     data.cancelOutStacked ? data.cancelOutStacked : data.cancelOutStacked = { top: 0, bottom: 0, center: 0 };
 
@@ -30,6 +31,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         return originalSources;
     });
 
+    if (!x) return null;
     if (!dev) return null;
 
     // console.log({ [id]: { x: xPos.toFixed(0), y: yPos.toFixed(0) } })
@@ -230,27 +232,54 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     </div>
 
     return (
-        <div className="rsNode" >
-            <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth }}>
-                {relevance}
-                {cancelOut}
-                {scaleTo1}
-                {consolidate}
-                {weightByConfidence}
-                <div style={{ gridArea: "content" }} className={`rsContent ${data.pol}`}>
-                    {dev.isDev ? <>
-                        <p>scoreId: {data.score.id}</p>
-                        <p>nodeId: {id}</p>
-                        <p>claimId: {data.claim.id}</p>
-                    </> : <>
-                        <TextArea
-                            className="node-text-area"
-                            value={nodeText}
-                            onChange={(e) => handleChangeText(e, data.claim.id)}
-                            autoResize
-                            asyncControl
-                        />
-                    </>}
+        <div className='group relative'>
+            <div className="rsNode" >
+                <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * maxStrokeWidth }}>
+                    {relevance}
+                    {cancelOut}
+                    {scaleTo1}
+                    {consolidate}
+                    {weightByConfidence}
+                    <div style={{ gridArea: "content" }} className={`rsContent ${data.pol} relative`}>
+                        {dev.isDev ? <>
+                            <p>scoreId: {data.score.id}</p>
+                            <p>nodeId: {id}</p>
+                            <p>claimId: {data.claim.id}</p>
+                        </> : <>
+                            <TextArea
+                                className="node-text-area"
+                                value={nodeText}
+                                onChange={(e) => handleChangeText(e, data.claim.id)}
+                                autoResize
+                                asyncControl
+                            />
+                        </>}
+                        <div
+                            className="absolute -right-7 bottom-0 transform 
+                                opacity-0 
+                                group-hover:opacity-100 
+                                transition flex flex-col"
+                        >
+                            <Tooltip content="Add Pro" position="right">
+                                <Button
+                                    minimal
+                                    small
+                                    className="mb-1 !bg-pro"
+                                    icon="plus"
+                                    onClick={() => addNode({ x, sourceId: id, proTarget: true, affects: 'confidence' })}
+                                />
+                            </Tooltip>
+                            <Tooltip content="Add Con" position="right">
+                                <Button
+                                    minimal
+                                    small
+                                    className="!bg-con"
+                                    onClick={() => addNode({ x, sourceId: id, proTarget: false, affects: 'confidence' })}
+                                    icon="plus"
+                                />
+                            </Tooltip>
+                        </div>
+                    </div>
                 </div>
             </div>
 
