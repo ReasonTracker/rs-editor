@@ -1,13 +1,11 @@
-.dev {
-    .react-flow__handle {
-      height: 25px;
-      color: white;
-      width: 25px;
-      background-color: white;
-      opacity: 1;
-    }
-  
-    .rsContent {
-      width: 250px;
-    }
-  }
+.dev .react-flow__handle {
+  height: 25px;
+  color: white;
+  width: 25px;
+  background-color: white;
+  opacity: 1;
+}
+
+.dev .rsContent {
+  width: 250px;
+}

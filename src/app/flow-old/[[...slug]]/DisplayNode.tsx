@@ -236,7 +236,7 @@ export function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         <p>claimId: {data.claim.id}</p>
                     </> : <>
                         <TextArea
-                            className="invisible-input"
+                            className="invisible-input text-white"
                             value={nodeText}
                             onChange={(e) => handleChangeText(e, data.claim.id)}
                             autoResize

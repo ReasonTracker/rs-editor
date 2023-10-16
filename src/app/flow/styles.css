@@ -1,3 +1,5 @@
+/* TODO move this to proper module file */
+
 /* global.css */
 :root {
   --max-width: 1100px;
@@ -239,4 +241,8 @@ svg {
 
 div.bp5-overlay.bp5-overlay-container.bp5-overlay-inline {
   position: initial;
+}
+
+.rsNode .bp5-button .bp5-icon {
+  color: initial
 }
