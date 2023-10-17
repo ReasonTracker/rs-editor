@@ -6,42 +6,45 @@ import { newConnector, Affects } from "@/reasonScoreNext/Connector";
 
 
 const addNode = ({
-  x,
-  sourceId,
-  proTarget,
-  affects,
+    x,
+    sourceId,
+    proTarget = true,
+    affects = "confidence",
 }: {
-  x: FlowDataState;
-  sourceId?: string;
-  proTarget?: boolean;
-  affects?: Affects;
+    x: FlowDataState;
+    sourceId?: string;
+    proTarget?: boolean;
+    affects?: Affects;
 }) => {
-  let actions = [];
+    let actions = [];
 
-  const newClaimData = newClaim({ content: generateSimpleAnimalClaim() });
+    const newClaimData = newClaim({ content: generateSimpleAnimalClaim() });
 
-  const claimAction: ClaimActions = {
-    type: "add",
-    newData: newClaimData,
-  };
+    // Probably need to adjust this?
+    const pol = proTarget ? "pro" : "con";
 
-  // If there is no sourceId, add orphan claim
-  actions.push(claimAction);
-  if (!sourceId) return x.dispatch(actions);
+    const claimAction: ClaimActions = {
+        type: "add",
+        newData: {...newClaimData, pol},
+    };
 
-  const newConnectorData = newConnector({
-    source: newClaimData.id,
-    target: sourceId,
-    proTarget: proTarget || true,
-    affects: affects || "confidence",
-  });
-  const connectorAction: ConnectorActions = {
-    type: "add",
-    newData: newConnectorData,
-  };
+    // If there is no sourceId, add orphan claim
+    actions.push(claimAction);
+    if (!sourceId) return x.dispatch(actions);
 
-  actions.push(connectorAction);
-  x.dispatch(actions);
+    const newConnectorData = newConnector({
+        source: newClaimData.id,
+        target: sourceId,
+        proTarget,
+        affects
+    });
+    const connectorAction: ConnectorActions = {
+        type: "add",
+        newData: newConnectorData,
+    };
+
+    actions.push(connectorAction);
+    x.dispatch(actions);
 };
 
 export default addNode;

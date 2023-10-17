@@ -28,6 +28,10 @@ const getLayoutedElements = (nodes: Node<DisplayNodeData>[], edges: Edge<Display
         // node.targetPosition = 'left'
         // node.sourcePosition = 'right'
 
+        // TODO calculate node with position set already here
+        // new nodes have node.position.x === 0 && node.position.y === 0)
+        // Probably want to add a flag with onNodeChange to set it's position
+
         // We are shifting the dagre node position (anchor=center center) to the top left
         // so it matches the React Flow node anchor point (top left).
         node.position = {

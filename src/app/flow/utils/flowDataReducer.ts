@@ -37,6 +37,8 @@ export function flowDataReducer({
         let newDisplayNodes: Node<DisplayNodeData>[] = [];
         for (const score of Object.values(newScores)) {
 
+            const claim = newDebateData.claims[score.id]
+            
             // TODO update, add position to debateData
             const position = () => {
 
@@ -65,7 +67,7 @@ export function flowDataReducer({
                 type: "rsNode",
                 position: position(),
                 data: {
-                    pol: "pro",
+                    pol: claim.pol || "pro", 
                     score: score,
                     claim: newDebateData.claims[score.id],
                     scoreNumberText: "scoreNumberText",

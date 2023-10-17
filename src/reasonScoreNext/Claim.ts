@@ -11,6 +11,9 @@ export interface Claim extends Item {
 
     /** the clearest description of the claim. As markdown.   */
     content: string
+
+    /** The polarity of the claim. */
+    pol: 'pro' | 'con'
 }
 
 /** Populates defaults */
@@ -25,6 +28,7 @@ export function newClaim(partialItem: Partial<Claim> = {}): Claim {
         ...itemType,
         content: partialItem.content ?? "",
         id: partialItem.id ?? newId(),
+        pol: partialItem.pol ?? 'pro',
     };
     return newItem
 }
