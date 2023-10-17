@@ -38,8 +38,9 @@ export function flowDataReducer({
         for (const score of Object.values(newScores)) {
 
             const claim = newDebateData.claims[score.id]
-            
+
             // TODO update, add position to debateData
+            // TODO probably remove, irrelevant with dagre now I think
             const position = () => {
 
                 const existingPosition = displayNodes.find((node) => node.id === score.id)?.position
@@ -65,9 +66,9 @@ export function flowDataReducer({
             newDisplayNodes.push({
                 id: score.id,
                 type: "rsNode",
-                position: position(),
+                position: { x: 0, y: 0 }, // position()
                 data: {
-                    pol: claim.pol || "pro", 
+                    pol: claim.pol || "pro",
                     score: score,
                     claim: newDebateData.claims[score.id],
                     scoreNumberText: "scoreNumberText",
