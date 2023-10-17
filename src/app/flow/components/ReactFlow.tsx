@@ -9,22 +9,22 @@ const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };
 
 
-export default function SubCom() {
+export default function Flow() {
 
-  const x = useContext(FlowDataContext);
-  if(!x) return null;
+    const x = useContext(FlowDataContext);
+    if (!x) return null;
 
-  return (
-      <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
-        <ReactFlow 
-          nodes={x.displayNodes}
-          edges={x.displayEdges}
-          onNodesChange={x.onNodesChange}
-          onEdgesChange={x.onEdgesChange}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          fitView
-        />
-      </div>
-  )
+    return (
+        <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
+            <ReactFlow
+                nodes={x.displayNodes}
+                edges={x.displayEdges}
+                onNodesChange={x.onNodesChange}
+                onEdgesChange={x.onEdgesChange}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                fitView
+            />
+        </div>
+    )
 }

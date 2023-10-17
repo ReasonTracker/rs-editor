@@ -11,6 +11,7 @@ import {
     DispatchType,
     DisplayEdgeData,
 } from "@/app/flow/types/types";
+import getLayoutedElements from "./getLayoutedElements";
 
 export function flowDataReducer({
     actions,
@@ -42,13 +43,13 @@ export function flowDataReducer({
                 const existingPosition = displayNodes.find((node) => node.id === score.id)?.position
                 if (existingPosition) return existingPosition
 
-                // Step 1: Identify Connector
+                // Identify Connector
                 let connector = Object.values(connectors).find(conn => conn.source === score.id);
 
-                // Step 2: Identify Source ID
+                // Identify Source ID
                 let targetId = connector?.target;
 
-                // Step 3: Locate Source ID Position in displayNodes
+                // Locate Source ID Position in displayNodes
                 let sourceNode = displayNodes.find(node => node.id === targetId);
                 if (!sourceNode) return { x: 0, y: 0 }
 
@@ -72,7 +73,6 @@ export function flowDataReducer({
                 },
             });
         }
-        setDisplayNodes(newDisplayNodes);
 
         // WIP
         let newDisplayEdges: Edge<DisplayEdgeData>[] = [];
@@ -117,7 +117,11 @@ export function flowDataReducer({
                 data
             });
         }
-        setDisplayEdges(newDisplayEdges);
+
+        const { nodes, edges } = getLayoutedElements(newDisplayNodes, newDisplayEdges)
+
+        setDisplayNodes(nodes);
+        setDisplayEdges(edges);
 
         return newDebateData;
     });
