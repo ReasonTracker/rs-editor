@@ -4,6 +4,9 @@ import { Score } from "@/reasonScoreNext/scoring/TypeA/Score";
 import { Claim } from "@/reasonScoreNext/Claim";
 import { Dispatch, SetStateAction } from 'react';
 import { Node, Edge } from "reactflow";
+import { ActionTypes } from '@/reasonScoreNext/ActionTypes';
+import { EdgeChange, NodeChange } from 'reactflow';
+import { DebateData } from '@/reasonScoreNext/DebateData';
 
 export type DisplayNodeData = {
     pol: "pro" | "con"
@@ -53,6 +56,17 @@ export type DevContextState = {
     isDev: boolean;
     setDevMode: DispatchType<boolean>;
   };
+
+export type FlowDataState = {
+    dispatch: (actions: ActionTypes[]) => void,
+    displayNodes: Node<DisplayNodeData, string | undefined>[],
+    displayEdges: Edge<DisplayEdgeData>[],
+    onNodesChange: OnChange<NodeChange>,
+    onEdgesChange: OnChange<EdgeChange>,
+    debateData: DebateData
+  }
+
+export type OnChange<ChangesType> = (changes: ChangesType[]) => void;
 
 export type NodeArray = Node<DisplayNodeData, string | undefined>[];
 export type EdgeArray = Edge<DisplayEdgeData>[];

@@ -9,10 +9,6 @@ const DevPanel = () => {
     const x = useContext(FlowDataContext);
     const dev = useContext(DevContext);
 
-    if (!x) return null;
-    if (!dev) return null;
-
-
     // WIP
     const addEdge = () => {
         const { source, target } = getRandomSourceAndTarget();

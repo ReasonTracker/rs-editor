@@ -12,7 +12,6 @@ const edgeTypes = { rsEdge: DisplayEdge };
 export default function Flow() {
 
     const x = useContext(FlowDataContext);
-    if (!x) return null;
 
     return (
         <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} >

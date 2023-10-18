@@ -1,6 +1,6 @@
 import { ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
 import { newClaim } from "@/reasonScoreNext/Claim";
-import { FlowDataState } from "../components/FlowDataProvider";
+import { FlowDataState } from "../types/types";
 import generateSimpleAnimalClaim from "./generateClaimContent";
 import { newConnector, Affects } from "@/reasonScoreNext/Connector";
 

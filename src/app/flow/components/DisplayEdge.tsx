@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, EdgeText, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { ConfidenceEdgeData, RelevanceEdgeData } from '@/app/flow/types/types'
 import { isConfidenceEdgeData } from '@/app/flow/types/typeGuards'
-// import { DevContext } from './page';
+import { DevContext } from './FlowDataProvider';
 
 const maxStrokeWidth = 25;
 const halfStroke = maxStrokeWidth / 2;
@@ -30,9 +30,8 @@ function EdgeLabel({ transform, label }: { transform: string, label: string }) {
 
 export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | RelevanceEdgeData>) {
     let { style, source, data, target, targetY, targetX, sourceX, sourceY, sourcePosition, targetPosition, id } = props
-    // const isDev = useContext(DevContext);
-    const isDev = true
-
+    const dev = useContext(DevContext);
+    
     sourceX += 4;
     targetX -= 4;
     let newTargetY = targetY;
@@ -57,7 +56,7 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
 
     return <g className={'rs-edge ' + data?.pol}>
 
-        {isDev &&
+        {dev.isDev &&
             <EdgeText
                 labelShowBg={false}
                 x={labelX}

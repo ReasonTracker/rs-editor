@@ -12,7 +12,6 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
     const x = useContext(FlowDataContext);
     const dev = useContext(DevContext);
-    // const rsRepo = useContext(RsRepoContext)
 
     // typescript temp fix
     data.cancelOutStacked ? data.cancelOutStacked : data.cancelOutStacked = { top: 0, bottom: 0, center: 0 };
@@ -30,11 +29,6 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
         return originalSources;
     });
-
-    if (!x) return null;
-    if (!dev) return null;
-
-    // console.log({ [id]: { x: xPos.toFixed(0), y: yPos.toFixed(0) } })
 
     const relevance = <div className="rsCalc" style={{ gridArea: 'relevance', width: '50px' }}>
         <svg
