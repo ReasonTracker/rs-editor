@@ -1,74 +1,44 @@
 import React, { useContext } from "react";
 import { DevContext, FlowDataContext } from "./FlowDataProvider";
-import { Drawer, Button, IconName } from "@blueprintjs/core";
-import { newConnector } from "@/reasonScoreNext/Connector";
-import { ConnectorActions } from "@/reasonScoreNext/ActionTypes";
+import { Drawer, Button, IconName, Divider } from "@blueprintjs/core";
+import { ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
 import addNode from "../utils/addNode";
+
+const DevButton = ({
+    label,
+    icon,
+    onClick,
+}: {
+    label: string;
+    icon: IconName;
+    onClick: () => void;
+}) => {
+    return (
+        <Button
+            className="w-full justify-start"
+            onClick={onClick}
+            icon={icon}
+            minimal
+            text={label}
+        />
+    );
+};
 
 const DevPanel = () => {
     const x = useContext(FlowDataContext);
     const dev = useContext(DevContext);
 
-    // WIP
-    const addEdge = () => {
-        const { source, target } = getRandomSourceAndTarget();
-        if (!source || !target) {
-            console.log("Couldn't find a source or target node");
-            return;
-        }
-        const proTarget = Math.random() < 0.5;
-        const affects = Math.random() < 0.5 ? "confidence" : "relevance";
+    const deleteAll = () => {
+        const nodeActions: Array<ClaimActions> = x.displayNodes.map((node) => ({
+            type: "delete",
+            newData: { id: node.id, type: "claim" },
+        }));
+        const edgeActions: Array<ConnectorActions> = x.displayEdges.map((edge) => ({
+            type: "delete",
+            newData: { id: edge.id, type: "connector" },
+        }));
 
-        const newConnectorData = newConnector({
-            source,
-            target,
-            proTarget,
-            affects,
-        });
-
-        const connectorAction: ConnectorActions = {
-            type: "add",
-            newData: newConnectorData,
-        };
-
-        x.dispatch([connectorAction]);
-    };
-
-    const getRandomSourceAndTarget = () => {
-        const nodes = x.displayNodes;
-        if (nodes.length < 2) {
-            console.error("Not enough nodes to get distinct source and target.");
-            return { source: undefined, target: undefined };
-        }
-        const sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
-        let targetNode = nodes[Math.floor(Math.random() * nodes.length)];
-        let loop = 20
-        while (targetNode === sourceNode && loop-- > 0) {
-            targetNode = nodes[Math.floor(Math.random() * nodes.length)];
-        }
-        if (loop <= 0) console.log("Couldn't find a target node that wasn't the source node")
-
-        return { source: sourceNode.id, target: targetNode.id };
-    };
-
-    const DevButton = ({
-        label,
-        icon,
-        onClick,
-    }: {
-        label: string;
-        icon: IconName;
-        onClick: () => void;
-    }) => {
-        return (
-            <Button
-                className="w-full justify-start"
-                onClick={onClick}
-                icon={icon}
-                minimal
-                text={label}
-            />
-        );
+        x.dispatch([...nodeActions, ...edgeActions]);
     };
 
     return (
@@ -102,10 +72,7 @@ const DevPanel = () => {
                         onClick={() => addNode({ x })}
                         label={"Add Node"}
                     />
-                    <DevButton
-                        icon={"one-to-one"}
-                        onClick={addEdge}
-                        label={"Add Edge"} />
+                    <Divider />
                     <DevButton
                         icon={"console"}
                         onClick={() => console.log(x.displayNodes)}
@@ -120,6 +87,12 @@ const DevPanel = () => {
                         icon={"console"}
                         onClick={() => console.log(x.debateData)}
                         label={"DebateData"}
+                    />
+                    <Divider />
+                    <DevButton
+                        onClick={deleteAll}
+                        icon={"trash"}
+                        label={"Delete All"}
                     />
                 </div>
             </Drawer>
