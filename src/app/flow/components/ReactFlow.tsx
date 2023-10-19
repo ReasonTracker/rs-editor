@@ -6,7 +6,6 @@ import DisplayNode from './DisplayNode'
 import DisplayEdge from './DisplayEdge'
 import { DisplayNodeData } from '../types/types';
 import ContextMenu, { ContextMenuData } from './ContextMenu';
-import { on } from 'events';
 
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };

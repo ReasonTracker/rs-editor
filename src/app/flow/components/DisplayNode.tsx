@@ -241,7 +241,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                             <p>claimId: {data.claim.id}</p>
                         </> : <>
                             <TextArea
-                                className="node-text-area"
+                                className="node-text-area text-xs" // !p-0, but caused gap it main claim
                                 value={nodeText}
                                 onChange={(e) => handleChangeText(e, data.claim.id)}
                                 autoResize
@@ -281,13 +281,15 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 id="relevance"
                 position={Position.Top}
                 style={{ left: 50 - halfStroke + 'px' }}
-            />
+                className={dev.isDev ? 'opacity-100' : 'opacity-0'}
+                />
 
             <Handle type="source"
                 position={Position.Left}
                 style={{ top: 0 }}
                 isConnectableStart={false}
-            />
+                className={dev.isDev ? 'opacity-100' : 'opacity-0'}
+                />
 
             <Handle
                 type="target"
@@ -295,6 +297,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 position={Position.Right}
                 style={{ top: 0 }}
                 isConnectable={true}
+                className={dev.isDev ? 'opacity-100' : 'opacity-0'}
             />
         </div>
     );

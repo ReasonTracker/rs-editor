@@ -9,6 +9,8 @@ import {
     DevContextState,
     FlowDataState,
 } from "@/app/flow/types/types";
+import { initialDebateData, initialDisplayEdges, initialDisplayNodes } from '../data/initialNodesEdges';
+
 
 const initialFlowDataState: FlowDataState = {
     dispatch: () => { },
@@ -28,9 +30,9 @@ export const FlowDataContext = createContext<FlowDataState>(initialFlowDataState
 export const DevContext = createContext<DevContextState>(initialDevContextState);
 
 export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNode }) {
-    const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
-    const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<DisplayEdgeData>([]);
-    const [debateData, setDebateData] = useState<DebateData>({ claims: {}, connectors: {} })
+    const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>(initialDisplayNodes);
+    const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<DisplayEdgeData>(initialDisplayEdges);
+    const [debateData, setDebateData] = useState<DebateData>(initialDebateData)
     const [isDev, setDevMode] = useState<boolean>(false);
 
     async function dispatch(actions: ActionTypes[]) {

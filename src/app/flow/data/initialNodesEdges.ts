@@ -1,77 +1,515 @@
-import { newClaim } from "@/reasonScoreNext/Claim";
-import { newConnector } from "@/reasonScoreNext/Connector";
 import { DebateData } from "@/reasonScoreNext/DebateData";
-import { getNewScore } from "@/reasonScoreNext/scoring/TypeA/Score";
+import { DisplayEdgeData, DisplayNodeData } from "../types/types";
+import { Edge, Node } from "reactflow";
 
-export const initialDebateData: DebateData = {
-  claims: {},
-  connectors: {},
-};
+const mainClaim = "The Apollo moon landings were faked"
+const pro1 = "The moon landing photos contain inconsistencies"
+const pro2 = "Astronauts couldn't survive the Van Allen belts' radiation"
+const pro3 = "1960s technology was too primitive for a moon landing"
 
-const claim1 = newClaim({
-  content: "Cats are better pets than dogs.",
-});
-const claim2 = newClaim({
-  content: "Dogs are loyal and protective.",
-});
+const con1 = "Verified artifacts and independent tracking confirm the moon landings"
+const con2 = "Ongoing space missions validate the Apollo program's achievements"
 
-const score1 = getNewScore({
-  id: "s" + claim1.id,
-  type: "score",
-  confidence: 0.5,
-  relevance: 1,
-});
+// TODO change to generated
+// so that dagre changes take effect
 
-// TEMP - REMOVE
-let scoreNumber = 0;
-let scoreNumberText = "--";
-let confidence = score1.confidence < 0 ? 0 : score1.confidence;
-scoreNumber = Math.round(confidence * score1.relevance * 100);
-if (true) {
-    const sign = "X"
-    scoreNumberText = `${sign} ${(score1.relevance + 1).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 1 })}`;
-} 
-// else {
-//     if (scoreNumber === 100) scoreNumber = 99;
-//     scoreNumberText = `${scoreNumber.toString().padStart(2, " ")}%`;
-// }
-
-initialDebateData.claims[claim1.id] = claim1;
-
-const connector = newConnector({
-  target: claim1.id,
-  source: claim2.id,
-  proTarget: false,
-  affects: "confidence",
-});
-
-initialDebateData.connectors[connector.id] = connector;
-
-export const initialNodes = [
-  {
-    id: claim1.id,
-    type: "rsNode",
-    data: {
-      claim: claim1,
-      score: score1,
-      pol: "pro" as "pro" | "con",
-      scoreNumberText: scoreNumberText,
-      scoreNumber: scoreNumber
+export const initialDisplayEdges: Edge<DisplayEdgeData>[] = [
+    {
+        "id": "W8zs6Auj33jz",
+        "source": "W8zs6Aus8ZqQ",
+        "targetHandle": "confidence",
+        "target": "W8zs7713oOLi",
+        "type": "rsEdge",
+        "data": {
+            "pol": "pro",
+            "type": "confidence",
+            "maxImpact": 1,
+            "maxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedMaxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "consolidatedStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "scaledTo1Stacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impact": 1,
+            "targetTop": 1
+        }
     },
-    position: {
-      x: 250,
-      y: 5,
+    {
+        "id": "W8zs6slrqItB",
+        "source": "W8zs6sl1Vn2t",
+        "targetHandle": "confidence",
+        "target": "W8zs7713oOLi",
+        "type": "rsEdge",
+        "data": {
+            "pol": "pro",
+            "type": "confidence",
+            "maxImpact": 1,
+            "maxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedMaxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "consolidatedStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "scaledTo1Stacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impact": 1,
+            "targetTop": 1
+        }
     },
-  },
-];
+    {
+        "id": "W8zs6bikubt2",
+        "source": "W8zs6biOiqLT",
+        "targetHandle": "confidence",
+        "target": "W8zs7713oOLi",
+        "type": "rsEdge",
+        "data": {
+            "pol": "pro",
+            "type": "confidence",
+            "maxImpact": 1,
+            "maxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedMaxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "consolidatedStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "scaledTo1Stacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impact": 1,
+            "targetTop": 1
+        }
+    },
+    {
+        "id": "W8zs5HQ1j6HC",
+        "source": "W8zs5HQC6WKF",
+        "targetHandle": "confidence",
+        "target": "W8zs7713oOLi",
+        "type": "rsEdge",
+        "data": {
+            "pol": "con",
+            "type": "confidence",
+            "maxImpact": 1,
+            "maxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedMaxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "consolidatedStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "scaledTo1Stacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impact": 1,
+            "targetTop": 1
+        }
+    },
+    {
+        "id": "W8zs4zuGZz7C",
+        "source": "W8zs4zu8QoYY",
+        "targetHandle": "confidence",
+        "target": "W8zs7713oOLi",
+        "type": "rsEdge",
+        "data": {
+            "pol": "con",
+            "type": "confidence",
+            "maxImpact": 1,
+            "maxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "reducedMaxImpactStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "consolidatedStacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "scaledTo1Stacked": {
+                "top": 1,
+                "bottom": 1,
+                "center": 1
+            },
+            "impact": 1,
+            "targetTop": 1
+        }
+    }
+]
+export const initialDisplayNodes: Node<DisplayNodeData>[] = [
+    {
+        "id": "W8zs7713oOLi",
+        "type": "rsNode",
+        "position": {
+            "x": 0,
+            "y": 350
+        },
+        "data": {
+            "pol": "pro",
+            "score": {
+                "type": "score",
+                "id": "W8zs7713oOLi",
+                "relevance": 1,
+                "confidence": 1
+            },
+            "claim": {
+                "content": `${mainClaim}`,
+                "type": "claim",
+                "id": "W8zs7713oOLi",
+                "pol": "pro"
+            },
+            "scoreNumberText": "scoreNumberText",
+            "scoreNumber": 50,
+            "cancelOutStacked": {
+                "top": 0,
+                "bottom": 0,
+                "center": 0
+            }
+        },
+        "width": 375,
+        "height": 155
+    },
+    {
+        "id": "W8zs6Aus8ZqQ",
+        "type": "rsNode",
+        "position": {
+            "x": 650,
+            "y": 0
+        },
+        "data": {
+            "pol": "pro",
+            "score": {
+                "type": "score",
+                "id": "W8zs6Aus8ZqQ",
+                "relevance": 1,
+                "confidence": 1
+            },
+            "claim": {
+                "content": `${pro1}`,
+                "type": "claim",
+                "id": "W8zs6Aus8ZqQ",
+                "pol": "pro"
+            },
+            "scoreNumberText": "scoreNumberText",
+            "scoreNumber": 50,
+            "cancelOutStacked": {
+                "top": 0,
+                "bottom": 0,
+                "center": 0
+            }
+        },
+        "width": 200,
+        "height": 155
+    },
+    {
+        "id": "W8zs6sl1Vn2t",
+        "type": "rsNode",
+        "position": {
+            "x": 650,
+            "y": 175
+        },
+        "data": {
+            "pol": "pro",
+            "score": {
+                "type": "score",
+                "id": "W8zs6sl1Vn2t",
+                "relevance": 1,
+                "confidence": 1
+            },
+            "claim": {
+                "content": `${pro2}`,
+                "type": "claim",
+                "id": "W8zs6sl1Vn2t",
+                "pol": "pro"
+            },
+            "scoreNumberText": "scoreNumberText",
+            "scoreNumber": 50,
+            "cancelOutStacked": {
+                "top": 0,
+                "bottom": 0,
+                "center": 0
+            }
+        },
+        "width": 200,
+        "height": 119
+    },
+    {
+        "id": "W8zs6biOiqLT",
+        "type": "rsNode",
+        "position": {
+            "x": 650,
+            "y": 350
+        },
+        "data": {
+            "pol": "pro",
+            "score": {
+                "type": "score",
+                "id": "W8zs6biOiqLT",
+                "relevance": 1,
+                "confidence": 1
+            },
+            "claim": {
+                "content": `${pro3}`,
+                "type": "claim",
+                "id": "W8zs6biOiqLT",
+                "pol": "pro"
+            },
+            "scoreNumberText": "scoreNumberText",
+            "scoreNumber": 50,
+            "cancelOutStacked": {
+                "top": 0,
+                "bottom": 0,
+                "center": 0
+            }
+        },
+        "width": 375,
+        "height": 137
+    },
+    {
+        "id": "W8zs5HQC6WKF",
+        "type": "rsNode",
+        "position": {
+            "x": 650,
+            "y": 525
+        },
+        "data": {
+            "pol": "con",
+            "score": {
+                "type": "score",
+                "id": "W8zs5HQC6WKF",
+                "relevance": 1,
+                "confidence": 1
+            },
+            "claim": {
+                "content": `${con1}`,
+                "type": "claim",
+                "id": "W8zs5HQC6WKF",
+                "pol": "con"
+            },
+            "scoreNumberText": "scoreNumberText",
+            "scoreNumber": 50,
+            "cancelOutStacked": {
+                "top": 0,
+                "bottom": 0,
+                "center": 0
+            }
+        },
+        "width": 200,
+        "height": 155
+    },
+    {
+        "id": "W8zs4zu8QoYY",
+        "type": "rsNode",
+        "position": {
+            "x": 650,
+            "y": 700
+        },
+        "data": {
+            "pol": "con",
+            "score": {
+                "type": "score",
+                "id": "W8zs4zu8QoYY",
+                "relevance": 1,
+                "confidence": 1
+            },
+            "claim": {
+                "content": `${con2}`,
+                "type": "claim",
+                "id": "W8zs4zu8QoYY",
+                "pol": "con"
+            },
+            "scoreNumberText": "scoreNumberText",
+            "scoreNumber": 50,
+            "cancelOutStacked": {
+                "top": 0,
+                "bottom": 0,
+                "center": 0
+            }
+        },
+        "width": 200,
+        "height": 155
+    }
+]
+export const initialDebateData: DebateData =
+{
+    "claims": {
+        "W8zs7713oOLi": {
+            "content": `${mainClaim}`,
+            "type": "claim",
+            "id": "W8zs7713oOLi",
+            "pol": "pro"
+        },
+        "W8zs6Aus8ZqQ": {
+            "content": `${pro1}}`,
+            "type": "claim",
+            "id": "W8zs6Aus8ZqQ",
+            "pol": "pro"
+        },
+        "W8zs6sl1Vn2t": {
+            "content": `${pro2}`,
+            "type": "claim",
+            "id": "W8zs6sl1Vn2t",
+            "pol": "pro"
+        },
+        "W8zs6biOiqLT": {
+            "content": `${pro3}`,
+            "type": "claim",
+            "id": "W8zs6biOiqLT",
+            "pol": "pro"
+        },
+        "W8zs5HQC6WKF": {
+            "content": `${con1}`,
+            "type": "claim",
+            "id": "W8zs5HQC6WKF",
+            "pol": "con"
+        },
+        "W8zs4zu8QoYY": {
+            "content": `${con2}`,
+            "type": "claim",
+            "id": "W8zs4zu8QoYY",
+            "pol": "con"
+        }
+    },
+    "connectors": {
+        "W8zs6Auj33jz": {
+            "source": "W8zs6Aus8ZqQ",
+            "target": "W8zs7713oOLi",
+            "proTarget": true,
+            "affects": "confidence",
+            "type": "connector",
+            "id": "W8zs6Auj33jz"
+        },
+        "W8zs6slrqItB": {
+            "source": "W8zs6sl1Vn2t",
+            "target": "W8zs7713oOLi",
+            "proTarget": true,
+            "affects": "confidence",
+            "type": "connector",
+            "id": "W8zs6slrqItB"
+        },
+        "W8zs6bikubt2": {
+            "source": "W8zs6biOiqLT",
+            "target": "W8zs7713oOLi",
+            "proTarget": true,
+            "affects": "confidence",
+            "type": "connector",
+            "id": "W8zs6bikubt2"
+        },
+        "W8zs5HQ1j6HC": {
+            "source": "W8zs5HQC6WKF",
+            "target": "W8zs7713oOLi",
+            "proTarget": false,
+            "affects": "confidence",
+            "type": "connector",
+            "id": "W8zs5HQ1j6HC"
+        },
+        "W8zs4zuGZz7C": {
+            "source": "W8zs4zu8QoYY",
+            "target": "W8zs7713oOLi",
+            "proTarget": false,
+            "affects": "confidence",
+            "type": "connector",
+            "id": "W8zs4zuGZz7C"
+        }
+    }
+}
 
-// Uncomment if needed.
-// export const initialEdges = [
-//   {
-//     id: "edge-" + connector.id,
-//     source: claim1.id,
-//     target: claim2.id,
-//     animated: true,
-//     type: "rsEdge",
-//   },
-// ];

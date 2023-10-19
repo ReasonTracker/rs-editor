@@ -130,18 +130,6 @@ svg {
   margin-bottom: 30px;
 }
 
-.react-flow__handle {
-  opacity: 0.2;
-  width: 10px;
-  height: 10px;
-  background: transparent;
-  border-width: 2px;
-  transition: 0.5s;
-}
-.rsNode:hover .react-flow__handle {
-  opacity: 1;
-}
-
 .react-flow__attribution a {
   background: black;
   display: inline-block;
