@@ -34,7 +34,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const relevanceMax = data.score.relevance * MAX_STROKE_WIDTH
     const confidenceMax = data.score.confidence * MAX_STROKE_WIDTH
 
-    const Relevance = () => (
+    const relevance = (
         <div className="rsCalc" style={{ gridArea: 'relevance', width: '50px' }}>
             <svg
                 height={relevanceMax}
@@ -65,7 +65,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const cancelOutTop = data.cancelOutStacked.top * MAX_STROKE_WIDTH
     const cancelOutBottom = data.cancelOutStacked.bottom * MAX_STROKE_WIDTH
 
-    const CancelOut = () => (
+    const cancelOut = (
         <div className="rsCalc" style={{ gridArea: 'cancelOut', position: "relative" }}>
             <div style={{
                 opacity: .4,
@@ -117,149 +117,140 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         (allSources[allSources.length - 1]?.data?.maxImpact || 0)
     ) * MAX_STROKE_WIDTH
 
-    const ScaleTo1Polygon = ({ source }: { source: Edge<ConfidenceEdgeData> }) => {
-        const { id, data } = source;
-        if (!data) return null;
+    const scaleTo1Polygon = (<>
+        {allSources.map(s => {
+            if (!s.data) return null;
 
-        const { consolidatedStacked, scaledTo1Stacked } = data;
+            const { consolidatedStacked, scaledTo1Stacked } = s.data;
 
-        const scaledTop = scaledTo1Stacked.top * MAX_STROKE_WIDTH
-        const scaledBottom = scaledTo1Stacked.bottom * MAX_STROKE_WIDTH
-        const consolidatedTop = consolidatedStacked.top * MAX_STROKE_WIDTH
-        const consolidatedBottom = consolidatedStacked.bottom * MAX_STROKE_WIDTH
+            const scaledTop = scaledTo1Stacked.top * MAX_STROKE_WIDTH
+            const scaledBottom = scaledTo1Stacked.bottom * MAX_STROKE_WIDTH
+            const consolidatedTop = consolidatedStacked.top * MAX_STROKE_WIDTH
+            const consolidatedBottom = consolidatedStacked.bottom * MAX_STROKE_WIDTH
 
-        return (
-            <Fragment key={id}>
-                <polygon
-                    style={{ fill: `var(--${data.pol})` }}
-                    points={`
-                        0  , ${scaledTop}
-                        0  , ${scaledBottom}
-                        50 , ${consolidatedBottom}
-                        50 , ${consolidatedTop}
-                    `}
-                />
-            </Fragment>
-        );
-    };
-    const ScaleTo1 = () => {
-        if (allSources.length === 0) return null
-
-        return (
-            <div className="rsCalc" style={{ gridArea: 'scaleTo1' }}>
-                <svg height={calculatedHeight} width={'50px'}>
-                    {allSources.map(s =>
-                        <ScaleTo1Polygon key={s.id} source={s} />
-                    )}
-                </svg>
-            </div>
-        )
-    }
-
-    const ConsolidatePolygon = ({ source }: { source: Edge<ConfidenceEdgeData> }) => {
-        const { id, data } = source;
-        if (!data) return null;
-
-        const { reducedImpactStacked, consolidatedStacked } = data;
-
-        const reducedCenter = reducedImpactStacked.center * MAX_STROKE_WIDTH
-        const consolidatedCenter = consolidatedStacked.center * MAX_STROKE_WIDTH
-        const reducedImpact = (reducedImpactStacked.bottom - reducedImpactStacked.top) * MAX_STROKE_WIDTH
-
-        const [edgePath, labelX, labelY] = getBezierPath({
-            sourceX: 100,
-            sourceY: reducedCenter,
-            sourcePosition: Position.Left,
-            targetX: 0,
-            targetY: consolidatedCenter,
-            targetPosition: Position.Right,
-        });
-
-        return (
-            <Fragment key={id}>
-                <path
-                    style={{
-                        stroke: `var(--${data?.pol})`,
-                        strokeWidth: reducedImpact,
-                    }}
-                    d={edgePath}
-                />
-            </Fragment>
-        );
-    }
-
-    const Consolidate = () => (
-        <div className="rsCalc" style={{ gridArea: 'consolidate' }}>
-            {allSources.length > 0 && <>
-                <svg
-                    height={calculatedHeight}
-                    width={'100px'}>
-                    {allSources.map(s =>
-                        <ConsolidatePolygon key={s.id} source={s} />
-                    )}
-                </svg>
-            </>}
+            return (
+                <Fragment key={`scale=${s.id}`}>
+                    <polygon
+                        style={{ fill: `var(--${data.pol})` }}
+                        points={`
+                            0  , ${scaledTop}
+                            0  , ${scaledBottom}
+                            50 , ${consolidatedBottom}
+                            50 , ${consolidatedTop}
+                        `}
+                    />
+                </Fragment>
+            );
+        })}
+    </>)
+    const scaleTo1 = (
+        <div className="rsCalc" style={{ gridArea: 'scaleTo1' }}>
+            <svg height={calculatedHeight} width={'50px'}>
+                {scaleTo1Polygon}
+            </svg>
         </div>
     )
 
-    const WeightByConfidencePolygon = ({ source }: { source: Edge<ConfidenceEdgeData> }) => {
-        const { id, data } = source;
-        if (!data) return null;
+    const consolidatePolygon = (<>
+        {allSources.map(s => {
+            if (!s.data) return null;
+            const { reducedImpactStacked, consolidatedStacked } = s.data;
 
-        const { impactStacked, reducedImpactStacked, maxImpactStacked, reducedMaxImpactStacked } = data;
+            const reducedCenter = reducedImpactStacked.center * MAX_STROKE_WIDTH
+            const consolidatedCenter = consolidatedStacked.center * MAX_STROKE_WIDTH
+            const reducedImpact = (reducedImpactStacked.bottom - reducedImpactStacked.top) * MAX_STROKE_WIDTH
 
-        const top = impactStacked.top * MAX_STROKE_WIDTH;
-        const reducedTop = reducedImpactStacked.top * MAX_STROKE_WIDTH;
-        const reducedMaxTop = reducedMaxImpactStacked.top * MAX_STROKE_WIDTH;
-        const maxTop = maxImpactStacked.top * MAX_STROKE_WIDTH;
+            const [edgePath, labelX, labelY] = getBezierPath({
+                sourceX: 100,
+                sourceY: reducedCenter,
+                sourcePosition: Position.Left,
+                targetX: 0,
+                targetY: consolidatedCenter,
+                targetPosition: Position.Right,
+            });
 
-        const bottom = impactStacked.bottom * MAX_STROKE_WIDTH;
-        const reducedBottom = reducedImpactStacked.bottom * MAX_STROKE_WIDTH;
-        const reducedMaxBottom = reducedMaxImpactStacked.bottom * MAX_STROKE_WIDTH;
-        const maxBottom = maxImpactStacked.bottom * MAX_STROKE_WIDTH;
+            return (
+                <Fragment key={`consolidate-${s.id}`}>
+                    <path
+                        style={{
+                            stroke: `var(--${data?.pol})`,
+                            strokeWidth: reducedImpact,
+                        }}
+                        d={edgePath}
+                    />
+                </Fragment>
+            );
+        }
+        )}
+    </>);
+    const consolidate = (
+        <div className="rsCalc" style={{ gridArea: 'consolidate' }}>
+            <svg
+                height={calculatedHeight}
+                width={'100px'}>
+                {consolidatePolygon}
+            </svg>
+        </div>
+    )
 
-        return (
-            <Fragment key={id}>
-                <polygon
-                    style={{ opacity: .4, fill: `var(--${data?.pol})` }}
-                    points={`
-                        0                   , ${reducedMaxTop}
-                        0                   , ${reducedMaxBottom}
-                        ${MAX_STROKE_WIDTH} , ${maxBottom}
-                        ${MAX_STROKE_WIDTH} , ${maxTop}
-                    `}
-                />
-                <polygon
-                    style={{ fill: `var(--${data?.pol})` }}
-                    points={`
-                        0                   , ${reducedTop}
-                        0                   , ${reducedBottom}
-                        ${MAX_STROKE_WIDTH} , ${bottom}
-                        ${MAX_STROKE_WIDTH} , ${top}
-                    `}
-                />
-            </Fragment>
-        );
-    }
-    const WeightByConfidence = () => {
-        if (allSources.length === 0) return null
-        return (
-            <div className="rsCalc" style={{ gridArea: 'weightByConfidence' }}>
-                <svg
-                    height={calculatedHeight}
-                    width={MAX_STROKE_WIDTH}>
-                    {allSources.map(s =>
-                        <WeightByConfidencePolygon key={s.id} source={s} />
-                    )}
-                </svg>
-            </div>
-        )
-    }
+    const weightByConfidencePolygon = (<>
+        {allSources.map(s => {
+            if (!s.data) return null;
+            const { impactStacked, reducedImpactStacked, maxImpactStacked, reducedMaxImpactStacked } = s.data;
 
-    const RsContent = () => (
+            const top = impactStacked.top * MAX_STROKE_WIDTH;
+            const reducedTop = reducedImpactStacked.top * MAX_STROKE_WIDTH;
+            const reducedMaxTop = reducedMaxImpactStacked.top * MAX_STROKE_WIDTH;
+            const maxTop = maxImpactStacked.top * MAX_STROKE_WIDTH;
+
+            const bottom = impactStacked.bottom * MAX_STROKE_WIDTH;
+            const reducedBottom = reducedImpactStacked.bottom * MAX_STROKE_WIDTH;
+            const reducedMaxBottom = reducedMaxImpactStacked.bottom * MAX_STROKE_WIDTH;
+            const maxBottom = maxImpactStacked.bottom * MAX_STROKE_WIDTH;
+
+            return (
+                <Fragment key={`weight-${s.id}`}>
+                    <polygon
+                        style={{ opacity: .4, fill: `var(--${data?.pol})` }}
+                        points={`
+                            0                   , ${reducedMaxTop}
+                            0                   , ${reducedMaxBottom}
+                            ${MAX_STROKE_WIDTH} , ${maxBottom}
+                            ${MAX_STROKE_WIDTH} , ${maxTop}
+                        `}
+                    />
+                    <polygon
+                        style={{ fill: `var(--${data?.pol})` }}
+                        points={`
+                            0                   , ${reducedTop}
+                            0                   , ${reducedBottom}
+                            ${MAX_STROKE_WIDTH} , ${bottom}
+                            ${MAX_STROKE_WIDTH} , ${top}
+                        `}
+                    />
+                </Fragment>
+            );
+        })
+        }
+    </>)
+    const weightByConfidence = (
+        <div className="rsCalc" style={{ gridArea: 'weightByConfidence' }}>
+            <svg
+                height={calculatedHeight}
+                width={MAX_STROKE_WIDTH}>
+                {weightByConfidencePolygon}
+            </svg>
+        </div>
+    )
+
+    const rsContent = (
         <div style={{ gridArea: "content" }} className={`rsContent ${data.pol} relative`}>
             {dev.isDev
-                ? <DevDetails />
+                ? <>
+                    <p>scoreId: {data.score.id}</p>
+                    <p>nodeId: {id}</p>
+                    <p>claimId: {data.claim.id}</p>
+                </>
                 : <TextArea
                     className="node-text-area text-xs" // !p-0, but caused gap it main claim
                     value={nodeText}
@@ -269,10 +260,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 />
             }
             <div
-                className="absolute -right-7 bottom-0 transform 
-                                opacity-0 
-                                group-hover:opacity-100 
-                                transition flex flex-col"
+                className="absolute -right-7 bottom-0 transform opacity-0 group-hover:opacity-100 transition flex flex-col"
             >
                 <Tooltip content="Add Pro" position="right">
                     <Button
@@ -296,28 +284,18 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         </div>
     )
 
-    const DevDetails = () => {
-        return (
-            <>
-                <p>scoreId: {data.score.id}</p>
-                <p>nodeId: {id}</p>
-                <p>claimId: {data.claim.id}</p>
-            </>
-        )
-    }
-
     return (
         <div className='group relative'>
             <div className="rsNode" >
                 <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * MAX_STROKE_WIDTH }}>
 
-                    <Relevance />
-                    <CancelOut />
-                    <ScaleTo1 />
-                    <Consolidate />
-                    <WeightByConfidence />
+                    {relevance}
+                    {cancelOut}
+                    {scaleTo1}
+                    {consolidate}
+                    {weightByConfidence}
 
-                    <RsContent />
+                    {rsContent}
 
                 </div>
             </div>
