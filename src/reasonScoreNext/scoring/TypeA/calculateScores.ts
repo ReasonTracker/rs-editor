@@ -6,8 +6,7 @@ import { calculateRelevance } from "./calculateRelevance";
 import { calculateConfidence } from "./calculateConfidence";
 
 export function calculateScores(debateData: DebateData) {
-    let ids: string[] = [];
-    // let ids = sortSourceIdsFirst(debateData.connectors);
+    let ids = sortSourceIdsFirst(debateData.connectors);
     if (ids.length === 0) { // In case no nodes are connected
         ids = Object.keys(debateData.claims)
     }
@@ -25,8 +24,8 @@ export function calculateScores(debateData: DebateData) {
         const children = connectorsBySource[id]?.map(connector => {
             const score = scores[connector.target]
             return {score, connector}
-
         }) ?? [];
+
         const newScore: Score = {
             type: 'score',
             id: claim.id,

@@ -12,6 +12,9 @@ import {
     DisplayEdgeData,
 } from "@/app/flow/types/types";
 import getLayoutedElements from "./getLayoutedElements";
+import { scaleStacked, sizeStacked, stackSpace } from "@/utils/stackSpace";
+import { GUTTER } from "../data/config";
+import { getNewScore } from "@/reasonScoreNext/scoring/TypeA/Score";
 
 export function flowDataReducer({
     actions,
@@ -78,37 +81,56 @@ export function flowDataReducer({
         }
 
         // WIP
+        let lastBottom = 0;
+        const maxImpactStack = stackSpace(GUTTER);
+        const consolidatedStack = stackSpace();
+        const scaledTo1Stack = stackSpace();
+
         let newDisplayEdges: Edge<DisplayEdgeData>[] = [];
         for (const edge of Object.values(newDebateData.connectors)) {
             // if (oldDebateData.connectors[edge.id]) continue
 
+            let sourceScore = displayNodes.find((node) => node.id === edge.source)?.data?.score;
+            if (!sourceScore) {
+                sourceScore = getNewScore({ id: edge.id, type: "score" })
+                console.log("new score generated")
+            }
+
+            const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
+            const maxImpact = sourceScore.relevance;
+
+            const maxImpactStacked = maxImpactStack(sourceScore.relevance);
+            const impactStacked = sizeStacked(maxImpactStacked, impact);
+            const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence);
+            const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
+            const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
+            // const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight); //percentOfWeight doesn't exist
+            const scaledTo1Stacked = scaledTo1Stack(1);
+
+
             const pol = edge.proTarget ? "pro" : "con"
             const type = edge.affects
-            const stacked = {
-                top: 1,
-                bottom: 1,
-                center: 1,
-            };
-            const commonData = {
+
+            const persistedData = {
                 pol,
                 // claimEdge: ClaimEdge,
-                // sourceScore: Score,
+                sourceScore,
                 type,
-                maxImpact: 1,
             }
-            const confidenceData = {
-                maxImpactStacked: stacked,
-                impactStacked: stacked,
-                reducedImpactStacked: stacked,
-                reducedMaxImpactStacked: stacked,
-                consolidatedStacked: stacked,
-                scaledTo1Stacked: stacked,
+            const calculatedData = {
+                maxImpactStacked,
+                impactStacked,
+                reducedImpactStacked,
+                reducedMaxImpactStacked,
+                consolidatedStacked,
+                scaledTo1Stacked,
                 impact: 1,
-                targetTop: 1,
+                targetTop: lastBottom,
+                maxImpact,
             }
             const data = {
-                ...commonData,
-                ...confidenceData
+                ...persistedData,
+                ...calculatedData
             }
 
             newDisplayEdges.push({
@@ -119,6 +141,9 @@ export function flowDataReducer({
                 type: "rsEdge",
                 data
             });
+
+            lastBottom += maxImpact;
+            lastBottom += GUTTER;
         }
 
         const { nodes, edges } = getLayoutedElements(newDisplayNodes, newDisplayEdges)

@@ -439,7 +439,7 @@ export const initialDebateData: DebateData =
             "pol": "pro"
         },
         "W8zs6Aus8ZqQ": {
-            "content": `${pro1}}`,
+            "content": `${pro1}`,
             "type": "claim",
             "id": "W8zs6Aus8ZqQ",
             "pol": "pro"

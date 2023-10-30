@@ -30,8 +30,10 @@ const addNode = ({
 
     // If there is no sourceId, add orphan claim
     actions.push(claimAction);
-    if (!sourceId) return x.dispatch(actions);
-
+    if (!sourceId) {
+        console.log("no sourceId")
+        return x.dispatch(actions);
+    }
     const newConnectorData = newConnector({
         source: newClaimData.id,
         target: sourceId,

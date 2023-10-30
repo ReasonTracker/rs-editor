@@ -3,6 +3,7 @@ import { DevContext, FlowDataContext } from "./FlowDataProvider";
 import { Drawer, Button, IconName, Divider } from "@blueprintjs/core";
 import { ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
 import addNode from "../utils/addNode";
+import { calculateScores } from "@/reasonScoreNext/scoring/TypeA/calculateScores";
 
 const DevButton = ({
     label,
@@ -87,6 +88,15 @@ const DevPanel = () => {
                         icon={"console"}
                         onClick={() => console.log(x.debateData)}
                         label={"DebateData"}
+                    />
+                    <Divider />
+                    <DevButton
+                        icon={"sort"}
+                        onClick={() => {
+                            const calcScore = calculateScores(x.debateData);
+                            console.log(calcScore);
+                        }}
+                        label={"Calculate Score"}
                     />
                     <Divider />
                     <DevButton

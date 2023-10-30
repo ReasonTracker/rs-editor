@@ -47,7 +47,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         0  , ${relevanceMax}
                         50 , ${MAX_STROKE_WIDTH}
                         50 , 0
-                `}
+                    `}
                 />
                 <polygon
                     style={{ fill: `var(--${data.pol})` }}
@@ -131,7 +131,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             return (
                 <Fragment key={`scale=${s.id}`}>
                     <polygon
-                        style={{ fill: `var(--${data.pol})` }}
+                        style={{ fill: `var(--${s.data.pol})` }}
                         points={`
                             0  , ${scaledTop}
                             0  , ${scaledBottom}
@@ -173,7 +173,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 <Fragment key={`consolidate-${s.id}`}>
                     <path
                         style={{
-                            stroke: `var(--${data?.pol})`,
+                            stroke: `var(--${s.data?.pol})`,
                             strokeWidth: reducedImpact,
                         }}
                         d={edgePath}
@@ -184,7 +184,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         )}
     </>);
     const consolidate = (
-        <div className="rsCalc" style={{ gridArea: 'consolidate' }}>
+        <div className="rsCalc consolidate" style={{ gridArea: 'consolidate' }} >
             <svg
                 height={calculatedHeight}
                 width={'100px'}>
@@ -211,7 +211,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             return (
                 <Fragment key={`weight-${s.id}`}>
                     <polygon
-                        style={{ opacity: .4, fill: `var(--${data?.pol})` }}
+                        style={{
+                            opacity: .4,
+                            fill: `var(--${s.data?.pol})`
+                        }}
                         points={`
                             0                   , ${reducedMaxTop}
                             0                   , ${reducedMaxBottom}
@@ -220,7 +223,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         `}
                     />
                     <polygon
-                        style={{ fill: `var(--${data?.pol})` }}
+                        style={{ fill: `var(--${s.data?.pol})` }}
                         points={`
                             0                   , ${reducedTop}
                             0                   , ${reducedBottom}
@@ -262,6 +265,48 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             <div
                 className="absolute -right-7 bottom-0 transform opacity-0 group-hover:opacity-100 transition flex flex-col"
             >
+                {dev.isDev
+                    ? <>
+                        <Button
+                            minimal
+                            small
+                            className="mb-1"
+                            icon="helicopter"
+                            onClick={() => {
+                                console.log("calculatedHeight", calculatedHeight)
+                            }}
+                        />
+                        <Button
+                            minimal
+                            small
+                            className="mb-1"
+                            icon="database"
+                            onClick={() => {
+                                console.log("data", data)
+                            }}
+                        />
+                        <Button
+                            minimal
+                            small
+                            className="mb-1"
+                            icon="sort-numerical"
+                            onClick={() => {
+                                allSources.map(s => {
+                                    if (!s.data) return null;
+                                    const { reducedImpactStacked, consolidatedStacked } = s.data;
+                                    console.log("source", s)
+                                    console.log("consolidatedStacked", s.data?.consolidatedStacked)
+                                    console.log("reducedImpactStacked", s.data?.reducedImpactStacked)
+                                    console.log("targetTop", s.data?.targetTop)
+                                    console.log("maxImpact", s.data?.maxImpact)
+                                    console.log("reducedImpact", (reducedImpactStacked.bottom - consolidatedStacked.top) * MAX_STROKE_WIDTH)
+                                    console.log("pol", s.data?.pol)
+
+                                })
+                                console.log("allSources", allSources)
+                            }}
+                        />
+                    </> : null}
                 <Tooltip content="Add Pro" position="right">
                     <Button
                         minimal
