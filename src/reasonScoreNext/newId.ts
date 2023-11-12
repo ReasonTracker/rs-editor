@@ -13,7 +13,6 @@ export const newId = (() => {
         let result = toBase62(num);
 
         if (num === lastNum) {
-            console.log(`Warning: newId called twice in the same millisecond. ${num} ${lastNum}`);
             suffixNum++
         } else {
             // Generate a random 30-bit number between 2^29 and 2^30 - 1 
