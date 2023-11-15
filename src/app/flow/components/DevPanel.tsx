@@ -86,7 +86,7 @@ const DevPanel = () => {
                     />
                     <DevButton
                         icon={"console"}
-                        onClick={() => console.log(x.debateData)}
+                        onClick={() => { console.log("claims", x.debateData.claims); console.log("connectors", x.debateData.connectors) }}
                         label={"DebateData"}
                     />
                     <Divider />

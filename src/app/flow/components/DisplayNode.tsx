@@ -246,6 +246,55 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         </div>
     )
 
+    const devButtons = (
+        <>
+            <Tooltip content="calculatedHeight" position="right">
+                <Button
+                    minimal
+                    small
+                    className="mb-1"
+                    icon="helicopter"
+                    onClick={() => {
+                        console.log("calculatedHeight", calculatedHeight)
+                    }}
+                />
+            </Tooltip>
+            <Tooltip content="data" position="right">
+                <Button
+                    minimal
+                    small
+                    className="mb-1"
+                    icon="database"
+                    onClick={() => {
+                        console.log("data", data)
+                    }}
+                />
+            </Tooltip>
+            <Tooltip content="allSources" position="right">
+                <Button
+                    minimal
+                    small
+                    className="mb-1"
+                    icon="sort-numerical"
+                    onClick={() => {
+                        allSources.map(s => {
+                            if (!s.data) return null;
+                            const { reducedImpactStacked, consolidatedStacked } = s.data;
+                            console.log("source", s)
+                            console.log("consolidatedStacked", s.data?.consolidatedStacked)
+                            console.log("reducedImpactStacked", s.data?.reducedImpactStacked)
+                            console.log("targetTop", s.data?.targetTop)
+                            console.log("maxImpact", s.data?.maxImpact)
+                            console.log("reducedImpact", (reducedImpactStacked.bottom - consolidatedStacked.top) * MAX_STROKE_WIDTH)
+                            console.log("pol", s.data?.pol)
+
+                        })
+                        console.log("allSources", allSources)
+                    }}
+                />
+            </Tooltip>
+        </>
+    )
     const rsContent = (
         <div style={{ gridArea: "content" }} className={`rsContent ${data.pol} relative`}>
             {dev.isDev
@@ -265,48 +314,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             <div
                 className="absolute -right-7 bottom-0 transform opacity-0 group-hover:opacity-100 transition flex flex-col"
             >
-                {dev.isDev
-                    ? <>
-                        <Button
-                            minimal
-                            small
-                            className="mb-1"
-                            icon="helicopter"
-                            onClick={() => {
-                                console.log("calculatedHeight", calculatedHeight)
-                            }}
-                        />
-                        <Button
-                            minimal
-                            small
-                            className="mb-1"
-                            icon="database"
-                            onClick={() => {
-                                console.log("data", data)
-                            }}
-                        />
-                        <Button
-                            minimal
-                            small
-                            className="mb-1"
-                            icon="sort-numerical"
-                            onClick={() => {
-                                allSources.map(s => {
-                                    if (!s.data) return null;
-                                    const { reducedImpactStacked, consolidatedStacked } = s.data;
-                                    console.log("source", s)
-                                    console.log("consolidatedStacked", s.data?.consolidatedStacked)
-                                    console.log("reducedImpactStacked", s.data?.reducedImpactStacked)
-                                    console.log("targetTop", s.data?.targetTop)
-                                    console.log("maxImpact", s.data?.maxImpact)
-                                    console.log("reducedImpact", (reducedImpactStacked.bottom - consolidatedStacked.top) * MAX_STROKE_WIDTH)
-                                    console.log("pol", s.data?.pol)
-
-                                })
-                                console.log("allSources", allSources)
-                            }}
-                        />
-                    </> : null}
+                {dev.isDev ? devButtons : null}
                 <Tooltip content="Add Pro" position="right">
                     <Button
                         minimal
