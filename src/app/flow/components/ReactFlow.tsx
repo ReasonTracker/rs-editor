@@ -1,11 +1,12 @@
 'use client';
 import ReactFlow, { Node } from 'reactflow';
 import { FlowDataContext } from './FlowDataProvider'
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import DisplayNode from './DisplayNode'
 import DisplayEdge from './DisplayEdge'
 import { DisplayNodeData } from '../types/types';
 import ContextMenu, { ContextMenuData } from './ContextMenu';
+import addNode from '../utils/addNode';
 
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };
@@ -35,6 +36,12 @@ export default function Flow() {
     );
 
     const x = useContext(FlowDataContext);
+
+    // addNode({ x }) for dev
+    useEffect(() => {
+        addNode({ x })
+    }, [])
+
 
     return (
         <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
