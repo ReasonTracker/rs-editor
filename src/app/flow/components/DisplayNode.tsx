@@ -375,6 +375,15 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 isConnectable={true}
                 className={dev.isDev ? 'opacity-100' : 'opacity-0'}
             />
+            <svg style={{ height: 0 }}>
+                <defs>
+                    <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
+                        <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />
+                        <path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' />
+                        <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
+                    </pattern>
+                </defs>
+            </svg>
         </div>
     );
 }
