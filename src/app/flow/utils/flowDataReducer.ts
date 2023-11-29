@@ -33,14 +33,18 @@ export function flowDataReducer({
     //  * Apply actions to reasonScore debate data
     setDebateData((oldDebateData) => {
         const newDebateData = rsReducer(actions, oldDebateData);
-        const newScores = calculateScores(newDebateData);
+        const newScores = calculateScores(newDebateData, displayNodes);
         const connectors = newDebateData.connectors;
+
+        const cancelOut = stackSpace();
 
         // TODO: Figure out new nodes and new edges
         let newDisplayNodes: Node<DisplayNodeData>[] = [];
         for (const score of Object.values(newScores)) {
 
             const claim = newDebateData.claims[score.id]
+            const cancelOutStacked = cancelOut(score.confidence);
+
 
             // TODO update, add position to debateData
             // TODO probably remove, irrelevant with dagre now I think
@@ -76,6 +80,7 @@ export function flowDataReducer({
                     claim: newDebateData.claims[score.id],
                     scoreNumberText: "scoreNumberText",
                     scoreNumber: 50,
+                    cancelOutStacked
                 },
             });
         }
@@ -105,7 +110,7 @@ export function flowDataReducer({
             const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
             const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
             // const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight); //percentOfWeight doesn't exist
-            const scaledTo1Stacked = scaledTo1Stack(1);
+            const scaledTo1Stacked = scaledTo1Stack(.5); // temp
 
 
             const pol = edge.proTarget ? "pro" : "con"
