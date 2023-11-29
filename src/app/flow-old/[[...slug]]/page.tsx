@@ -48,7 +48,7 @@ export const DevContext = createContext<boolean>(false);
 export const RsRepoContext = createContext<RepositoryLocalPure>(new RepositoryLocalPure(rsData));
 
 function Flow({ slug }: { slug: string[] }) {
-  console.log(slug)
+//   console.log(slug)
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
   const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<ConfidenceEdgeData | RelevenceEdgeData>([]);
