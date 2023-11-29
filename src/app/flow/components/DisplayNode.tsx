@@ -4,6 +4,7 @@ import { Button, TextArea, Tooltip } from '@blueprintjs/core';
 import { DisplayNodeData, ConfidenceEdgeData } from '@/app/flow/types/types';
 import { DevContext, FlowDataContext } from './FlowDataProvider';
 import addNode from '../utils/addNode';
+import { stackSpace } from '@/utils/stackSpace';
 
 const MAX_STROKE_WIDTH = 25
 const HALF_STROKE_WIDTH = MAX_STROKE_WIDTH / 2
@@ -29,6 +30,11 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
         return originalSources;
     });
+
+    const totalConfidence = allSources.reduce((acc, s) => {
+        if (!s.data?.sourceScore) return acc;
+        return acc + s.data.sourceScore.confidence;
+    }, 0);
 
     const relevanceHalf = data.score.relevance * HALF_STROKE_WIDTH
     const relevanceMax = data.score.relevance * MAX_STROKE_WIDTH
@@ -117,11 +123,14 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         (allSources[allSources.length - 1]?.data?.maxImpact || 0)
     ) * MAX_STROKE_WIDTH
 
+    const scaledTo1Stack = stackSpace();
     const scaleTo1Polygon = (<>
         {allSources.map(s => {
             if (!s.data) return null;
 
-            const { consolidatedStacked, scaledTo1Stacked } = s.data;
+            const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
+            const scaledTo1Stacked = scaledTo1Stack(percentOfWeight)
+            const { consolidatedStacked } = s.data;
 
             const scaledTop = scaledTo1Stacked.top * MAX_STROKE_WIDTH
             const scaledBottom = scaledTo1Stacked.bottom * MAX_STROKE_WIDTH
