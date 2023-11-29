@@ -1,19 +1,32 @@
 import { DebateData } from "../..//DebateData";
 import { Connector } from "../../Connector";
-import { Score } from "./Score";
+import { Score, getNewScore } from "./Score";
 import { sortSourceIdsFirst } from "../../sortSourceIdsFirst";
 import { calculateRelevance } from "./calculateRelevance";
 import { calculateConfidence } from "./calculateConfidence";
+import { DisplayNodeData } from "@/app/flow/types/types";
+import { Node } from "reactflow";
 
-export function calculateScores(debateData: DebateData) {
+export function calculateScores(debateData: DebateData, displayNodes: Node<DisplayNodeData>[]) {
     let ids = sortSourceIdsFirst(debateData.connectors);
     if (ids.length === 0) { // In case no nodes are connected
         ids = Object.keys(debateData.claims)
     }
-    let scores: { [id: string]: Score } = {};
 
-    /** index for quickly finding connectors by source */
-    let connectorsBySource: { [id: string]: Connector[] } = {}
+    let scores: { [id: string]: Score } = {};
+    displayNodes.map(node => scores[node.data.score.id] = node.data.score);
+
+    /** index for quickly finding connectors by target */
+    let connectorsByTarget: { [id: string]: Connector[] } = {}
+    Object.values(debateData.connectors).forEach(connector => {
+        const sourceId = connector.target;
+
+        if (!connectorsByTarget[sourceId]) {
+            connectorsByTarget[sourceId] = [];
+        }
+
+        connectorsByTarget[sourceId].push(connector);
+    });
 
     for (const id of ids) {
         const claim = debateData.claims[id];
@@ -21,9 +34,9 @@ export function calculateScores(debateData: DebateData) {
             console.error("No claim found for id:", id);
             continue;
         }
-        const children = connectorsBySource[id]?.map(connector => {
-            const score = scores[connector.target]
-            return {score, connector}
+        const children = connectorsByTarget[id]?.map(connector => {
+            const score = scores[connector.source]
+            return { score, connector }
         }) ?? [];
 
         const newScore: Score = {
