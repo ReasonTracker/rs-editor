@@ -3,7 +3,7 @@ import { halfStroke, maxStrokeWidth } from './config';
 import { ConfidenceEdgeData, DisplayNodeData } from './pageData';
 import { Fragment, useContext, useState } from 'react';
 import { DevContext } from './page';
-import { TextArea } from '@blueprintjs/core';
+import { Button, TextArea, Tooltip } from '@blueprintjs/core';
 import { RsRepoContext } from './page';
 
 export function DisplayNode(props: NodeProps<DisplayNodeData>) {
@@ -234,6 +234,30 @@ export function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         <p>scoreId: {data.score.id}</p>
                         <p>nodeId: {id}</p>
                         <p>claimId: {data.claim.id}</p>
+                        <Tooltip content="data" position="right">
+                            <Button
+                                minimal
+                                small
+                                className="mb-1"
+                                icon="database"
+                                onClick={() => {
+                                    console.log("data", id)
+                                    console.log(id, data)
+                                    console.log("cancelOutStacked", data.cancelOutStacked)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip content="allSources" position="right">
+                            <Button
+                                minimal
+                                small
+                                className="mb-1"
+                                icon="database"
+                                onClick={() => {
+                                    console.log("allSources", allSources)
+                                }}
+                            />
+                        </Tooltip>
                     </> : <>
                         <TextArea
                             className="invisible-input text-white"

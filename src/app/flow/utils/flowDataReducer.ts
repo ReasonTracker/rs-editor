@@ -89,7 +89,7 @@ export function flowDataReducer({
         let lastBottom = 0;
         const maxImpactStack = stackSpace(GUTTER);
         const consolidatedStack = stackSpace();
-        const scaledTo1Stack = stackSpace();
+        // const scaledTo1Stack = stackSpace();
 
         let newDisplayEdges: Edge<DisplayEdgeData>[] = [];
         for (const edge of Object.values(newDebateData.connectors)) {
@@ -110,7 +110,7 @@ export function flowDataReducer({
             const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
             const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
             // const scaledTo1Stacked = scaledTo1Stack(sourceScore.percentOfWeight); //percentOfWeight doesn't exist
-            const scaledTo1Stacked = scaledTo1Stack(.5); // temp
+            // const scaledTo1Stacked = scaledTo1Stack(.5); // temp
 
 
             const pol = edge.proTarget ? "pro" : "con"
@@ -128,7 +128,7 @@ export function flowDataReducer({
                 reducedImpactStacked,
                 reducedMaxImpactStacked,
                 consolidatedStacked,
-                scaledTo1Stacked,
+                // scaledTo1Stacked,
                 impact: 1,
                 targetTop: lastBottom,
                 maxImpact,

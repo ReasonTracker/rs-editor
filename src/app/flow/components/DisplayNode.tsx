@@ -278,7 +278,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     className="mb-1"
                     icon="database"
                     onClick={() => {
-                        console.log("data", data)
+                        console.log(id, data)
+                        console.log("confidence", data.score.confidence)
+                        console.log("totalConfidence", totalConfidence)
+                        console.log("cancelOutStacked", data.cancelOutStacked)
                     }}
                 />
             </Tooltip>
@@ -291,14 +294,15 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     onClick={() => {
                         allSources.map(s => {
                             if (!s.data) return null;
-                            const { reducedImpactStacked, consolidatedStacked } = s.data;
-                            console.log("source", s)
-                            console.log("consolidatedStacked", s.data?.consolidatedStacked)
-                            console.log("reducedImpactStacked", s.data?.reducedImpactStacked)
-                            console.log("targetTop", s.data?.targetTop)
-                            console.log("maxImpact", s.data?.maxImpact)
-                            console.log("reducedImpact", (reducedImpactStacked.bottom - consolidatedStacked.top) * MAX_STROKE_WIDTH)
-                            console.log("pol", s.data?.pol)
+                            // const { cancelOutStacked, consolidatedStacked, scaledTo1Stacked } = s.data;
+                            console.log(`${s.id}----`)
+                            // console.log("cancelOutStacked", cancelOutStacked)
+                            // console.log("totalConfidence", totalConfidence)
+
+                            const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
+                            const scaledTo1Stacked = stackSpace()(percentOfWeight)
+                            console.log("percentOfWeight", percentOfWeight)
+                            console.log("scaledTo1Stacked", scaledTo1Stacked)
 
                         })
                         console.log("allSources", allSources)
@@ -311,9 +315,12 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         <div style={{ gridArea: "content" }} className={`rsContent ${data.pol} relative`}>
             {dev.isDev
                 ? <>
-                    <p>scoreId: {data.score.id}</p>
-                    <p>nodeId: {id}</p>
-                    <p>claimId: {data.claim.id}</p>
+                    {/* <p>scoreId: {data.score.id}</p> */}
+                    {/* <p>nodeId: {id}</p> */}
+                    {/* <p>claimId: {data.claim.id}</p> */}
+                    <p>{nodeText}</p>
+                    <br />
+                    <p>id: {id}</p>
                 </>
                 : <TextArea
                     className="node-text-area text-xs" // !p-0, but caused gap it main claim
