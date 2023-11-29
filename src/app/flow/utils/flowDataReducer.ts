@@ -43,6 +43,10 @@ export function flowDataReducer({
         for (const score of Object.values(newScores)) {
 
             const claim = newDebateData.claims[score.id]
+            if (!claim) {
+                console.error("No claim found for id:", score.id);
+                continue;
+            }
             const cancelOutStacked = cancelOut(score.confidence);
 
 
@@ -146,7 +150,10 @@ export function flowDataReducer({
                 type: "rsEdge",
                 data
             });
-
+            
+            // TODO we are running through every connector
+            // this only works for every connector per target score
+            // eg: loop through all child edges
             lastBottom += maxImpact;
             lastBottom += GUTTER;
         }

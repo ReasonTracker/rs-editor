@@ -26,7 +26,7 @@ export type ConfidenceEdgeData = {
     reducedImpactStacked: Stacked
     reducedMaxImpactStacked: Stacked
     consolidatedStacked: Stacked
-    scaledTo1Stacked: Stacked
+    // scaledTo1Stacked: Stacked
     type: "confidence"
 
 
