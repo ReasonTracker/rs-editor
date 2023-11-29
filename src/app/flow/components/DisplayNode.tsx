@@ -14,9 +14,6 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const x = useContext(FlowDataContext);
     const dev = useContext(DevContext);
 
-    // typescript temp fix
-    data.cancelOutStacked ? data.cancelOutStacked : data.cancelOutStacked = { top: 0, bottom: 0, center: 0 };
-
     const [nodeText, setNodeText] = useState(data.claim.content);
     const handleChangeText = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
         setNodeText(e.target.value);
@@ -68,8 +65,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         </div>
     )
 
-    const cancelOutTop = data.cancelOutStacked.top * MAX_STROKE_WIDTH
-    const cancelOutBottom = data.cancelOutStacked.bottom * MAX_STROKE_WIDTH
+    const cancelOutTop = data?.cancelOutStacked?.top ?? 0 * MAX_STROKE_WIDTH
+    const cancelOutBottom = data?.cancelOutStacked?.bottom ?? 0 * MAX_STROKE_WIDTH
 
     const cancelOut = (
         <div className="rsCalc" style={{ gridArea: 'cancelOut', position: "relative" }}>
@@ -91,7 +88,13 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
                     height={MAX_STROKE_WIDTH}
                     width={MAX_STROKE_WIDTH * 2}>
-
+                    <defs>
+                        <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
+                            <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />
+                            <path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' />
+                            <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
+                        </pattern>
+                    </defs>
                     <polygon
                         fill='url(#cancelOutPattern)'
                         points={`
@@ -138,7 +141,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             const consolidatedBottom = consolidatedStacked.bottom * MAX_STROKE_WIDTH
 
             return (
-                <Fragment key={`scale=${s.id}`}>
+                <Fragment key={`scale-${s.id}`}>
                     <polygon
                         style={{ fill: `var(--${s.data.pol})` }}
                         points={`
@@ -384,15 +387,6 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 isConnectable={true}
                 className={dev.isDev ? 'opacity-100' : 'opacity-0'}
             />
-            <svg style={{ height: 0 }}>
-                <defs>
-                    <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
-                        <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />
-                        <path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' />
-                        <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
-                    </pattern>
-                </defs>
-            </svg>
         </div>
     );
 }
