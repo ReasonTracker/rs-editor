@@ -21,6 +21,8 @@ export function calculateRelevance(children: { score: Score, connector?: Connect
             }
         }
     }
+    
+    if (relevance < 0) relevance = 0;
 
     return relevance;
 }
