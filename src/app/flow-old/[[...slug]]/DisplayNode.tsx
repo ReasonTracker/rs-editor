@@ -231,9 +231,56 @@ export function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 {weightByConfidence}
                 <div style={{ gridArea: "content" }} className={`rsContent ${data.pol}`}>
                     {isDev ? <>
-                        <p>scoreId: {data.score.id}</p>
-                        <p>nodeId: {id}</p>
-                        <p>claimId: {data.claim.id}</p>
+                        {/* <p>scoreId: {data.score.id}</p> */}
+                        {/* <p>nodeId: {id}</p> */}
+                        {/* <p>claimId: {data.claim.id}</p> */}
+
+                        {/* data.score values: */}
+                        {/*
+                        "affects": "confidence",
+                        "childrenAveragingWeight": 1,
+                        "childrenConfidenceWeight": 1,
+                        "childrenRelevanceWeight": 1,
+                        "childrenWeight": 1,
+                        "confidence": 1,
+                        "content": "",
+                        "descendantCount": 0,
+                        "fraction": 0.5,
+                        "fractionSimple": 0.25,
+                        "generation": 1,
+                        "id": "costScore",
+                        "parentScoreId": "mainClaimScore",
+                        "percentOfWeight": 0.3333333333333333,
+                        "priority": "",
+                        "proParent": false,
+                        "relevance": 1,
+                        "reversible": false,
+                        "scoreRootId": "ScoreRoot",
+                        "sourceClaimId": "cost",
+                        "sourceEdgeId": "costEdge",
+                        "type": "score",
+                        "weight": 1 
+                        */}
+
+                        <table>
+                            <tbody>
+                                {
+                                Object.entries(data.score).map(([key, value]) => {
+                                    const values = [
+                                        "id",
+                                        "confidence", 
+                                        "relevance",
+                                    ]
+                                    if (values.includes(key)) {
+                                        return <tr key={key}>
+                                            <td>{key}</td>
+                                            <td>{((typeof value === "number") ? value.toFixed(2) : value)}</td>
+                                        </tr>
+                                    }
+                                })}
+                            </tbody>
+                        </table>
+
                         <Tooltip content="data" position="right">
                             <Button
                                 minimal
