@@ -165,7 +165,7 @@ svg {
 .rsNodeGrid {
   display: grid;
   grid-template-columns: 50px auto;
-  grid-template-rows: auto;
+  grid-template-rows: minmax(auto, 25px) auto auto;
   grid-template-areas:
     "relevance cancelOut scaleTo1 consolidate weightByConfidence"
     "relevance content scaleTo1 consolidate weightByConfidence"
