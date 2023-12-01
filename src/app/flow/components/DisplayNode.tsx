@@ -77,7 +77,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const cancelOutBottom = data?.cancelOutStacked?.bottom ?? 0 * MAX_STROKE_WIDTH
 
     const cancelOut = (
-        <div className="rsCalc" style={{ gridArea: 'cancelOut', position: "relative" }}>
+        <div className="rsCalc rs-cancelOut" style={{ gridArea: 'cancelOut', position: "relative" }}>
             <div style={{
                 opacity: .4,
                 backgroundColor: `var(--${data.pol})`,
@@ -165,7 +165,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         })}
     </>)
     const scaleTo1 = (
-        <div className="rsCalc" style={{ gridArea: 'scaleTo1' }}>
+        <div className="rsCalc rs-scaleTo1" style={{ gridArea: 'scaleTo1' }}>
             <svg height={calculatedHeight} width={'50px'}>
                 {scaleTo1Polygon}
             </svg>
@@ -205,7 +205,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         )}
     </>);
     const consolidate = (
-        <div className="rsCalc consolidate" style={{ gridArea: 'consolidate' }} >
+        <div className="rsCalc rs-consolidate" style={{ gridArea: 'consolidate' }} >
             <svg
                 height={calculatedHeight}
                 width={'100px'}>
@@ -258,7 +258,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         }
     </>)
     const weightByConfidence = (
-        <div className="rsCalc" style={{ gridArea: 'weightByConfidence' }}>
+        <div className="rsCalc rs-weightByConfidence" style={{ gridArea: 'weightByConfidence' }}>
             <svg
                 height={calculatedHeight}
                 width={MAX_STROKE_WIDTH}>
@@ -329,7 +329,24 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     {/* <p>claimId: {data.claim.id}</p> */}
                     <p>{nodeText}</p>
                     <br />
-                    <p>id: {id}</p>
+                    <p>{id}</p>
+                    <table className='overflow-hidden'>
+                        <tbody>
+                            {
+                                Object.entries(data.score).map(([key, value]) => {
+                                    const values = [
+                                        "confidence",
+                                        "relevance",
+                                    ]
+                                    if (values.includes(key)) {
+                                        return <tr key={key}>
+                                            <td>{key}</td>
+                                            <td>{((typeof value === "number") ? value.toFixed(2) : value)}</td>
+                                        </tr>
+                                    }
+                                })}
+                        </tbody>
+                    </table>
                 </>
                 : <TextArea
                     className="node-text-area text-xs" // !p-0, but caused gap it main claim
