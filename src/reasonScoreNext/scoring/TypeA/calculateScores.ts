@@ -38,12 +38,14 @@ export function calculateScores(debateData: DebateData, displayNodes: Node<Displ
             const score = scores[connector.source]
             return { score, connector }
         }) ?? [];
+        const confidenceChildren = children.filter(child => child.connector?.affects === 'confidence');
+        const relevanceChildren = children.filter(child => child.connector?.affects === 'relevance');
 
         const newScore: Score = {
             type: 'score',
             id: claim.id,
-            relevance: calculateRelevance(children),
-            confidence: calculateConfidence(children)
+            relevance: calculateRelevance(relevanceChildren),
+            confidence: calculateConfidence(confidenceChildren)
         }
         scores[newScore.id] = newScore;
     }
