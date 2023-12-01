@@ -87,7 +87,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 backgroundColor: `var(--${data.pol})`,
                 height: `${confidenceMax}px`,
                 position: 'absolute', top: '0px', left: '0px',
-                width: '100%'
+                width: '100%',
+                zIndex: 10
             }} />
 
             {allSources.length > 0 && <>
