@@ -27,6 +27,13 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
         return originalSources;
     });
+    const allTargets = useStore((s: ReactFlowState) => {
+        const originalTargets: Edge<ConfidenceEdgeData>[] = s.edges.filter(
+            (e) => e.source === id && e.data?.type !== 'relevance'
+        );
+
+        return originalTargets;
+    });
 
     const totalConfidence = allSources.reduce((acc, s) => {
         if (!s.data?.sourceScore) return acc;
@@ -37,33 +44,34 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const relevanceMax = data.score.relevance * MAX_STROKE_WIDTH
     const confidenceMax = data.score.confidence * MAX_STROKE_WIDTH
 
-    const relevance = (
-        <div className="rsCalc" style={{ gridArea: 'relevance', width: '50px' }}>
-            <svg
-                height={relevanceMax}
-                width={'50px'}
-            >
-                <polygon
-                    style={{ opacity: .4, fill: `var(--${data.pol})` }}
-                    points={`
+    const relevance = (<>
+        {allTargets.length > 0 && (
+            <div className="rsCalc rs-relevance" style={{ gridArea: 'relevance', width: '50px' }}>
+                <svg
+                    height={relevanceMax}
+                    width={'50px'}
+                >
+                    <polygon
+                        style={{ opacity: .4, fill: `var(--${data.pol})` }}
+                        points={`
                         0  , 0
                         0  , ${relevanceMax}
                         50 , ${MAX_STROKE_WIDTH}
                         50 , 0
                     `}
-                />
-                <polygon
-                    style={{ fill: `var(--${data.pol})` }}
-                    points={`
+                    />
+                    <polygon
+                        style={{ fill: `var(--${data.pol})` }}
+                        points={`
                         0  , ${relevanceHalf - confidenceMax}
                         0  , ${relevanceHalf + confidenceMax}
                         50 , ${confidenceMax}
                         50 , 0
                     `}
-                />
-            </svg>
-        </div>
-    )
+                    />
+                </svg>
+            </div>
+        )}</>)
 
     const cancelOutTop = data?.cancelOutStacked?.top ?? 0 * MAX_STROKE_WIDTH
     const cancelOutBottom = data?.cancelOutStacked?.bottom ?? 0 * MAX_STROKE_WIDTH
