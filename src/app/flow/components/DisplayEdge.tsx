@@ -58,9 +58,10 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
 
         {dev.isDev &&
             <EdgeText
+
                 labelShowBg={false}
-                x={labelX}
-                y={labelY}
+                x={labelX-30}
+                y={labelY-30}
                 label={props.id}
                 labelStyle={{
                     fill: 'white',
