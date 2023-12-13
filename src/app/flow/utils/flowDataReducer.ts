@@ -66,7 +66,7 @@ export function flowDataReducer({
             for (const connector of Object.values(sourceConnectors)) {
                 // if (oldDebateData.connectors[edge.id]) continue
 
-                let sourceScore = displayNodes.find((node) => node.id === connector.source)?.data?.score;
+                let sourceScore = newScores[connector.source];
                 if (!sourceScore) {
                     sourceScore = getNewScore({ id: connector.id, type: "score" })
                     console.log("new score generated")
@@ -96,7 +96,7 @@ export function flowDataReducer({
                     reducedImpactStacked,
                     reducedMaxImpactStacked,
                     consolidatedStacked,
-                    impact: 1,
+                    impact,
                     targetTop: lastBottom,
                     maxImpact,
                 }
