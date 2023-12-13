@@ -93,7 +93,7 @@ const DevPanel = () => {
                     <DevButton
                         icon={"sort"}
                         onClick={() => {
-                            const calcScore = calculateScores(x.debateData);
+                            const calcScore = calculateScores(x.debateData, x.displayNodes);
                             console.log(calcScore);
                         }}
                         label={"Calculate Score"}
