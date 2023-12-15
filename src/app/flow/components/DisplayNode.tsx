@@ -17,19 +17,18 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const [nodeText, setNodeText] = useState(data.claim.content);
     const handleChangeText = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
         setNodeText(e.target.value);
-        // rsRepo.updateClaim(id, e.target.value);
     };
 
     const allSources = useStore((s: ReactFlowState) => {
-        const originalSources: Edge<ConfidenceEdgeData>[] = s.edges.filter(
+        const originalSources = s.edges.filter(
             (e) => e.target === id && e.data?.type !== 'relevance'
         );
 
         return originalSources;
     });
     const allTargets = useStore((s: ReactFlowState) => {
-        const originalTargets: Edge<ConfidenceEdgeData>[] = s.edges.filter(
-            (e) => e.source === id && e.data?.type !== 'relevance'
+        const originalTargets = s.edges.filter(
+            (e) => e.source === id
         );
 
         return originalTargets;
@@ -360,6 +359,15 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 className="absolute -right-7 bottom-0 transform opacity-0 group-hover:opacity-100 transition flex flex-col"
             >
                 {dev.isDev ? devButtons : null}
+                <Tooltip content="Add Relevance" position="right">
+                    <Button
+                        minimal
+                        small
+                        className="mb-1 !bg-pro"
+                        icon="plus"
+                        onClick={() => addNode({ x, sourceId: id, proTarget: true, affects: 'relevance' })}
+                    />
+                </Tooltip>
                 <Tooltip content="Add Pro" position="right">
                     <Button
                         minimal
