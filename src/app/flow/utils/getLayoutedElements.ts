@@ -22,22 +22,29 @@ const getLayoutedElements = (nodes: Node<DisplayNodeData>[], edges: Edge<Display
     dagre.layout(dagreGraph);
 
     nodes.forEach((node) => {
+        const edge = edges.find((edge) => edge.source === node.id)
+        const type = edge?.targetHandle;
+        const targetNode = nodes.find(node => node.id === edge?.target)
+
         const nodeWithPosition = dagreGraph.node(node.id);
-        
-        // These seem to have no effect
-        // node.targetPosition = 'left'
-        // node.sourcePosition = 'right'
 
         // TODO calculate node with position set already here
         // new nodes have node.position.x === 0 && node.position.y === 0)
         // Probably want to add a flag with onNodeChange to set it's position
 
-        // We are shifting the dagre node position (anchor=center center) to the top left
-        // so it matches the React Flow node anchor point (top left).
-        node.position = {
-            x: nodeWithPosition.x - nodeWidth / 2,
-            y: nodeWithPosition.y - nodeHeight / 2,
-        };
+        if (type === "relevance") {
+            if (!targetNode) return node;
+            node.position = {
+                x: targetNode.position.x + 150,
+                y: targetNode.position.y - 200
+            };
+
+        } else {
+            node.position = {
+                x: nodeWithPosition.x - nodeWidth / 2,
+                y: nodeWithPosition.y - nodeHeight / 2,
+            };
+        }
 
         return node;
     });
