@@ -64,8 +64,13 @@ export function flowDataReducer({
                 .reduce((acc, conn) => ({ ...acc, [conn.id]: conn }), {})
 
             for (const connector of Object.values(sourceConnectors)) {
-                // if (oldDebateData.connectors[edge.id]) continue
 
+                // 
+                // TODO: Separate confidence and relevance edges
+                // relevance only needs maxImpact
+                // and consolidatedStack is getting affected by relevance edges in this loop
+                // steps to repo: add 2 confidence edges, then add a relevance edge, then add another confidence edge
+                // 
                 let sourceScore = newScores[connector.source];
                 if (!sourceScore) {
                     sourceScore = getNewScore({ id: connector.id, type: "score" })
