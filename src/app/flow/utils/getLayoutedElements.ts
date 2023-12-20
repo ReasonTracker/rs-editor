@@ -23,7 +23,7 @@ const getLayoutedElements = (nodes: Node<DisplayNodeData>[], edges: Edge<Display
 
     nodes.forEach((node) => {
         const edge = edges.find((edge) => edge.source === node.id)
-        const type = edge?.targetHandle;
+        const edgeType = edge?.targetHandle;
         const targetNode = nodes.find(node => node.id === edge?.target)
 
         const nodeWithPosition = dagreGraph.node(node.id);
@@ -32,8 +32,7 @@ const getLayoutedElements = (nodes: Node<DisplayNodeData>[], edges: Edge<Display
         // new nodes have node.position.x === 0 && node.position.y === 0)
         // Probably want to add a flag with onNodeChange to set it's position
 
-        if (type === "relevance") {
-            if (!targetNode) return node;
+        if (edgeType === "relevance") {
             node.position = {
                 x: targetNode.position.x + 150,
                 y: targetNode.position.y - 200

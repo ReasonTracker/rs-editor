@@ -340,12 +340,18 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                                     if (values.includes(key)) {
                                         return <tr key={key}>
                                             <td>{key}</td>
-                                            <td>{((typeof value === "number") ? value.toFixed(2) : value)}</td>
+                                            <td className='pl-2'>{((typeof value === "number") ? value.toFixed(2) : value)}</td>
                                         </tr>
                                     }
                                 })}
                         </tbody>
                     </table>
+                    <div
+                className="absolute -left-14 bottom-0 transform"
+            >
+                <div><span className='text-gray-400'>x:</span> {props.xPos}</div>
+                <div><span className='text-gray-400'>y:</span> {props.yPos}</div>
+            </div>
                 </>
                 : <TextArea
                     className="node-text-area text-xs" // !p-0, but caused gap it main claim
