@@ -2,8 +2,8 @@
 import ReactFlow from 'reactflow';
 import { FlowDataContext } from './FlowDataProvider'
 import { useContext } from 'react';
-import { DisplayNode } from '../flow/[[...slug]]/DisplayNode';
-import DisplayEdge from '../flow/[[...slug]]/DisplayEdge';
+import { DisplayNode } from '../flow-old/[[...slug]]/DisplayNode';
+import DisplayEdge from '../flow-old/[[...slug]]/DisplayEdge';
 
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };
