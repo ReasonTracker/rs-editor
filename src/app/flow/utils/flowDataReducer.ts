@@ -59,11 +59,11 @@ export function flowDataReducer({
             const consolidatedStack = stackSpace();
 
             // Get all connectors where this score is the target
-            const sourceConnectors: { [id: string]: Connector } = Object.values(connectors)
+            const scoreConnectors: { [id: string]: Connector } = Object.values(connectors)
                 .filter(conn => conn.target === score.id)
                 .reduce((acc, conn) => ({ ...acc, [conn.id]: conn }), {})
 
-            for (const connector of Object.values(sourceConnectors)) {
+            for (const connector of Object.values(scoreConnectors)) {
 
                 // 
                 // TODO: Separate confidence and relevance edges
@@ -86,11 +86,11 @@ export function flowDataReducer({
                 const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
                 const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
 
-                const pol = connector.proTarget ? "pro" : "con"
+                const sourceScorePolarity = newDebateData.claims[sourceScore.id].pol
                 const type = connector.affects
 
                 const persistedData = {
-                    pol,
+                    pol: sourceScorePolarity,
                     // claimEdge: ClaimEdge,
                     sourceScore,
                     type,

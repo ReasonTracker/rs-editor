@@ -371,7 +371,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="mb-1 !bg-pro"
                         icon="plus"
-                        onClick={() => addNode({ x, sourceId: id, proTarget: true, affects: 'relevance' })}
+                        onClick={() => addNode({ x, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })}
                     />
                 </Tooltip>
                 <Tooltip content="Add Pro" position="right">
@@ -380,7 +380,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="mb-1 !bg-pro"
                         icon="plus"
-                        onClick={() => addNode({ x, sourceId: id, proTarget: true, affects: 'confidence' })}
+                        onClick={() => addNode({ x, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' })}
                     />
                 </Tooltip>
                 <Tooltip content="Add Con" position="right">
@@ -388,7 +388,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         minimal
                         small
                         className="!bg-con"
-                        onClick={() => addNode({ x, sourceId: id, proTarget: false, affects: 'confidence' })}
+                        onClick={() => addNode({ x, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' })}
                         icon="plus"
                     />
                 </Tooltip>

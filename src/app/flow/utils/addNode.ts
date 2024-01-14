@@ -1,6 +1,6 @@
 import { ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
 import { newClaim } from "@/reasonScoreNext/Claim";
-import { FlowDataState } from "../types/types";
+import { DisplayNodeData, FlowDataState } from "../types/types";
 import generateSimpleAnimalClaim from "./generateClaimContent";
 import { newConnector, Affects } from "@/reasonScoreNext/Connector";
 
@@ -8,24 +8,25 @@ import { newConnector, Affects } from "@/reasonScoreNext/Connector";
 const addNode = ({
     x,
     sourceId,
-    proTarget = true,
+    isNewNodePro,
     affects = "confidence",
+    targetNodeData
 }: {
     x: FlowDataState;
     sourceId?: string;
-    proTarget?: boolean;
     affects?: Affects;
+    isNewNodePro: boolean;
+    targetNodeData?: DisplayNodeData
 }) => {
     let actions = [];
 
     const newClaimData = newClaim({ content: generateSimpleAnimalClaim() });
 
-    // Probably need to adjust this?
-    const pol = proTarget ? "pro" : "con";
+    const pol = isNewNodePro ? "pro" : "con";
 
     const claimAction: ClaimActions = {
         type: "add",
-        newData: {...newClaimData, pol},
+        newData: { ...newClaimData, pol },
     };
 
     // If there is no sourceId, add orphan claim
@@ -34,6 +35,7 @@ const addNode = ({
         console.log("no sourceId")
         return x.dispatch(actions);
     }
+    const proTarget = (isNewNodePro === (targetNodeData?.pol === "pro"));
     const newConnectorData = newConnector({
         source: newClaimData.id,
         target: sourceId,

@@ -39,7 +39,7 @@ export default function Flow() {
 
     // addNode({ x }) for dev
     useEffect(() => {
-        addNode({ x })
+        addNode({ x, isNewNodePro: true })
     }, [])
 
 
