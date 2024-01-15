@@ -16,6 +16,7 @@ import { scaleStacked, sizeStacked, stackSpace } from "@/utils/stackSpace";
 import { GUTTER } from "../data/config";
 import { getNewScore } from "@/reasonScoreNext/scoring/TypeA/Score";
 import { Connector } from "@/reasonScoreNext/Connector";
+import { flushSync } from "react-dom";
 
 export function flowDataReducer({
     actions,
@@ -39,7 +40,7 @@ export function flowDataReducer({
         const newDebateData = rsReducer(actions, oldDebateData);
         const newScores = calculateScores(newDebateData, displayNodes);
         const connectors = newDebateData.connectors;
-        
+
         // 
         // Process Nodes
         // 
@@ -166,8 +167,16 @@ export function flowDataReducer({
 
         const { nodes, edges } = getLayoutedElements(newDisplayNodes, newDisplayEdges)
 
-        setDisplayNodes(nodes);
-        setDisplayEdges(edges);
+        //@ts-ignore
+        document.startViewTransition(() => {
+            console.log("startViewTransition")
+            flushSync(() => {
+                setDisplayNodes(nodes);
+                setDisplayEdges(edges);
+            })
+
+        })
+
 
         return newDebateData;
     });
