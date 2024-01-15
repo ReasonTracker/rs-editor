@@ -64,6 +64,7 @@ export type FlowDataState = {
     onNodesChange: OnChange<NodeChange>,
     onEdgesChange: OnChange<EdgeChange>,
     debateData: DebateData
+    animating: boolean
   }
 
 export type OnChange<ChangesType> = (changes: ChangesType[]) => void;

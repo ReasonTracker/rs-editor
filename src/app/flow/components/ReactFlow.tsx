@@ -44,7 +44,7 @@ export default function Flow() {
 
 
     return (
-        <div style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
+        <div className={x.animating ? "autoAnimate" : ''}  style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
             <ReactFlow
                 ref={menuRef}
                 nodes={x.displayNodes}

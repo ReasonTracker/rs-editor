@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useState } from 'react';
+import { ReactNode, createContext, use, useState } from 'react';
 import { useEdgesState, useNodesState } from 'reactflow';
 import { ActionTypes } from '@/reasonScoreNext/ActionTypes';
 import { flowDataReducer } from '../utils/flowDataReducer';
@@ -19,6 +19,7 @@ const initialFlowDataState: FlowDataState = {
     onNodesChange: () => { },
     onEdgesChange: () => { },
     debateData: { claims: {}, connectors: {} },
+    animating: false,
 };
 
 const initialDevContextState: DevContextState = {
@@ -34,16 +35,17 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
     const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<DisplayEdgeData>([]);
     const [debateData, setDebateData] = useState<DebateData>({claims: {}, connectors: {}})
     const [isDev, setDevMode] = useState<boolean>(false);
+    const [animating, setAnimating] = useState<boolean>(false);
 
     async function dispatch(actions: ActionTypes[]) {
         flowDataReducer({
-            actions, setDisplayNodes, setDisplayEdges, setDebateData,
+            actions, setDisplayNodes, setDisplayEdges, setDebateData, setAnimating,
             displayNodes // TODO: remove this, add position to debateData
         })
     }
 
     return (
-        <FlowDataContext.Provider value={{ dispatch, displayNodes, displayEdges, onNodesChange, onEdgesChange, debateData }}>
+        <FlowDataContext.Provider value={{ dispatch, displayNodes, displayEdges, onNodesChange, onEdgesChange, debateData, animating }}>
             <DevContext.Provider value={{ isDev, setDevMode }}>
                 {children}
             </DevContext.Provider>

@@ -68,11 +68,11 @@ const DevPanel = () => {
                 autoFocus={false}
             >
                 <div className="flex flex-col space-y-2 mt-4">
-                    <DevButton
+                    {/* <DevButton
                         icon={"send-to-graph"}
                         onClick={() => addNode({ x })}
                         label={"Add Node"}
-                    />
+                    /> */}
                     <Divider />
                     <DevButton
                         icon={"console"}

@@ -234,3 +234,17 @@ div.bp5-overlay.bp5-overlay-container.bp5-overlay-inline {
 .rsNode .bp5-button .bp5-icon {
   color: initial
 }
+
+.autoAnimate {
+    .react-flow__node-rsNode,
+    path{
+        transition: all 1s ease;
+    }
+
+    /* react-flow__edgelabel-renderer{
+        transition: all 1s ease;
+        div{
+            transition: all 1s ease;
+        }
+    } */
+}

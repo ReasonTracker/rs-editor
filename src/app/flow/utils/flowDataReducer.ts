@@ -22,12 +22,14 @@ export function flowDataReducer({
     setDisplayNodes,
     setDisplayEdges,
     setDebateData,
+    setAnimating,
     displayNodes
 }: {
     actions: ActionTypes[];
     setDisplayNodes: DispatchType<NodeArray>;
     setDisplayEdges: DispatchType<EdgeArray>;
-    setDebateData: Dispatch<SetStateAction<DebateData>>;
+        setDebateData: Dispatch<SetStateAction<DebateData>>;
+        setAnimating: Dispatch<boolean>;
     displayNodes: Node<DisplayNodeData>[];
 }) {
     // TODO: Right now all data changes so does a lot of screen updating. Refactor
@@ -166,8 +168,10 @@ export function flowDataReducer({
 
         const { nodes, edges } = getLayoutedElements(newDisplayNodes, newDisplayEdges)
 
+        setAnimating(true);
         setDisplayNodes(nodes);
         setDisplayEdges(edges);
+        setTimeout(() => setAnimating(false), 1000);
 
         return newDebateData;
     });
