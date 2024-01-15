@@ -78,8 +78,7 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
                 ...(props.style),
                 stroke: `var(--${data?.pol})`,
                 strokeWidth: (data?.maxImpact || 1) * maxStrokeWidth,
-                strokeOpacity: .4,
-                viewTransitionName: `be2-${id}`,
+                strokeOpacity: .4
             }}
             path={edgePath}
 
@@ -90,7 +89,6 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
                 ...(props.style),
                 stroke: `var(--${data?.pol})`,
                 strokeWidth: width,
-                viewTransitionName: `be1-${id}`,
             }}
             path={edgePath} />
         <EdgeLabelRenderer>

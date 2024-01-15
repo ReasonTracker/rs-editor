@@ -397,8 +397,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     )
 
     return (
-        <div className='group relative'
-            style={{ viewTransitionName: `dn-${data.score.id}` }}>
+        <div className='group relative'>
             <div className="rsNode" >
                 <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * MAX_STROKE_WIDTH }}>
 
