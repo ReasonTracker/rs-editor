@@ -1,3 +1,15 @@
 {
-  "editor.formatOnSave": false
+  "editor.formatOnSave": false,
+  "editor.detectIndentation": false, // enforce default tab size
+
+  // enforce default vscode formatter
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+}
 }

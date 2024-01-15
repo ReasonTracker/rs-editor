@@ -1,10 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* TODO move this to proper module file */
 
-@import "@blueprintjs/core/lib/css/blueprint.css";
-@import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-
+/* global.css */
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
@@ -125,4 +121,116 @@ a {
 
 svg {
   display: block;
+}
+
+/* page.css */
+.react-flow__minimap {
+  background-color: #000;
+  border: 1px solid grey;
+  margin-bottom: 30px;
+}
+
+.react-flow__attribution a {
+  background: black;
+  display: inline-block;
+  padding: 0.5em;
+}
+
+/* displayNode.css */
+.rsNode {
+  border-radius: 3px;
+  font-size: 12px;
+  color: white;
+  text-align: left;
+  /* border-width: 1px;
+    border-style: solid;
+    border-color: white;
+    border-width-left: 5px; */
+}
+
+.pro {
+  border-color: var(--pro);
+  stroke: var(--pro);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.con {
+  border-color: var(--con);
+  stroke: var(--con);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.rsNodeGrid {
+  display: grid;
+  grid-template-columns: 50px auto;
+  grid-template-rows: minmax(auto, 25px) auto auto;
+  grid-template-areas:
+    "relevance cancelOut scaleTo1 consolidate weightByConfidence"
+    "relevance content scaleTo1 consolidate weightByConfidence"
+    ".         content   scaleTo1 consolidate weightByConfidence";
+}
+
+.rsContent {
+  padding: 10px;
+  width: 150px;
+}
+
+.rsCalc {
+  display: grid;
+  align-content: start;
+  /* outline: 1px solid hsl(0deg 0% 42% / 30%); */
+}
+
+.node-text-area {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  resize: none !important;
+  overflow: hidden;
+  color: inherit
+}
+
+.node-text-area:focus {
+  border-bottom: 1px solid #ccc;
+}
+
+/* page.module.css */
+.main {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-size: 1.2em;
+  text-decoration: none;
+}
+
+.main a {
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+  margin: 10px;
+  transition: all 0.3s ease;
+}
+
+.main a:hover {
+  color: black;
+  background-color: white;
+  border-color: white;
+}
+
+/* Overrides */
+
+div.bp5-overlay.bp5-overlay-container.bp5-overlay-inline {
+  position: initial;
+}
+
+.rsNode .bp5-button .bp5-icon {
+  color: initial
 }

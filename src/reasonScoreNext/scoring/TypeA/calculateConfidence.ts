@@ -23,6 +23,8 @@ export function calculateConfidence(children: { score: Score, connector?: Connec
             * (child.connector?.proTarget === false? -1 : 1); // Flip it if it is a con (not pro)
     }
 
+    if (confidence < 0) confidence = 0;
+    
     return confidence;
 }
 

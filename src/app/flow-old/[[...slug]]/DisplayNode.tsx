@@ -3,7 +3,7 @@ import { halfStroke, maxStrokeWidth } from './config';
 import { ConfidenceEdgeData, DisplayNodeData } from './pageData';
 import { Fragment, useContext, useState } from 'react';
 import { DevContext } from './page';
-import { TextArea } from '@blueprintjs/core';
+import { Button, TextArea, Tooltip } from '@blueprintjs/core';
 import { RsRepoContext } from './page';
 
 export function DisplayNode(props: NodeProps<DisplayNodeData>) {
@@ -231,12 +231,83 @@ export function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 {weightByConfidence}
                 <div style={{ gridArea: "content" }} className={`rsContent ${data.pol}`}>
                     {isDev ? <>
-                        <p>scoreId: {data.score.id}</p>
-                        <p>nodeId: {id}</p>
-                        <p>claimId: {data.claim.id}</p>
+                        {/* <p>scoreId: {data.score.id}</p> */}
+                        {/* <p>nodeId: {id}</p> */}
+                        {/* <p>claimId: {data.claim.id}</p> */}
+
+                        {/* data.score values: */}
+                        {/*
+                        "affects": "confidence",
+                        "childrenAveragingWeight": 1,
+                        "childrenConfidenceWeight": 1,
+                        "childrenRelevanceWeight": 1,
+                        "childrenWeight": 1,
+                        "confidence": 1,
+                        "content": "",
+                        "descendantCount": 0,
+                        "fraction": 0.5,
+                        "fractionSimple": 0.25,
+                        "generation": 1,
+                        "id": "costScore",
+                        "parentScoreId": "mainClaimScore",
+                        "percentOfWeight": 0.3333333333333333,
+                        "priority": "",
+                        "proParent": false,
+                        "relevance": 1,
+                        "reversible": false,
+                        "scoreRootId": "ScoreRoot",
+                        "sourceClaimId": "cost",
+                        "sourceEdgeId": "costEdge",
+                        "type": "score",
+                        "weight": 1 
+                        */}
+
+                        <table>
+                            <tbody>
+                                {
+                                Object.entries(data.score).map(([key, value]) => {
+                                    const values = [
+                                        "id",
+                                        "confidence", 
+                                        "relevance",
+                                    ]
+                                    if (values.includes(key)) {
+                                        return <tr key={key}>
+                                            <td>{key}</td>
+                                            <td>{((typeof value === "number") ? value.toFixed(2) : value)}</td>
+                                        </tr>
+                                    }
+                                })}
+                            </tbody>
+                        </table>
+
+                        <Tooltip content="data" position="right">
+                            <Button
+                                minimal
+                                small
+                                className="mb-1"
+                                icon="database"
+                                onClick={() => {
+                                    console.log("data", id)
+                                    console.log(id, data)
+                                    console.log("cancelOutStacked", data.cancelOutStacked)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip content="allSources" position="right">
+                            <Button
+                                minimal
+                                small
+                                className="mb-1"
+                                icon="database"
+                                onClick={() => {
+                                    console.log("allSources", allSources)
+                                }}
+                            />
+                        </Tooltip>
                     </> : <>
                         <TextArea
-                            className="invisible-input"
+                            className="invisible-input text-white"
                             value={nodeText}
                             onChange={(e) => handleChangeText(e, data.claim.id)}
                             autoResize

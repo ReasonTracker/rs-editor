@@ -18,8 +18,9 @@ export function flowDataReducer({ actions, setDisplayNodes, setDisplayEdges, set
     //  * Apply actions to reasonScore debate data
     setDebateData((oldDebateData) => {
         const newDebateData = rsReducer(actions, oldDebateData);
+        console.log(`newDebateData`, newDebateData);
         const newScores = calculateScores(newDebateData);
-
+        console.log(`newScores`, newScores);
         // TODO: Figure out new nodes and new edges
         setDisplayNodes((oldNodes) => oldNodes);
         setDisplayEdges((oldEdges) => oldEdges);

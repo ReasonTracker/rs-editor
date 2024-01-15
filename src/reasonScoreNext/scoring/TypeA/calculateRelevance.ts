@@ -13,7 +13,7 @@ export function calculateRelevance(children: { score: Score, connector?: Connect
 
     let relevance = 0;
     for (const child of children) {
-        if (child.score.confidence > 0) { // skip if the confidence is less than zero (not reversable)
+        if (child?.score?.confidence > 0) { // skip if the confidence is less than zero (not reversable)
             if (child.connector?.proTarget){
                 relevance += child.score.confidence;
             } else {
@@ -21,6 +21,8 @@ export function calculateRelevance(children: { score: Score, connector?: Connect
             }
         }
     }
+    
+    if (relevance < 0) relevance = 0;
 
     return relevance;
 }

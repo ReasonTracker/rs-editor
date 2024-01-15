@@ -28,7 +28,7 @@ export function getNewScore(partialItem: Partial<Score> & ScoreRequired): Score 
         id: partialItem.id ?? newId(),
 
         relevance: partialItem.relevance ?? 1,
-        confidence: partialItem.confidence ?? 0,
+        confidence: partialItem.confidence ?? 1,
     };
     return newItem
 }
