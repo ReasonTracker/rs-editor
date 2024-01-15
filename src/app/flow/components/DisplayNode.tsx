@@ -62,8 +62,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     <polygon
                         style={{ fill: `var(--${data.pol})` }}
                         points={`
-                        0  , ${relevanceHalf - confidenceMax}
-                        0  , ${relevanceHalf + confidenceMax}
+                        0  , ${relevanceHalf - (confidenceMax/2)}
+                        0  , ${relevanceHalf + (confidenceMax/2)}
                         50 , ${confidenceMax}
                         50 , 0
                     `}
