@@ -28,8 +28,8 @@ export function flowDataReducer({
     actions: ActionTypes[];
     setDisplayNodes: DispatchType<NodeArray>;
     setDisplayEdges: DispatchType<EdgeArray>;
-        setDebateData: Dispatch<SetStateAction<DebateData>>;
-        setAnimating: Dispatch<boolean>;
+    setDebateData: Dispatch<SetStateAction<DebateData>>;
+    setAnimating: Dispatch<boolean>;
     displayNodes: Node<DisplayNodeData>[];
 }) {
     // TODO: Right now all data changes so does a lot of screen updating. Refactor
@@ -41,7 +41,7 @@ export function flowDataReducer({
         const newDebateData = rsReducer(actions, oldDebateData);
         const newScores = calculateScores(newDebateData, displayNodes);
         const connectors = newDebateData.connectors;
-        
+
         // 
         // Process Nodes
         // 
@@ -125,31 +125,6 @@ export function flowDataReducer({
                 lastBottom += GUTTER;
             }
 
-            //
-            // Keep track of manual position
-            //
-            // TODO probably remove, irrelevant with dagre now I think
-            const position = () => {
-
-                const existingPosition = displayNodes.find((node) => node.id === score.id)?.position
-                if (existingPosition) return existingPosition
-
-                // Identify Connector
-                let connector = Object.values(connectors).find(conn => conn.source === score.id);
-
-                // Identify Source ID
-                let targetId = connector?.target;
-
-                // Locate Source ID Position in displayNodes
-                let sourceNode = displayNodes.find(node => node.id === targetId);
-                if (!sourceNode) return { x: 0, y: 0 }
-
-                return {
-                    x: sourceNode.position.x + 600,
-                    y: sourceNode.position.y
-                }
-            }
-
             newDisplayNodes.push({
                 id: score.id,
                 type: "rsNode",
@@ -172,7 +147,7 @@ export function flowDataReducer({
         setDisplayNodes(nodes);
         setDisplayEdges(edges);
         setTimeout(() => setAnimating(false), 1000);
-
+        console.log("actions", actions)
         return newDebateData;
     });
 

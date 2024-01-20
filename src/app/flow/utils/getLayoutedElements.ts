@@ -35,34 +35,42 @@ const getLayoutedElements = (nodes: Node<DisplayNodeData>[], edges: Edge<Display
         // new nodes have node.position.x === 0 && node.position.y === 0)
         // Probably want to add a flag with onNodeChange to set it's position
 
-        if (edgeType === "relevance") {
-            if (!targetNode) return console.log("No target node found for edge", edge);
+        node.position = {
+            x: nodeWithPosition.x ,
+            y: nodeWithPosition.y  ,
+        };
 
-            // const dagreRelevance = new dagre.graphlib.Graph();   // TODO try
-            // dagreConfidence.setGraph({ rankdir: 'BT' });         // TODO try
-            // dagreRelevance.setDefaultEdgeLabel(() => ({}));      // TODO try
+        // if (edgeType === "relevance") {
+        //     if (!targetNode) return console.log("No target node found for edge", edge);
 
-            const relevanceEdges = edges.filter(e => e.target === targetNode.id && e.targetHandle === "relevance");
-            const index = relevanceEdges.findIndex(edge => edge.source === node.id);
-            const yOffset = index * -150;
+        //     // const dagreRelevance = new dagre.graphlib.Graph();   // TODO try
+        //     // dagreConfidence.setGraph({ rankdir: 'BT' });         // TODO try
+        //     // dagreRelevance.setDefaultEdgeLabel(() => ({}));      // TODO try
 
-            node.position = {
-                x: targetNode.position.x + 150,
-                y: targetNode.position.y - 200 + yOffset
-            };
-        } else {
-            const siblings = edges
-                .filter(e => e.target === targetNode?.id && e.targetHandle === "confidence")
-                .map(e => e.source);
-            const indexInSiblings = siblings.findIndex(id => id === node.id);
-            const relevanceEdges = edges.filter(e => e.target === node.id && e.targetHandle === "relevance");
-            const yOffset = indexInSiblings > 0 ? relevanceEdges.length * -150 : 0;
+        //     const relevanceEdges = edges.filter(e => e.target === targetNode.id && e.targetHandle === "relevance");
+        //     const index = relevanceEdges.findIndex(edge => edge.source === node.id);
+        //     const yOffset = index * -150;
+        //     console.log("yOffset relevance", yOffset)
 
-            node.position = {
-                x: nodeWithPosition.x - nodeWidth / 2,
-                y: nodeWithPosition.y - nodeHeight / 2 - yOffset,
-            };
-        }
+        //     node.position = {
+        //         x: targetNode.position.x + 150,
+        //         y: targetNode.position.y - 200 + yOffset
+        //     };
+        // } else {
+
+        //     const siblings = edges
+        //         .filter(e => e.target === targetNode?.id && e.targetHandle === "confidence")
+        //         .map(e => e.source);
+        //     const indexInSiblings = siblings.findIndex(id => id === node.id);
+        //     const relevanceEdges = edges.filter(e => e.target === node.id && e.targetHandle === "relevance");
+        //     const yOffset = indexInSiblings > 0 ? relevanceEdges.length * -150 : 0;
+        //     console.log("yOffset confidence", yOffset)
+
+        //     node.position = {
+        //         x: nodeWithPosition.x - nodeWidth / 2,
+        //         y: nodeWithPosition.y - nodeHeight / 2 - yOffset,
+        //     };
+        // }
 
         return node;
     });
