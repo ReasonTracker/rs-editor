@@ -1,5 +1,5 @@
 'use client';
-import ReactFlow, { Node } from 'reactflow';
+import ReactFlow, { Controls, MiniMap, Node } from 'reactflow';
 import { FlowDataContext } from './FlowDataProvider'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import DisplayNode from './DisplayNode'
@@ -44,7 +44,7 @@ export default function Flow() {
 
 
     return (
-        <div className={x.animating ? "autoAnimate" : ''}  style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
+        <div className={x.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
             <ReactFlow
                 ref={menuRef}
                 nodes={x.displayNodes}
@@ -56,7 +56,18 @@ export default function Flow() {
                 onPaneClick={onPaneClick}
                 onNodeContextMenu={onNodeContextMenu}
                 fitView
-            />
+            >
+                <Controls
+                    position='top-left'
+                />
+                <MiniMap
+                    maskColor='rgb(240, 240, 240, 0.3)'
+                    pannable
+                    zoomable
+                    nodeColor={n => `var(--${n.data.pol})`}
+                    position='bottom-left'
+                />
+            </ReactFlow>
             {menu && <ContextMenu {...menu} />}
         </div>
     )

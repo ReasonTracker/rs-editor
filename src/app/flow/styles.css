@@ -111,7 +111,7 @@ svg {
 }
 
 /* page.css */
-.react-flow__minimap {
+.react-flow__panel.react-flow__minimap {
     background-color: #000;
     border: 1px solid grey;
     margin-bottom: 30px;
@@ -121,6 +121,17 @@ svg {
     background: black;
     display: inline-block;
     padding: 0.5em;
+}
+
+button.react-flow__controls-button{
+    background-color: #333;
+    fill: white;
+    border-bottom: 2px solid black;
+}
+
+button.react-flow__controls-button:hover{
+    background-color: #777;
+    fill: white;
 }
 
 /* displayNode.css */

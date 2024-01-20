@@ -147,7 +147,6 @@ export function flowDataReducer({
         setDisplayNodes(nodes);
         setDisplayEdges(edges);
         setTimeout(() => setAnimating(false), 1000);
-        console.log("actions", actions)
         return newDebateData;
     });
 
