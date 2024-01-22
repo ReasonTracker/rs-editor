@@ -42,6 +42,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const relevanceHalf = data.score.relevance * HALF_STROKE_WIDTH
     const relevanceMax = data.score.relevance * MAX_STROKE_WIDTH
     const confidenceMax = data.score.confidence * MAX_STROKE_WIDTH
+    const confidenceHalf = data.score.confidence * HALF_STROKE_WIDTH
+
 
     const relevance = (<>
         {allTargets.length > 0 && (
@@ -62,8 +64,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     <polygon
                         style={{ fill: `var(--${data.pol})` }}
                         points={`
-                        0  , ${relevanceHalf - (confidenceMax/2)}
-                        0  , ${relevanceHalf + (confidenceMax/2)}
+                        0  , ${relevanceHalf - (confidenceMax * data.score.relevance / 2)}
+                        0  , ${relevanceHalf + (confidenceMax * data.score.relevance / 2)}
                         50 , ${confidenceMax}
                         50 , 0
                     `}
@@ -347,11 +349,11 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         </tbody>
                     </table>
                     <div
-                className="absolute -left-14 bottom-0 transform"
-            >
-                <div><span className='text-gray-400'>x:</span> {props.xPos}</div>
-                <div><span className='text-gray-400'>y:</span> {props.yPos}</div>
-            </div>
+                        className="absolute -left-14 bottom-0 transform"
+                    >
+                        <div><span className='text-gray-400'>x:</span> {props.xPos}</div>
+                        <div><span className='text-gray-400'>y:</span> {props.yPos}</div>
+                    </div>
                 </>
                 : <TextArea
                     className="node-text-area text-xs" // !p-0, but caused gap it main claim
