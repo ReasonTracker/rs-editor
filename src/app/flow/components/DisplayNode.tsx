@@ -2,7 +2,7 @@ import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useSt
 import { Fragment, useContext, useState } from 'react';
 import { Button, TextArea, Tooltip } from '@blueprintjs/core';
 import { DisplayNodeData, ConfidenceEdgeData } from '@/app/flow/types/types';
-import { DevContext, FlowDataContext } from './FlowDataProvider';
+import { DevContext, FlowDataContext, FlowDataProvider } from './FlowDataProvider';
 import addNode from '../utils/addNode';
 import { stackSpace } from '@/utils/stackSpace';
 
@@ -14,9 +14,15 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const x = useContext(FlowDataContext);
     const dev = useContext(DevContext);
 
-    const [nodeText, setNodeText] = useState(data.claim.content);
     const handleChangeText = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
-        setNodeText(e.target.value);
+        x.dispatch([{
+            type: `modify`,
+            newData: {
+                id,
+                content: e.target.value,
+                type: "claim",
+            }
+        }])
     };
 
     const allSources = useStore((s: ReactFlowState) => {
@@ -328,7 +334,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     {/* <p>scoreId: {data.score.id}</p> */}
                     {/* <p>nodeId: {id}</p> */}
                     {/* <p>claimId: {data.claim.id}</p> */}
-                    <p>{nodeText}</p>
+                    <p>{data.claim.content}</p>
                     <br />
                     <p>{id}</p>
                     <table className='overflow-hidden'>
@@ -357,7 +363,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 </>
                 : <TextArea
                     className="node-text-area text-xs" // !p-0, but caused gap it main claim
-                    value={nodeText}
+                    value={data.claim.content}
                     onChange={(e) => handleChangeText(e, data.claim.id)}
                     autoResize
                     asyncControl
@@ -394,6 +400,31 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         icon="plus"
                     />
                 </Tooltip>
+                <Tooltip content="Collapse" position="right">
+                    <Button
+                        minimal
+                        small
+                        className="mb-1"
+                        icon="collapse-all"
+                        onClick={() => {
+                            x.setDisplayNodes((prev) => {
+                                return prev.map((n) => {
+                                    if (n.id === id) {
+                                        return {
+                                            ...n,
+                                            data: {
+                                                ...n.data,
+                                                collapsed: !n.data.collapsed,
+                                            },
+                                        };
+                                    }
+                                    return n;
+                                });
+                            })
+
+                        }}
+                    />
+                </Tooltip>
             </div>
         </div>
     )
@@ -408,7 +439,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     {scaleTo1}
                     {consolidate}
                     {weightByConfidence}
-
+-{data.collapsed? "true":"false"}-
                     {rsContent}
 
                 </div>

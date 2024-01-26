@@ -15,6 +15,8 @@ import { initialDebateData, initialDisplayEdges, initialDisplayNodes } from '../
 const initialFlowDataState: FlowDataState = {
     dispatch: () => { },
     displayNodes: [],
+    setDisplayNodes: () => { },
+    setDisplayEdges: () => { },
     displayEdges: [],
     onNodesChange: () => { },
     onEdgesChange: () => { },
@@ -45,7 +47,7 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
     }
 
     return (
-        <FlowDataContext.Provider value={{ dispatch, displayNodes, displayEdges, onNodesChange, onEdgesChange, debateData, animating }}>
+        <FlowDataContext.Provider value={{ dispatch, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }}>
             <DevContext.Provider value={{ isDev, setDevMode }}>
                 {children}
             </DevContext.Provider>

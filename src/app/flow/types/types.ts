@@ -15,6 +15,7 @@ export type DisplayNodeData = {
     scoreNumberText: string
     scoreNumber: number
     cancelOutStacked?: Stacked
+    collapsed?: boolean
 }
 
 export type ConfidenceEdgeData = {
@@ -60,7 +61,9 @@ export type DevContextState = {
 export type FlowDataState = {
     dispatch: (actions: ActionTypes[]) => void,
     displayNodes: Node<DisplayNodeData, string | undefined>[],
+    setDisplayNodes: Dispatch<SetStateAction<Node<DisplayNodeData, string | undefined>[]>>,
     displayEdges: Edge<DisplayEdgeData>[],
+    setDisplayEdges: Dispatch<SetStateAction<Edge<DisplayEdgeData>[]>>,
     onNodesChange: OnChange<NodeChange>,
     onEdgesChange: OnChange<EdgeChange>,
     debateData: DebateData

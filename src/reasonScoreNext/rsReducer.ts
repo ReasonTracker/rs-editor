@@ -15,7 +15,7 @@ export function rsReducer(actions: ActionTypes[], debateData: DebateData) {
     return newDebateData;
 }
 
-function ApplyItemActions<T extends Item>(index: { [id: string]: T }, actions: generateItemActionType<T>[]): { [id: string]: T } {
+function ApplyItemActions<T extends Claim | Connector>(index: { [id: string]: T }, actions: generateItemActionType<T>[]): { [id: string]:T } {
     if (actions.length === 0) return index;
     const newIndex = { ...index };
     actions.forEach(action => {

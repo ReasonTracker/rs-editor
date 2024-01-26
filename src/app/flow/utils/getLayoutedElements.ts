@@ -1,5 +1,5 @@
 import dagre from "dagre";
-import { Node, Edge } from "reactflow";
+// import { Node, Edge } from "reactflow";
 import { DisplayNodeData, DisplayEdgeData } from "../types/types";
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -8,14 +8,32 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const nodeWidth = 600;
 const nodeHeight = 125;
 
-const getLayoutedElements = (nodes: Node<DisplayNodeData>[], edges: Edge<DisplayEdgeData>[]) => {
+interface Node { 
+    position: { 
+        x: number; 
+        y: number; 
+    }; 
+    id: string; 
+    data: {collapsed?: boolean};
+}
+
+interface Edge { 
+    source: string; 
+    target: string; 
+    sourceHandle?: string | null | undefined; 
+    targetHandle?: string | null | undefined; 
+}
+
+const getLayoutedElements = <N extends Node,E extends Edge>(nodes: N[], edges: E[]) => {
     dagreGraph.setGraph({ rankdir: 'RL' });
 
     // const confidenceNodes = nodes.filter(node => node.data.affects === "confidence"); // TODO try
     // const confidenceEdges = edges.filter(edge => edge.sourceHandle === "confidence"); // TODO try
 
     nodes.forEach((node) => {
-        dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+        dagreGraph.setNode(node.id, node.data.collapsed ? 
+            { width: 0, height: 0 } : 
+            { width: nodeWidth, height: nodeHeight });
     });
 
     edges.forEach((edge) => {

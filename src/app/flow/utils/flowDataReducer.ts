@@ -41,7 +41,6 @@ export function flowDataReducer({
         const newDebateData = rsReducer(actions, oldDebateData);
         const newScores = calculateScores(newDebateData, displayNodes);
         const connectors = newDebateData.connectors;
-
         // 
         // Process Nodes
         // 
