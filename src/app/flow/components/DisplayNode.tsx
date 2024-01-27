@@ -400,7 +400,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         icon="plus"
                     />
                 </Tooltip>
-                <Tooltip content="Collapse" position="right">
+                {/* <Tooltip content="Collapse" position="right">
                     <Button
                         minimal
                         small
@@ -424,7 +424,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
                         }}
                     />
-                </Tooltip>
+                </Tooltip> */}
             </div>
         </div>
     )
@@ -439,7 +439,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     {scaleTo1}
                     {consolidate}
                     {weightByConfidence}
--{data.collapsed? "true":"false"}-
+{/* -{data.collapsed? "true":"false"}- */}
                     {rsContent}
 
                 </div>
@@ -447,8 +447,11 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
             <Handle type="target"
                 id="relevance"
-                position={Position.Top}
-                style={{ left: 50 - HALF_STROKE_WIDTH + 'px' }}
+                position={Position.Right}
+                style={{
+                    left: 50 + 'px',
+                    top: - HALF_STROKE_WIDTH + 'px',
+                }}
                 className={dev.isDev ? 'opacity-100' : 'opacity-0'}
             />
 
