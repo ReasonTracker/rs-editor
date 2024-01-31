@@ -448,7 +448,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     {scaleTo1}
                     {consolidate}
                     {weightByConfidence}
-{/* -{data.collapsed? "true":"false"}- */}
+                    {/* -{data.collapsed? "true":"false"}- */}
                     {rsContent}
 
                 </div>
@@ -457,10 +457,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             <Handle type="target"
                 id="relevance"
                 position={Position.Right}
-                style={{
-                    left: 50 + 'px',
-                    top: - HALF_STROKE_WIDTH + 'px',
-                }}
+                style={{ top: - HALF_STROKE_WIDTH + 'px', }}
                 className={dev.isDev ? 'opacity-100' : 'opacity-0'}
             />
 
