@@ -18,10 +18,13 @@ const ContextMenu = ({ id, top, left, right, bottom, onPaneClick }: ContextMenuD
     const x = useContext(FlowDataContext);
 
     const deleteNode = () => {
+        // TODO: delete all connections to this node and all the descendants and connections to them. Probably need to make a reducer for this specific task
         const claimAction: ClaimActions = {
             type: "delete",
             newData: { id, type: "claim" },
         };
+
+        console.log("deleteNode", claimAction);
 
         x.dispatch([claimAction]);
 

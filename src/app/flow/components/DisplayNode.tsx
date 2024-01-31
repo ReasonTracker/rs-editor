@@ -382,6 +382,15 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         onClick={() => addNode({ x, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })}
                     />
                 </Tooltip>
+                <Tooltip content="Add Relevance" position="right">
+                    <Button
+                        minimal
+                        small
+                        className="mb-1 !bg-con"
+                        icon="plus"
+                        onClick={() => addNode({ x, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' })}
+                    />
+                </Tooltip>
                 <Tooltip content="Add Pro" position="right">
                     <Button
                         minimal
