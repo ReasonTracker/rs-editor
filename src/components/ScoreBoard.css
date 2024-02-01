@@ -1,0 +1,56 @@
+.numDisplay {
+    vertical-align: middle;
+    display: inline-block;
+    fill: url("#grey");
+    stroke: rgb(255 255 255 / 20%);
+    stroke-width: 0.5;
+    stroke-linecap: round;
+    height: 0.73em;
+}
+
+.seg {
+    transition: 0.8s;
+    opacity: 0.3;
+    filter: saturate(0.3);
+}
+
+#scoreBoard {
+    font-size: 10rem;
+    display: inline-block;
+    line-height: 0.5;
+}
+
+.digits {
+    border: .5rem solid grey;
+    border-radius: 2rem;
+    padding: 1rem;
+    display: inline-block;
+}
+
+.d0 .seg,
+.d1 .seg {
+    fill: url("#purple");
+}
+
+.d2 .seg,
+.d3 .seg {
+    fill: url("#orange");
+}
+
+.o0 .n0,
+.o1 .n1,
+.o2 .n2,
+.o3 .n3,
+.o4 .n4,
+.o5 .n5,
+.o6 .n6,
+.o7 .n7,
+.o8 .n8,
+.o9 .n9 {
+    opacity: 1;
+    filter: saturate(1);
+}
+
+.separator {
+    width: 1rem;
+}

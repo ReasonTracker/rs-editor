@@ -7,6 +7,7 @@ import DisplayEdge from './DisplayEdge'
 import { DisplayNodeData } from '../types/types';
 import ContextMenu, { ContextMenuData } from './ContextMenu';
 import addNode from '../utils/addNode';
+import ScoreBoard from '../../../components/ScoreBoard';
 
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };
@@ -69,6 +70,8 @@ export default function Flow() {
                 />
             </ReactFlow>
             {menu && <ContextMenu {...menu} />}
+            <ScoreBoard score={92} />
+
         </div>
     )
 }
