@@ -44,7 +44,6 @@ export default function Flow() {
     }, [])
 
     const mainScore = x.displayNodes[0]?.data?.score;
-    console.log("mainScore", mainScore)
 
     return (
         <div className={x.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} >

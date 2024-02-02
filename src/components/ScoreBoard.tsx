@@ -332,16 +332,12 @@ export default function ScoreBoard({ score }: { score: number | undefined }) {
         <svg >
             <defs>
                 <radialGradient id="orange">
-                    <stop offset="10%" stopColor="hsl(35deg 100% 80%)" />
-                    <stop offset="95%" stopColor="hsl(35deg 100% 40%)" />
+                    <stop offset="10%" stopColor="hsl(30deg 100% 80%)" />
+                    <stop offset="95%" stopColor="hsl(30deg 100% 42%)" />
                 </radialGradient>
                 <radialGradient id="purple">
-                    <stop offset="10%" stopColor="hsl(270deg 100% 80%)" />
-                    <stop offset="95%" stopColor="hsl(270deg 100% 50%)" />
-                </radialGradient>
-                <radialGradient id="grey">
-                    <stop offset="10%" stopColor="hsl(270deg 0% 5%)" />
-                    <stop offset="95%" stopColor="hsl(270deg 0% 10%)" />
+                    <stop offset="10%" stopColor="hsl(276deg 100% 80%)" />
+                    <stop offset="95%" stopColor="hsl(276deg 100% 65%)" />
                 </radialGradient>
             </defs>
         </svg>
