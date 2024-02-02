@@ -11,8 +11,9 @@ export default function ScoreBoard({ score }: { score: number | undefined }) {
 
         async function effect() {
             setScoreString((oldScoreString) => {
-            let newScore = score || 99
-            if (newScore > 99) newScore = 99;
+                let newScore = score || .99
+                if (newScore > .99) newScore = .99;
+                newScore = Math.floor(newScore * 100);
                 return newScore.toString().padStart(2, " ") +
                     (100 - newScore).toString().padStart(2, " ");
             })
@@ -23,7 +24,7 @@ export default function ScoreBoard({ score }: { score: number | undefined }) {
     }, [score])
 
 
-    return <div id="scoreBoard">
+    return <div className="scoreBoard">
         <div className="digits">
             <svg className={`numDisplay d0 o${scoreString[0]}`} viewBox="0 0 100 180">
 

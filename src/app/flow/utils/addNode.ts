@@ -10,17 +10,19 @@ const addNode = ({
     sourceId,
     isNewNodePro,
     affects = "confidence",
-    targetNodeData
+    targetNodeData,
+    claimId,
 }: {
     x: FlowDataState;
     sourceId?: string;
     affects?: Affects;
     isNewNodePro: boolean;
     targetNodeData?: DisplayNodeData
+    claimId?: string;
 }) => {
     let actions = [];
 
-    const newClaimData = newClaim({ content: generateSimpleAnimalClaim() });
+    const newClaimData = newClaim({ content: generateSimpleAnimalClaim(), id: claimId});
 
     const pol = isNewNodePro ? "pro" : "con";
 

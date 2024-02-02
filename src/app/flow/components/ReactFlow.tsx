@@ -40,9 +40,11 @@ export default function Flow() {
 
     // addNode({ x }) for dev
     useEffect(() => {
-        addNode({ x, isNewNodePro: true })
+        addNode({ x, isNewNodePro: true, claimId: "mainClaim" })
     }, [])
 
+    const mainScore = x.displayNodes[0]?.data?.score;
+    console.log("mainScore", mainScore)
 
     return (
         <div className={x.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
@@ -58,6 +60,7 @@ export default function Flow() {
                 onNodeContextMenu={onNodeContextMenu}
                 fitView
             >
+            <ScoreBoard score={mainScore?.confidence} />
                 <Controls
                     position='top-left'
                 />
@@ -70,7 +73,6 @@ export default function Flow() {
                 />
             </ReactFlow>
             {menu && <ContextMenu {...menu} />}
-            <ScoreBoard score={92} />
 
         </div>
     )

@@ -14,10 +14,14 @@
     filter: saturate(0.3);
 }
 
-#scoreBoard {
+.scoreBoard {
     font-size: 10rem;
     display: inline-block;
     line-height: 0.5;
+    position: absolute;
+    top: 0;
+    left: 32px;
+    padding: 50px;
 }
 
 .digits {
