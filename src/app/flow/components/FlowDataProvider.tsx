@@ -1,4 +1,6 @@
-import { ReactNode, createContext, use, useState } from 'react';
+'use client';
+
+import { ReactNode, createContext, use, useEffect, useState } from 'react';
 import { useEdgesState, useNodesState } from 'reactflow';
 import { ActionTypes } from '@/reasonScoreNext/ActionTypes';
 import { flowDataReducer } from '../utils/flowDataReducer';
@@ -9,8 +11,9 @@ import {
     DevContextState,
     FlowDataState,
 } from "@/app/flow/types/types";
-import { initialDebateData, initialDisplayEdges, initialDisplayNodes } from '../data/initialNodesEdges';
 import { Debate, newDebate } from '@/reasonScoreNext/Debate';
+import addNode from '../utils/addNode';
+import { newId } from '@/reasonScore/newId';
 
 
 const initialFlowDataState: FlowDataState = {
@@ -23,7 +26,7 @@ const initialFlowDataState: FlowDataState = {
     onEdgesChange: () => { },
     debateData: { claims: {}, connectors: {} },
     animating: false,
-    debate: newDebate({}),
+    debate: newDebate({mainClaimId: newId()}),
 };
 
 const initialDevContextState: DevContextState = {
@@ -38,9 +41,16 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
     const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
     const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<DisplayEdgeData>([]);
     const [debateData, setDebateData] = useState<DebateData>({ claims: {}, connectors: {} })
-    const [debate, setDebate] = useState<Debate>(newDebate({}))
+    const [debate, setDebate] = useState<Debate>(initialFlowDataState.debate)
     const [isDev, setDevMode] = useState<boolean>(false);
     const [animating, setAnimating] = useState<boolean>(false);
+    const flowDataState = { debate, dispatch, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }
+
+    useEffect(() => {
+        if (debateData.claims[debate.mainClaimId || ""]) return
+        addNode({ flowDataState, isNewNodePro: true, claimId: debate.mainClaimId })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     async function dispatch(actions: ActionTypes[]) {
         flowDataReducer({

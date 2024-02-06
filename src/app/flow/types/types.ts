@@ -10,6 +10,7 @@ import { DebateData } from '@/reasonScoreNext/DebateData';
 import { Debate } from '@/reasonScoreNext/Debate';
 
 export type DisplayNodeData = {
+    scoreId: string,
     pol: "pro" | "con"
     score: Score
     claim: Claim

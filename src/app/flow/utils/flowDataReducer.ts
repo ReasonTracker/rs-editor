@@ -20,20 +20,20 @@ import { Debate } from "@/reasonScoreNext/Debate";
 
 export function flowDataReducer({
     actions,
-    setDisplayNodes,
     setDisplayEdges,
     setDebateData,
     setAnimating,
     displayNodes,
+    setDisplayNodes,
     debate,
     setDebate,
 }: {
     actions: ActionTypes[]
-    setDisplayNodes: DispatchType<NodeArray>
     setDisplayEdges: DispatchType<EdgeArray>
     setDebateData: Dispatch<SetStateAction<DebateData>>
     setAnimating: Dispatch<boolean>
     displayNodes: Node<DisplayNodeData>[]
+    setDisplayNodes: DispatchType<NodeArray>
     debate: Debate
     setDebate: Dispatch<SetStateAction<Debate>>
 }) {
@@ -134,6 +134,7 @@ export function flowDataReducer({
                 type: "rsNode",
                 position: { x: 0, y: 0 }, // position()
                 data: {
+                    scoreId: score.id,
                     pol: claim.pol || "pro",
                     score: score,
                     claim: newDebateData.claims[score.id],

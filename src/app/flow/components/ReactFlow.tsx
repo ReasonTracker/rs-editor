@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import ReactFlow, { Controls, MiniMap, Node } from 'reactflow';
 import { FlowDataContext } from './FlowDataProvider'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -38,12 +39,12 @@ export default function Flow() {
 
     const flowDataState = useContext(FlowDataContext);
 
-    // addNode({ x }) for dev
-    useEffect(() => {
-        addNode({ flowDataState, isNewNodePro: true, claimId: "mainClaim" })
-    }, [])
+    // // addNode({ x }) for dev
+    // useEffect(() => {
+    //     addNode({ flowDataState, isNewNodePro: true, claimId: "mainClaim" })
+    // }, [])
 
-    const mainScore = flowDataState.displayNodes[0]?.data?.score;
+    const mainScore = flowDataState.displayNodes.find((n) => n.id === flowDataState.debate.mainClaimId )?.data?.score;
 
     return (
         <div className={flowDataState.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} >

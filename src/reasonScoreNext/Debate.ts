@@ -1,3 +1,5 @@
+'use client';
+
 import { newId } from "./newId";
 import { Item } from "./Item";
 
@@ -26,7 +28,7 @@ export function newDebate(partialItem: Partial<Debate> = {}): Debate {
         type: 'debate',
     }
 
-    const newItem = {
+    const newItem: Debate = {
         ...partialItem,
         ...itemType,
         name: partialItem.name ?? "",
