@@ -36,23 +36,23 @@ export default function Flow() {
         [setMenu, onPaneClick]
     );
 
-    const x = useContext(FlowDataContext);
+    const flowDataState = useContext(FlowDataContext);
 
     // addNode({ x }) for dev
     useEffect(() => {
-        addNode({ x, isNewNodePro: true, claimId: "mainClaim" })
-    }, [])
+        addNode({ flowDataState, isNewNodePro: true, claimId: "mainClaim" })
+    }, [flowDataState])
 
-    const mainScore = x.displayNodes[0]?.data?.score;
+    const mainScore = flowDataState.displayNodes[0]?.data?.score;
 
     return (
-        <div className={x.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
+        <div className={flowDataState.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
             <ReactFlow
                 ref={menuRef}
-                nodes={x.displayNodes}
-                edges={x.displayEdges}
-                onNodesChange={x.onNodesChange}
-                onEdgesChange={x.onEdgesChange}
+                nodes={flowDataState.displayNodes}
+                edges={flowDataState.displayEdges}
+                onNodesChange={flowDataState.onNodesChange}
+                onEdgesChange={flowDataState.onEdgesChange}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 onPaneClick={onPaneClick}

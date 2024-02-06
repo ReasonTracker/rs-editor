@@ -6,14 +6,14 @@ import { newConnector, Affects } from "@/reasonScoreNext/Connector";
 
 
 const addNode = ({
-    x,
+    flowDataState,
     sourceId,
     isNewNodePro,
     affects = "confidence",
     targetNodeData,
     claimId,
 }: {
-    x: FlowDataState;
+    flowDataState: FlowDataState;
     sourceId?: string;
     affects?: Affects;
     isNewNodePro: boolean;
@@ -35,7 +35,7 @@ const addNode = ({
     actions.push(claimAction);
     if (!sourceId) {
         console.log("no sourceId")
-        return x.dispatch(actions);
+        return flowDataState.dispatch(actions);
     }
     const proTarget = (isNewNodePro === (targetNodeData?.pol === "pro"));
     const newConnectorData = newConnector({
@@ -50,7 +50,7 @@ const addNode = ({
     };
 
     actions.push(connectorAction);
-    x.dispatch(actions);
+    flowDataState.dispatch(actions);
 };
 
 export default addNode;

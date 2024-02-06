@@ -40,4 +40,3 @@ export function isClaim(item: any): item is Debate {
     return item.type === 'debate'
 }
 
-const x: Debate = newDebate()

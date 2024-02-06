@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { DevContext, FlowDataContext } from "./FlowDataProvider";
 import { Drawer, Button, IconName, Divider } from "@blueprintjs/core";
 import { ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
-import addNode from "../utils/addNode";
 import { calculateScores } from "@/reasonScoreNext/scoring/TypeA/calculateScores";
 
 const DevButton = ({
@@ -26,20 +25,20 @@ const DevButton = ({
 };
 
 const DevPanel = () => {
-    const x = useContext(FlowDataContext);
+    const flowDataState = useContext(FlowDataContext);
     const dev = useContext(DevContext);
 
     const deleteAll = () => {
-        const nodeActions: Array<ClaimActions> = x.displayNodes.map((node) => ({
+        const nodeActions: Array<ClaimActions> = flowDataState.displayNodes.map((node) => ({
             type: "delete",
             newData: { id: node.id, type: "claim" },
         }));
-        const edgeActions: Array<ConnectorActions> = x.displayEdges.map((edge) => ({
+        const edgeActions: Array<ConnectorActions> = flowDataState.displayEdges.map((edge) => ({
             type: "delete",
             newData: { id: edge.id, type: "connector" },
         }));
 
-        x.dispatch([...nodeActions, ...edgeActions]);
+        flowDataState.dispatch([...nodeActions, ...edgeActions]);
     };
 
     return (
@@ -76,24 +75,24 @@ const DevPanel = () => {
                     <Divider />
                     <DevButton
                         icon={"console"}
-                        onClick={() => console.log(x.displayNodes)}
+                        onClick={() => console.log(flowDataState.displayNodes)}
                         label={"Nodes"}
                     />
                     <DevButton
                         icon={"console"}
-                        onClick={() => console.log(x.displayEdges)}
+                        onClick={() => console.log(flowDataState.displayEdges)}
                         label={"Edges"}
                     />
                     <DevButton
                         icon={"console"}
-                        onClick={() => { console.log("claims", x.debateData.claims); console.log("connectors", x.debateData.connectors) }}
+                        onClick={() => { console.log("claims", flowDataState.debateData.claims); console.log("connectors", flowDataState.debateData.connectors) }}
                         label={"DebateData"}
                     />
                     <Divider />
                     <DevButton
                         icon={"sort"}
                         onClick={() => {
-                            const calcScore = calculateScores(x.debateData, x.displayNodes);
+                            const calcScore = calculateScores(flowDataState.debateData);
                             console.log(calcScore);
                         }}
                         label={"Calculate Score"}

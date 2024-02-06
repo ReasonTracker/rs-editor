@@ -11,11 +11,11 @@ const HALF_STROKE_WIDTH = MAX_STROKE_WIDTH / 2
 
 export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
-    const x = useContext(FlowDataContext);
+    const flowDataState = useContext(FlowDataContext);
     const dev = useContext(DevContext);
 
     const handleChangeText = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
-        x.dispatch([{
+        flowDataState.dispatch([{
             type: `modify`,
             newData: {
                 id,
@@ -379,7 +379,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="mb-1 !bg-pro"
                         icon="plus"
-                        onClick={() => addNode({ x, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })}
+                        onClick={() => addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })}
                     />
                 </Tooltip>
                 <Tooltip content="Add Relevance" position="right">
@@ -388,7 +388,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="mb-1 !bg-con"
                         icon="plus"
-                        onClick={() => addNode({ x, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' })}
+                        onClick={() => addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' })}
                     />
                 </Tooltip>
                 <Tooltip content="Add Pro" position="right">
@@ -397,7 +397,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="mb-1 !bg-pro"
                         icon="plus"
-                        onClick={() => addNode({ x, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' })}
+                        onClick={() => addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' })}
                     />
                 </Tooltip>
                 <Tooltip content="Add Con" position="right">
@@ -405,7 +405,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         minimal
                         small
                         className="!bg-con"
-                        onClick={() => addNode({ x, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' })}
+                        onClick={() => addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' })}
                         icon="plus"
                     />
                 </Tooltip>
