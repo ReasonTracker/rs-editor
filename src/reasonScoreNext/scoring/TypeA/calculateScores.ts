@@ -7,14 +7,14 @@ import { calculateConfidence } from "./calculateConfidence";
 import { DisplayNodeData } from "@/app/flow/types/types";
 import { Node } from "reactflow";
 
-export function calculateScores(debateData: DebateData, displayNodes: Node<DisplayNodeData>[]) {
+export function calculateScores(debateData: DebateData, displayNodes?: Node<DisplayNodeData>[]) {
     let ids = sortSourceIdsFirst(debateData.connectors);
     if (ids.length === 0) { // In case no nodes are connected
         ids = Object.keys(debateData.claims)
     }
 
     let scores: { [id: string]: Score } = {};
-    displayNodes.map(node => scores[node.data.score.id] = node.data.score);
+    // displayNodes.map(node => scores[node.data.score.id] = node.data.score);
 
     /** index for quickly finding connectors by target */
     let connectorsByTarget: { [id: string]: Connector[] } = {}

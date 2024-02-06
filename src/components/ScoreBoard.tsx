@@ -11,9 +11,14 @@ export default function ScoreBoard({ score }: { score: number | undefined }) {
 
         async function effect() {
             setScoreString((oldScoreString) => {
-                let newScore = score || .99
+                let newScore = score===undefined? .99 : score;
+                console.log("newScore1", newScore)
+                newScore = (newScore + 1) / 2;
                 if (newScore > .99) newScore = .99;
+                if (newScore < .01) newScore = .01;
+                console.log("newScore2", newScore)
                 newScore = Math.floor(newScore * 100);
+                console.log("newScore3", newScore)
                 return newScore.toString().padStart(2, " ") +
                     (100 - newScore).toString().padStart(2, " ");
             })

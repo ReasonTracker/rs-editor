@@ -6,7 +6,7 @@ import { DebateData } from "@/reasonScoreNext/DebateData";
 import { calculateScores } from "@/reasonScoreNext/scoring/TypeA/calculateScores";
 import { Score } from "@/reasonScoreNext/scoring/TypeA/Score";
 import { Claim } from "@/reasonScoreNext/Claim";
-import { ConfidenceEdgeData, RelevenceEdgeData } from "../flow/[[...slug]]/pageData";
+import { ConfidenceEdgeData, RelevanceEdgeData } from "../flow/types/types";
 
 export interface DisplayNodeData {
     pol: "pro" | "con"
@@ -19,7 +19,7 @@ export interface DisplayNodeData {
 export function flowDataReducer({ actions, setDisplayNodes, setDisplayEdges, setDebateData }: {
     actions: ActionTypes[],
     setDisplayNodes: Dispatch<SetStateAction<Node<DisplayNodeData, string | undefined>[]>>,
-    setDisplayEdges: Dispatch<SetStateAction<Edge<ConfidenceEdgeData | RelevenceEdgeData>[]>>,
+    setDisplayEdges: Dispatch<SetStateAction<Edge<ConfidenceEdgeData | RelevanceEdgeData>[]>>,
     setDebateData: Dispatch<SetStateAction<DebateData>>
 }) {
     // TODO: Right now all data changes so does a lot of screen updating. Refactor
