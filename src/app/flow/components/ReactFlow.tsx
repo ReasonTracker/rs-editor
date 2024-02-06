@@ -41,7 +41,7 @@ export default function Flow() {
     // addNode({ x }) for dev
     useEffect(() => {
         addNode({ flowDataState, isNewNodePro: true, claimId: "mainClaim" })
-    }, [flowDataState])
+    }, [])
 
     const mainScore = flowDataState.displayNodes[0]?.data?.score;
 
