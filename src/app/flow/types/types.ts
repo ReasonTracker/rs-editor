@@ -7,6 +7,7 @@ import { Node, Edge } from "reactflow";
 import { ActionTypes } from '@/reasonScoreNext/ActionTypes';
 import { EdgeChange, NodeChange } from 'reactflow';
 import { DebateData } from '@/reasonScoreNext/DebateData';
+import { Debate } from '@/reasonScoreNext/Debate';
 
 export type DisplayNodeData = {
     pol: "pro" | "con"
@@ -59,15 +60,16 @@ export type DevContextState = {
   };
 
 export type FlowDataState = {
-    dispatch: (actions: ActionTypes[]) => void,
-    displayNodes: Node<DisplayNodeData, string | undefined>[],
-    setDisplayNodes: Dispatch<SetStateAction<Node<DisplayNodeData, string | undefined>[]>>,
-    displayEdges: Edge<DisplayEdgeData>[],
-    setDisplayEdges: Dispatch<SetStateAction<Edge<DisplayEdgeData>[]>>,
-    onNodesChange: OnChange<NodeChange>,
-    onEdgesChange: OnChange<EdgeChange>,
+    dispatch: (actions: ActionTypes[]) => void
+    displayNodes: Node<DisplayNodeData, string | undefined>[]
+    setDisplayNodes: Dispatch<SetStateAction<Node<DisplayNodeData, string | undefined>[]>>
+    displayEdges: Edge<DisplayEdgeData>[]
+    setDisplayEdges: Dispatch<SetStateAction<Edge<DisplayEdgeData>[]>>
+    onNodesChange: OnChange<NodeChange>
+    onEdgesChange: OnChange<EdgeChange>
     debateData: DebateData
     animating: boolean
+    debate:Debate
   }
 
 export type OnChange<ChangesType> = (changes: ChangesType[]) => void;

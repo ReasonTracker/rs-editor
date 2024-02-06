@@ -16,6 +16,7 @@ import { scaleStacked, sizeStacked, stackSpace } from "@/utils/stackSpace";
 import { GUTTER } from "../data/config";
 import { getNewScore } from "@/reasonScoreNext/scoring/TypeA/Score";
 import { Connector } from "@/reasonScoreNext/Connector";
+import { Debate } from "@/reasonScoreNext/Debate";
 
 export function flowDataReducer({
     actions,
@@ -23,14 +24,18 @@ export function flowDataReducer({
     setDisplayEdges,
     setDebateData,
     setAnimating,
-    displayNodes
+    displayNodes,
+    debate,
+    setDebate,
 }: {
-    actions: ActionTypes[];
-    setDisplayNodes: DispatchType<NodeArray>;
-    setDisplayEdges: DispatchType<EdgeArray>;
-    setDebateData: Dispatch<SetStateAction<DebateData>>;
-    setAnimating: Dispatch<boolean>;
-    displayNodes: Node<DisplayNodeData>[];
+    actions: ActionTypes[]
+    setDisplayNodes: DispatchType<NodeArray>
+    setDisplayEdges: DispatchType<EdgeArray>
+    setDebateData: Dispatch<SetStateAction<DebateData>>
+    setAnimating: Dispatch<boolean>
+    displayNodes: Node<DisplayNodeData>[]
+    debate: Debate
+    setDebate: Dispatch<SetStateAction<Debate>>
 }) {
     // TODO: Right now all data changes so does a lot of screen updating. Refactor
     //  * Apply actions to reasonScore debate data
@@ -39,7 +44,7 @@ export function flowDataReducer({
         let newDisplayEdges: Edge<DisplayEdgeData>[] = [];
 
         const newDebateData = rsReducer(actions, oldDebateData);
-        const newScores = calculateScores(newDebateData, displayNodes);
+        const newScores = calculateScores(newDebateData);
         const connectors = newDebateData.connectors;
         // 
         // Process Nodes

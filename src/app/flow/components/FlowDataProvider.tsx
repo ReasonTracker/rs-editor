@@ -10,6 +10,7 @@ import {
     FlowDataState,
 } from "@/app/flow/types/types";
 import { initialDebateData, initialDisplayEdges, initialDisplayNodes } from '../data/initialNodesEdges';
+import { Debate, newDebate } from '@/reasonScoreNext/Debate';
 
 
 const initialFlowDataState: FlowDataState = {
@@ -22,6 +23,7 @@ const initialFlowDataState: FlowDataState = {
     onEdgesChange: () => { },
     debateData: { claims: {}, connectors: {} },
     animating: false,
+    debate: newDebate({}),
 };
 
 const initialDevContextState: DevContextState = {
@@ -35,19 +37,20 @@ export const DevContext = createContext<DevContextState>(initialDevContextState)
 export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNode }) {
     const [displayNodes, setDisplayNodes, onNodesChange] = useNodesState<DisplayNodeData>([]);
     const [displayEdges, setDisplayEdges, onEdgesChange] = useEdgesState<DisplayEdgeData>([]);
-    const [debateData, setDebateData] = useState<DebateData>({claims: {}, connectors: {}})
+    const [debateData, setDebateData] = useState<DebateData>({ claims: {}, connectors: {} })
+    const [debate, setDebate] = useState<Debate>(newDebate({}))
     const [isDev, setDevMode] = useState<boolean>(false);
     const [animating, setAnimating] = useState<boolean>(false);
 
     async function dispatch(actions: ActionTypes[]) {
         flowDataReducer({
-            actions, setDisplayNodes, setDisplayEdges, setDebateData, setAnimating,
+            debate, setDebate, actions, setDisplayNodes, setDisplayEdges, setDebateData, setAnimating,
             displayNodes // TODO: remove this, add position to debateData
         })
     }
 
     return (
-        <FlowDataContext.Provider value={{ dispatch, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }}>
+        <FlowDataContext.Provider value={{ debate, dispatch, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }}>
             <DevContext.Provider value={{ isDev, setDevMode }}>
                 {children}
             </DevContext.Provider>

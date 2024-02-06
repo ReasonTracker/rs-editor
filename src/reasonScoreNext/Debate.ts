@@ -16,7 +16,7 @@ export interface Debate extends Item {
     name: string
 
     /** the ID of the main claim the debate is about. a claim that is not attacking or aupporting another claim. Is not a Source in any connectors  */
-    mainClaim?: string
+    mainClaimId?: string
 }
 
 /** Populates defaults */
@@ -29,7 +29,7 @@ export function newDebate(partialItem: Partial<Debate> = {}): Debate {
     const newItem = {
         ...partialItem,
         ...itemType,
-        name: partialItem.description ?? "",
+        name: partialItem.name ?? "",
         description: partialItem.description ?? "",
         id: partialItem.id ?? newId(),
     };
