@@ -18,6 +18,13 @@ import { getNewScore } from "@/reasonScoreNext/scoring/TypeA/Score";
 import { Connector } from "@/reasonScoreNext/Connector";
 import { Debate } from "@/reasonScoreNext/Debate";
 
+const sortConnectors = (a: Connector, b: Connector): number => {
+    const affects = b.affects.localeCompare(a.affects);
+    if (affects !== 0) return affects;
+    if (a.proTarget === b.proTarget) return 0;
+    return a.proTarget ? -1 : 1;
+};
+
 export function flowDataReducer({
     actions,
     setDisplayEdges,
@@ -67,7 +74,9 @@ export function flowDataReducer({
             // Get all connectors where this score is the target
             const scoreConnectors: { [id: string]: Connector } = Object.values(connectors)
                 .filter(conn => conn.target === score.id)
+                .sort(sortConnectors)
                 .reduce((acc, conn) => ({ ...acc, [conn.id]: conn }), {})
+
 
             for (const connector of Object.values(scoreConnectors)) {
 
@@ -82,15 +91,15 @@ export function flowDataReducer({
                     sourceScore = getNewScore({ id: connector.id, type: "score" })
                     console.log("new score generated")
                 }
-
+                const skip = connector.affects !== "confidence"
                 const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
                 const maxImpact = sourceScore.relevance;
 
-                const maxImpactStacked = maxImpactStack(sourceScore.relevance);
+                const maxImpactStacked = maxImpactStack(skip ? 0 : sourceScore.relevance);
                 const impactStacked = sizeStacked(maxImpactStacked, impact);
                 const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence);
                 const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
-                const consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
+                const consolidatedStacked = consolidatedStack(impact * (skip ? 0 : sourceScore.confidence));
 
                 const sourceScorePolarity = newDebateData.claims[sourceScore.id].pol
                 const type = connector.affects
@@ -125,7 +134,9 @@ export function flowDataReducer({
                     data
                 });
 
-                lastBottom += maxImpact;
+                if (type === "confidence") {
+                    lastBottom += maxImpact;
+                }
                 lastBottom += GUTTER;
             }
 
