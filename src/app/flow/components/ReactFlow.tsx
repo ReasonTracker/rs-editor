@@ -57,7 +57,7 @@ export default function Flow() {
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 onPaneClick={onPaneClick}
-                onNodeContextMenu={onNodeContextMenu}
+                // onNodeContextMenu={onNodeContextMenu}
                 fitView
             >
             <ScoreBoard score={mainScore?.confidence} />

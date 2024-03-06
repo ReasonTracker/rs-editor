@@ -374,6 +374,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             }
             <div
                 className="absolute -right-7 bottom-0 transform opacity-0 group-hover:opacity-100 transition flex flex-col"
+                style={{
+                    scale: '.5',
+                    transformOrigin: 'bottom left'
+                }}
             >
                 {dev.isDev ? devButtons : null}
                 <Tooltip content="Add Relevance" position="right">
