@@ -1,4 +1,4 @@
-import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useStore } from 'reactflow';
+import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useReactFlow, useStore } from 'reactflow';
 import { Fragment, useContext, useState } from 'react';
 import { Button, TextArea, Tooltip } from '@blueprintjs/core';
 import { DisplayNodeData, ConfidenceEdgeData } from '@/app/flow/types/types';
@@ -13,6 +13,9 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
     const flowDataState = useContext(FlowDataContext);
     const dev = useContext(DevContext);
+
+    const reactFlowInstance = useReactFlow();
+
 
     const handleChangeText = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
         flowDataState.dispatch([{
@@ -379,7 +382,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="mb-1 !bg-pro"
                         icon="plus"
-                        onClick={() => addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })}
+                        onClick={() => {
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })
+                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        }}
                     />
                 </Tooltip>
                 <Tooltip content="Add Relevance" position="right">
@@ -388,7 +394,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="mb-1 !bg-con"
                         icon="plus"
-                        onClick={() => addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' })}
+                        onClick={() => {
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' });
+                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        }}
                     />
                 </Tooltip>
                 <Tooltip content="Add Pro" position="right">
@@ -397,7 +406,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="mb-1 !bg-pro"
                         icon="plus"
-                        onClick={() => addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' })}
+                        onClick={() => {
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' });
+                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        }}
                     />
                 </Tooltip>
                 <Tooltip content="Add Con" position="right">
@@ -405,7 +417,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         minimal
                         small
                         className="!bg-con"
-                        onClick={() => addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' })}
+                        onClick={() => {
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
+                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        }}
                         icon="plus"
                     />
                 </Tooltip>
