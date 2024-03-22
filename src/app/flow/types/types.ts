@@ -9,9 +9,10 @@ import { EdgeChange, NodeChange } from 'reactflow';
 import { DebateData } from '@/reasonScoreNext/DebateData';
 import { Debate } from '@/reasonScoreNext/Debate';
 
+export type Polarity = "pro" | "con"
 export type DisplayNodeData = {
-    scoreId: string,
-    pol: "pro" | "con"
+    scoreId: string
+    pol: Polarity
     score: Score
     claim: Claim
     scoreNumberText: string

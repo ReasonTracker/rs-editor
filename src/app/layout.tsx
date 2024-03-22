@@ -13,9 +13,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+    const suppressHydrationWarning = process.env.NODE_ENV === "development" ? { suppressHydrationWarning: true } : {}
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+        {/* add suppressHydrationWarning if dev */}
+      <body className={inter.className} {...suppressHydrationWarning}> {children}</body>
     </html>
   )
 }
