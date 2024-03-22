@@ -7,7 +7,7 @@ import DisplayNode from './DisplayNode'
 import DisplayEdge from './DisplayEdge'
 import { DisplayNodeData } from '../types/types';
 import ContextMenu, { ContextMenuData } from './ContextMenu';
-import addNode from '../utils/addNode';
+import addNodes from '../utils/addNodes';
 import ScoreBoard from '../../../components/ScoreBoard';
 
 const nodeTypes = { rsNode: DisplayNode };
@@ -40,9 +40,9 @@ export default function Flow() {
     const flowDataState = useContext(FlowDataContext);
 
     // // addNode({ x }) for dev
-    // useEffect(() => {
-    //     addNode({ flowDataState, isNewNodePro: true, claimId: "mainClaim" })
-    // }, [])
+    useEffect(() => {
+        addNodes([{ flowDataState, isNewNodePro: true, claimId: "mainClaim" }])
+    }, [])
 
     const mainScore = flowDataState.displayNodes.find((n) => n.id === flowDataState.debate.mainClaimId )?.data?.score;
 

@@ -3,7 +3,7 @@ import { Fragment, useContext, useState } from 'react';
 import { Button, TextArea, Tooltip } from '@blueprintjs/core';
 import { DisplayNodeData, ConfidenceEdgeData } from '@/app/flow/types/types';
 import { DevContext, FlowDataContext, FlowDataProvider } from './FlowDataProvider';
-import addNode from '../utils/addNode';
+import addNodes from '../utils/addNodes';
 import { stackSpace } from '@/utils/stackSpace';
 
 const MAX_STROKE_WIDTH = 25
@@ -387,7 +387,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         className="mb-1 !bg-pro"
                         icon="plus"
                         onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })
+                            addNodes([{ flowDataState, sourceId: id, isNewNodePro: true, targetNodePolarity: data.pol, affects: 'relevance' }])
                             reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                     />
@@ -399,7 +399,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         className="mb-1 !bg-con"
                         icon="plus"
                         onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' });
+                            addNodes([{ flowDataState, sourceId: id, isNewNodePro: false, targetNodePolarity: data.pol, affects: 'relevance' }]);
                             reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                     />
@@ -411,7 +411,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         className="mb-1 !bg-pro"
                         icon="plus"
                         onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' });
+                            addNodes([{ flowDataState, sourceId: id, isNewNodePro: true, targetNodePolarity: data.pol, affects: 'confidence' }]);
                             reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                     />
@@ -422,7 +422,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="!bg-con"
                         onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
+                            addNodes([{ flowDataState, sourceId: id, isNewNodePro: false, targetNodePolarity: data.pol, affects: 'confidence' }]);
                             reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                         icon="plus"

@@ -12,7 +12,6 @@ import {
     FlowDataState,
 } from "@/app/flow/types/types";
 import { Debate, newDebate } from '@/reasonScoreNext/Debate';
-import addNode from '../utils/addNode';
 import { newId } from '@/reasonScore/newId';
 
 
@@ -48,7 +47,6 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
 
     useEffect(() => {
         if (debateData.claims[debate.mainClaimId || ""]) return
-        addNode({ flowDataState, isNewNodePro: true, claimId: debate.mainClaimId })
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
