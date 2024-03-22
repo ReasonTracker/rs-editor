@@ -3,6 +3,7 @@ import { FlowDataState } from '../../types/types';
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import addNodes, { AddNodeType } from '../../utils/addNodes';
+import { Button, InputGroup } from '@blueprintjs/core';
 
 type ArgumentMapSchemaType = {
     pros: string[];
@@ -75,7 +76,7 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
                 claimId: "mainClaim",
                 claimContent: claim
             }
-            // create proMainClaims for each pros in data
+
             const proMainClaims: AddNodeType[] = []
             data.pros.forEach((pro) => {
                 const proMainClaim: AddNodeType = {
@@ -112,18 +113,18 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
     return (
         <div className="absolute top-0 w-full z-10">
             <div className="flex flex-col sm:flex-row justify-center mb-4 pt-2">
-                <input
+                <InputGroup
                     placeholder="Enter a claim"
-                    className="mr-8 max-w-2xl"
+                    className="mr-8 w-2/5 min-w-[300px]"
                     id="claim-input"
                     value={claim}
                     onChange={handleClaimChange}
                     onKeyDown={handleKeyDown}
                     disabled={isLoading}
                 />
-                <button onClick={handleSubmit} disabled={isLoading}>
+                <Button onClick={handleSubmit} disabled={isLoading}>
                     Generate Argument Map
-                </button>
+                </Button>
             </div>
         </div>
     );
