@@ -1,13 +1,14 @@
 'use client'
 
-import ReactFlow, { Controls, MiniMap, Node, useEdgesState, useNodesState } from 'reactflow';
+import ReactFlow, { Controls, MiniMap, Node } from 'reactflow';
+import { FlowDataContext } from '../../components/FlowDataProvider';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import ScoreBoard from '@/components/ScoreBoard';
-import ContextMenu, { ContextMenuData } from '../../components/ContextMenu';
-import DisplayEdge from '../../components/DisplayEdge';
 import DisplayNode from '../../components/DisplayNode';
-import { FlowDataContext, FlowDataProvider } from '../../components/FlowDataProvider';
+import DisplayEdge from '../../components/DisplayEdge';
 import { DisplayNodeData } from '../../types/types';
+import ContextMenu, { ContextMenuData } from '../../components/ContextMenu';
+import addNodes from '../../utils/addNodes';
+import ScoreBoard from '@/components/ScoreBoard';
 import ClaimInput from './ClaimInput';
 
 
@@ -42,7 +43,7 @@ export default function ArgumentGenerator() {
 
     // // addNode({ x }) for dev
     // useEffect(() => {
-    //     addNode({ flowDataState, isNewNodePro: true, claimId: "mainClaim" })
+    //     addNodes([{ flowDataState, isNewNodePro: true, claimId: "mainClaim" }])
     // }, [])
 
     // const mainScore = flowDataState.displayNodes.find((n) => n.id === flowDataState.debate.mainClaimId)?.data?.score;
@@ -52,9 +53,8 @@ export default function ArgumentGenerator() {
     }`
 
     return (
-        <FlowDataProvider>
-            <style>{oneOffCss}</style>
-            <div className={flowDataState.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} id='argument-generator'>
+        <div className={flowDataState.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} id='argument-generator'>
+                <style>{oneOffCss}</style>
                 <ReactFlow
                     ref={menuRef}
                     nodes={flowDataState.displayNodes}
@@ -64,7 +64,7 @@ export default function ArgumentGenerator() {
                     nodeTypes={nodeTypes}
                     edgeTypes={edgeTypes}
                     onPaneClick={onPaneClick}
-                    onNodeContextMenu={onNodeContextMenu}
+                    // onNodeContextMenu={onNodeContextMenu}
                     fitView
                 >
                     {/* <ScoreBoard score={mainScore?.confidence} /> */}
@@ -83,6 +83,5 @@ export default function ArgumentGenerator() {
                 </ReactFlow>
                 {menu && <ContextMenu {...menu} />}
             </div>
-        </FlowDataProvider>
     )
 }
