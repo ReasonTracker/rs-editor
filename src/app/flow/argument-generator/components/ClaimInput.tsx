@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { FlowDataState } from '../../types/types';
 import addNodes, { AddNodeType } from '../../utils/addNodes';
 import { Button, InputGroup } from '@blueprintjs/core';
@@ -8,7 +8,7 @@ import { ArgumentMapSchemaType, argumentMapSchema } from '../utils/newProConSche
 
 const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
     const [claim, setClaim] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const { isLoading, setIsLoading } = useContext(LoadingContext);
 
     const handleClaimChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setClaim(e.target.value);
