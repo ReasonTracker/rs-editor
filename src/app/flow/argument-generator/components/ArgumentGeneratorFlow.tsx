@@ -3,19 +3,19 @@
 import ReactFlow, { Controls, MiniMap, Node } from 'reactflow';
 import { FlowDataContext } from '../../components/FlowDataProvider';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import DisplayNode from '../../components/DisplayNode';
 import DisplayEdge from '../../components/DisplayEdge';
 import { DisplayNodeData } from '../../types/types';
 import ContextMenu, { ContextMenuData } from '../../components/ContextMenu';
 import addNodes from '../../utils/addNodes';
 import ScoreBoard from '@/components/ScoreBoard';
 import ClaimInput from './ClaimInput';
+import AiNode from './AiNode';
 
 
-const nodeTypes = { rsNode: DisplayNode };
+const nodeTypes = { rsNode: AiNode };
 const edgeTypes = { rsEdge: DisplayEdge };
 
-export default function ArgumentGenerator() {
+export default function ArgumentGeneratorFlow() {
 
     const menuRef = useRef(null);
     const [menu, setMenu] = useState<ContextMenuData | null>(null);
