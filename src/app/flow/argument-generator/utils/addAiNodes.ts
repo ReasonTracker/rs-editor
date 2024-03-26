@@ -12,6 +12,10 @@ const addAiNodes = async ({
     claim: string;
     sourceId: string;
 }) => {
+
+    const nodes = flowDataState.displayNodes.map((node) => node.data.claim.content);
+    const currentArgumentMap = nodes ? nodes.join(' | ') : ''
+    
     try {
         const response = await fetch(
             "http://localhost:3000/api/structured-output",
@@ -21,8 +25,8 @@ const addAiNodes = async ({
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    systemMessage: newProConSystemMessage({currentArgumentMap}),
                     input: claim,
-                    systemMessage: newProConSystemMessage(),
                     schema: argumentMapSchema,
                 }),
             }

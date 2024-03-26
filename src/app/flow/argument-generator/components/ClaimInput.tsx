@@ -31,7 +31,7 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
                     },
                     body: JSON.stringify({
                         input: claim,
-                        systemMessage: newProConSystemMessage(),
+                        systemMessage: newProConSystemMessage({}),
                         schema: argumentMapSchema,
                     }),
                 }

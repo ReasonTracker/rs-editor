@@ -1,5 +1,8 @@
-export const newProConSystemMessage = (currentArgumentMap?: string) => {
-
+export const newProConSystemMessage = ({
+    currentArgumentMap
+}: {
+    currentArgumentMap?: string;
+}) => {
     const example = `BEGIN EXAMPLE:
         pros: [
             'It is a violation of human rights to take a person\'s life, regardless of their actions.',
@@ -11,16 +14,16 @@ export const newProConSystemMessage = (currentArgumentMap?: string) => {
             'It provides closure to victims\' families and a sense of justice.',
             'Some crimes are so heinous that they warrant the ultimate punishment.',
         ]
-        END EXAMPLE`
-
+        END EXAMPLE`;
 
     return `Generate an argument map (only text, not a list).  Max 3 Pro and Cons each.  Like this example;
   
     ${example}
   
-    ${currentArgumentMap 
-        ? `Here is the current argument map, do not re-use claims: ${currentArgumentMap}` 
-        : ''}
+    ${currentArgumentMap
+            ? `Here is the current argument map, do not re-use claims: ${currentArgumentMap}`
+            : ""
+        }
 
-    Starting Claim:`;
-}
+    Claim to add Pros and Cons to:`;
+};
