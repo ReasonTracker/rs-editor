@@ -1,41 +1,10 @@
 import React, { useState } from 'react';
 import { FlowDataState } from '../../types/types';
-import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
 import addNodes, { AddNodeType } from '../../utils/addNodes';
 import { Button, InputGroup } from '@blueprintjs/core';
-
-type ArgumentMapSchemaType = {
-    pros: string[];
-    cons: string[];
-};
-
-const argumentMapSchema = z.object({
-    pros: z.array(z.string()),
-    cons: z.array(z.string()),
-});
-
-const schema = zodToJsonSchema(argumentMapSchema);
-
-const systemMessage = `Generate an argument map (only text, not a list) like this example
-  
-  BEGIN EXAMPLE:
-  pros: [
-      'It is a violation of human rights to take a person\'s life, regardless of their actions.',
-      'There is a risk of executing innocent individuals.',
-      'The death penalty is disproportionately applied to minorities and those from disadvantaged backgrounds.',
-      'Life imprisonment without parole is a viable alternative that ensures public safety.',
-      'The death penalty does not deter crime effectively.'
-    ],
-      cons: [
-      'The death penalty serves as a deterrent to potential criminals.',
-      'It provides closure to victims\' families and a sense of justice.',
-      'Some crimes are so heinous that they warrant the ultimate punishment.',
-      'The cost of housing death row inmates for life may be higher than the cost of execution.'
-    ]
-  END EXAMPLE
-  
-  Starting Claim:`;
+import { LoadingContext } from '../page';
+import { newProConSystemMessage } from '../utils/newProConSystemMessage';
+import { ArgumentMapSchemaType, argumentMapSchema } from '../utils/newProConSchema';
 
 const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
     const [claim, setClaim] = useState('');
@@ -62,8 +31,8 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
                     },
                     body: JSON.stringify({
                         input: claim,
-                        systemMessage,
-                        schema,
+                        systemMessage: newProConSystemMessage(),
+                        schema: argumentMapSchema,
                     }),
                 }
             );
