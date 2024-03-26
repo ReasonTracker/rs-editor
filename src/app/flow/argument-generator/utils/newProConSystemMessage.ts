@@ -1,5 +1,3 @@
-
-
 export const newProConSystemMessage = (currentArgumentMap?: string) => {
 
     const example = `BEGIN EXAMPLE:

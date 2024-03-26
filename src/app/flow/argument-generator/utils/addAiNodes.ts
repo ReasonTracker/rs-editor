@@ -1,10 +1,4 @@
-import { ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
-import { newClaim } from "@/reasonScoreNext/Claim";
-import { newConnector, Affects } from "@/reasonScoreNext/Connector";
-import { FlowDataState, Polarity } from "../../types/types";
-import generateSimpleAnimalClaim from "../../utils/generateClaimContent";
-import { useContext } from "react";
-import { FlowDataContext } from "../../components/FlowDataProvider";
+import { FlowDataState } from "../../types/types";
 import { ArgumentMapSchemaType, argumentMapSchema } from "./newProConSchema";
 import addNodes, { AddNodeType } from "../../utils/addNodes";
 import { newProConSystemMessage } from "./newProConSystemMessage";

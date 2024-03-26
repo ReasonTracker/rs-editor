@@ -1,13 +1,10 @@
-import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useReactFlow, useStore } from 'reactflow';
-import { Fragment, useContext, useState } from 'react';
+import { Handle, NodeProps, Position, ReactFlowState, getBezierPath, useReactFlow, useStore } from 'reactflow';
+import { Fragment, useContext } from 'react';
 import { Button, TextArea, Tooltip } from '@blueprintjs/core';
-import { DisplayNodeData, ConfidenceEdgeData, Polarity } from '@/app/flow/types/types';
+import { DisplayNodeData } from '@/app/flow/types/types';
 import { stackSpace } from '@/utils/stackSpace';
 import { FlowDataContext, DevContext } from '../../components/FlowDataProvider';
 import { LoadingContext } from '../page';
-import { newProConSystemMessage } from '../utils/newProConSystemMessage';
-import { ArgumentMapSchemaType, argumentMapSchema } from '../utils/newProConSchema';
-import addNodes, { AddNodeType } from '../../utils/addNodes';
 import addAiNodes from '../utils/addAiNodes';
 
 const MAX_STROKE_WIDTH = 25
@@ -17,7 +14,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
     const flowDataState = useContext(FlowDataContext);
     const dev = useContext(DevContext);
-    const { isLoading, setIsLoading } = useContext(LoadingContext);
+    const { setIsLoading } = useContext(LoadingContext);
 
     const DEFAULT_FIT_VIEW = {
         padding: 0.5,
