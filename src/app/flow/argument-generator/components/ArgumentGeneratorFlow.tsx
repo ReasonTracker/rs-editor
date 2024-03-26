@@ -48,9 +48,14 @@ export default function ArgumentGeneratorFlow() {
 
     // const mainScore = flowDataState.displayNodes.find((n) => n.id === flowDataState.debate.mainClaimId)?.data?.score;
 
-    const oneOffCss = `#argument-generator .rsNode {
-        background-color: initial
-    }`
+    const oneOffCss = `
+        #argument-generator .rsNode {
+            background-color: initial
+        }
+        #argument-generator .rsContent {
+            width: 250px;
+        }
+    `
 
     return (
         <div className={flowDataState.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} id='argument-generator'>

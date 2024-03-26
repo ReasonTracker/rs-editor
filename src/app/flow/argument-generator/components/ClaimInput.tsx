@@ -47,28 +47,33 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
             }
 
             const proMainClaims: AddNodeType[] = []
-            data.pros.forEach((pro) => {
-                const proMainClaim: AddNodeType = {
-                    flowDataState,
-                    isNewNodePro: true,
-                    claimContent: pro,
-                    sourceId: "mainClaim",
-                    targetNodePolarity: "pro"
-                }
-                proMainClaims.push(proMainClaim);
-            });
+            if (data.pros && data.pros.length > 0) {
+                data.pros.forEach((pro) => {
+                    const proMainClaim: AddNodeType = {
+                        flowDataState,
+                        isNewNodePro: true,
+                        claimContent: pro,
+                        sourceId: "mainClaim",
+                        targetNodePolarity: "pro"
+                    }
+                    proMainClaims.push(proMainClaim);
+                });
+            }
 
             const conMainClaims: AddNodeType[] = []
-            data.cons.forEach((con) => {
-                const conMainClaim: AddNodeType = {
-                    flowDataState,
-                    isNewNodePro: false,
-                    claimContent: con,
-                    sourceId: "mainClaim",
-                    targetNodePolarity: "con"
-                }
-                conMainClaims.push(conMainClaim);
-            });
+            if (data.cons && data.cons.length > 0) {
+                data.cons.forEach((con) => {
+                    const conMainClaim: AddNodeType = {
+                        flowDataState,
+                        isNewNodePro: false,
+                        claimContent: con,
+                        sourceId: "mainClaim",
+                        targetNodePolarity: "con"
+                    }
+                    conMainClaims.push(conMainClaim);
+                })
+            }
+
 
             addNodes([mainClaim, ...proMainClaims, ...conMainClaims]);
 
