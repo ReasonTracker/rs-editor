@@ -9,6 +9,7 @@ import { DisplayNodeData } from '../types/types';
 import ContextMenu, { ContextMenuData } from './ContextMenu';
 import addNodes from '../utils/addNodes';
 import ScoreBoard from '../../../components/ScoreBoard';
+import VideoPlayer from './VideoPlayer/VideoPlayer';
 
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };
@@ -60,6 +61,7 @@ export default function Flow() {
                 // onNodeContextMenu={onNodeContextMenu}
                 fitView
             >
+            <VideoPlayer />
             <ScoreBoard score={mainScore?.confidence} />
                 <Controls
                     position='top-left'
