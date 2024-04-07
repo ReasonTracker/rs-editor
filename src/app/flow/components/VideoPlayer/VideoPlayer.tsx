@@ -1,11 +1,12 @@
 'use client'
 import React, { useContext, useEffect, useState } from 'react';
 import { FlowDataContext } from '../FlowDataProvider';
-import addNodes from '../../utils/addNodes';
+import addNodes, { typeOutContent } from '../../utils/addNodes';
 import { Button } from '@blueprintjs/core';
 import { useReactFlow } from 'reactflow';
 import { ClaimActions, ConnectorActions } from '@/reasonScoreNext/ActionTypes';
 
+const typeOut = true
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const VideoPlayer = () => {
@@ -40,7 +41,10 @@ const VideoPlayer = () => {
         try {
             for (let i = currentStep; i < tempNodeSequence.length; i++) {
                 if (abortController.signal.aborted) break;
-                addNodes(tempNodeSequence[i].nodes);
+                addNodes({
+                  nodes: tempNodeSequence[i].nodes,
+                  options: { typeOut, typeOutDelay: tempNodeSequence[i].delay },
+                });
                 setCurrentStep(i + 1);
                 reactFlowInstance.fitView({ padding: 0.5, duration: 1500 }); // TODO delay seems a step behind (one node behind)
                 await delay(tempNodeSequence[i].delay);
@@ -61,7 +65,10 @@ const VideoPlayer = () => {
 
     const stepForward = async () => {
         if (currentStep < tempNodeSequence.length) {
-            addNodes(tempNodeSequence[currentStep].nodes);
+            addNodes({
+                nodes: tempNodeSequence[currentStep].nodes,
+                options: { typeOut, typeOutDelay: tempNodeSequence[currentStep].delay },
+            });
             setCurrentStep(currentStep + 1);
             reactFlowInstance.fitView({ padding: 0.5, duration: 1500 });
         }

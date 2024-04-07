@@ -3,6 +3,7 @@ import { newClaim } from "@/reasonScoreNext/Claim";
 import { DisplayNodeData, FlowDataState, Polarity } from "../types/types";
 import generateSimpleAnimalClaim from "./generateClaimContent";
 import { newConnector, Affects } from "@/reasonScoreNext/Connector";
+import { newId } from "@/reasonScoreNext/newId";
 
 export type AddNodeType = {
     flowDataState: FlowDataState;
@@ -14,10 +15,53 @@ export type AddNodeType = {
     claimContent?: string;
 };
 
-const addNodes = (nodes: AddNodeType[]) => {
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const typeOutContent = async ({
+    flowDataState,
+    content,
+    id,
+}: {
+    flowDataState: FlowDataState;
+    content: string;
+    id: string;
+}) => {
+    for (let i = 0; i <= content.length; i++) {
+        setTimeout(() => {
+            flowDataState.dispatch([
+                {
+                    type: "modify",
+                    newData: {
+                        id,
+                        content: content.substring(0, i),
+                        type: "claim",
+                    },
+                },
+            ]);
+        }, i * 100);
+    }
+};
+
+type Options = {
+    typeOut?: boolean;
+    typeOutDelay?: number;
+}
+
+const addNodes = async ({
+    nodes,
+    options = {},
+}: {
+    nodes: AddNodeType[];
+    options?: Options;
+}) => {
+    const {
+        typeOut = false,
+        typeOutDelay = 0
+    } = options
+
     // TODO, can we batch distpatch?  or if nodes have targets that doesn't exist yet, will that break it?
-    nodes.forEach(
-        ({
+    for (const node of nodes) {
+        const {
             flowDataState,
             sourceId,
             isNewNodePro,
@@ -25,11 +69,15 @@ const addNodes = (nodes: AddNodeType[]) => {
             targetNodePolarity,
             claimId,
             claimContent,
-        }) => {
+        } = node;
             let actions = [];
 
             const content = claimContent || generateSimpleAnimalClaim();
-            const newClaimData = newClaim({ content, id: claimId });
+            const id = claimId || newId();
+            const newClaimData = newClaim({
+                content: typeOut ? "" : content,
+                id,
+            });
 
             const pol = isNewNodePro ? "pro" : "con";
             const claimAction: ClaimActions = {
@@ -56,8 +104,12 @@ const addNodes = (nodes: AddNodeType[]) => {
             }
 
             flowDataState.dispatch(actions);
-        }
-    );
+
+            if (typeOut) {
+                await delay(typeOutDelay)
+                typeOutContent({ flowDataState, content, id });
+            }
+    }
 };
 
 export default addNodes;

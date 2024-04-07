@@ -100,7 +100,7 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
                 conMainClaims.push(conMainClaim);
             });
 
-            addNodes([mainClaim, ...proMainClaims, ...conMainClaims]);
+            addNodes({ nodes: [mainClaim, ...proMainClaims, ...conMainClaims] });
 
         } catch (error) {
             console.error("Failed to fetch the argument map:", error);
