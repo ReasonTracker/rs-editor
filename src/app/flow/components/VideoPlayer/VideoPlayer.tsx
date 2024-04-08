@@ -41,13 +41,18 @@ const VideoPlayer = () => {
         try {
             for (let i = currentStep; i < tempNodeSequence.length; i++) {
                 if (abortController.signal.aborted) break;
-                addNodes({
-                  nodes: tempNodeSequence[i].nodes,
-                  options: { typeOut, typeOutDelay: tempNodeSequence[i].delay },
+                const nodeDelay = tempNodeSequence[i].delay
+                await addNodes({
+                    flowDataState,
+                    nodes: tempNodeSequence[i].nodes,
+                    options: { 
+                        fitView: { reactFlowInstance, duration: nodeDelay, padding: 0.5 }, 
+                        typeOut: { typeOutDelay: nodeDelay } 
+                    },
                 });
+
                 setCurrentStep(i + 1);
-                reactFlowInstance.fitView({ padding: 0.5, duration: 1500 }); // TODO delay seems a step behind (one node behind)
-                await delay(tempNodeSequence[i].delay);
+                await delay(2000)
                 if (abortController.signal.aborted) break;
             }
         } catch (error) {
@@ -65,9 +70,14 @@ const VideoPlayer = () => {
 
     const stepForward = async () => {
         if (currentStep < tempNodeSequence.length) {
+            const delay = tempNodeSequence[currentStep].delay
             addNodes({
+                flowDataState,
                 nodes: tempNodeSequence[currentStep].nodes,
-                options: { typeOut, typeOutDelay: tempNodeSequence[currentStep].delay },
+                options: { 
+                    fitView: { reactFlowInstance, duration: delay, padding: 0.5 },
+                    typeOut: { typeOutDelay: delay } 
+                },
             });
             setCurrentStep(currentStep + 1);
             reactFlowInstance.fitView({ padding: 0.5, duration: 1500 });

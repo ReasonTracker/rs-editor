@@ -4,9 +4,9 @@ import { DisplayNodeData, FlowDataState, Polarity } from "../types/types";
 import generateSimpleAnimalClaim from "./generateClaimContent";
 import { newConnector, Affects } from "@/reasonScoreNext/Connector";
 import { newId } from "@/reasonScoreNext/newId";
+import { ReactFlowInstance } from "reactflow";
 
 export type AddNodeType = {
-    flowDataState: FlowDataState;
     sourceId?: string;
     affects?: Affects;
     isNewNodePro: boolean;
@@ -42,27 +42,33 @@ export const typeOutContent = async ({
     }
 };
 
+type FitViewType = {
+    reactFlowInstance: ReactFlowInstance,
+    duration?: number;
+    fitViewDelay?: number;
+    padding?: number;
+}
+type TypeOutType = {
+    typeOutDelay: number;
+}
 type Options = {
-    typeOut?: boolean;
-    typeOutDelay?: number;
+    typeOut?: TypeOutType;
+    fitView?: FitViewType
 }
 
 const addNodes = async ({
+    flowDataState,
     nodes,
     options = {},
 }: {
+    flowDataState: FlowDataState;
     nodes: AddNodeType[];
     options?: Options;
 }) => {
-    const {
-        typeOut = false,
-        typeOutDelay = 0
-    } = options
-
+    const { typeOut, fitView } = options
     // TODO, can we batch distpatch?  or if nodes have targets that doesn't exist yet, will that break it?
     for (const node of nodes) {
         const {
-            flowDataState,
             sourceId,
             isNewNodePro,
             affects = "confidence",
@@ -70,45 +76,51 @@ const addNodes = async ({
             claimId,
             claimContent,
         } = node;
-            let actions = [];
+        let actions = [];
 
-            const content = claimContent || generateSimpleAnimalClaim();
-            const id = claimId || newId();
-            const newClaimData = newClaim({
-                content: typeOut ? "" : content,
-                id,
+        const content = claimContent || generateSimpleAnimalClaim();
+        const id = claimId || newId();
+        const newClaimData = newClaim({
+            content: typeOut ? "" : content,
+            id,
+        });
+
+        const pol = isNewNodePro ? "pro" : "con";
+        const claimAction: ClaimActions = {
+            type: "add",
+            newData: { ...newClaimData, pol },
+        };
+        actions.push(claimAction);
+
+        if (sourceId) {
+            const proTarget = isNewNodePro === (targetNodePolarity === "pro");
+            const newConnectorData = newConnector({
+                source: newClaimData.id,
+                target: sourceId,
+                proTarget,
+                affects,
             });
-
-            const pol = isNewNodePro ? "pro" : "con";
-            const claimAction: ClaimActions = {
+            const connectorAction: ConnectorActions = {
                 type: "add",
-                newData: { ...newClaimData, pol },
+                newData: newConnectorData,
             };
-            actions.push(claimAction);
+            actions.push(connectorAction);
+        } else {
+            console.log("no sourceId");
+        }
 
-            if (sourceId) {
-                const proTarget = isNewNodePro === (targetNodePolarity === "pro");
-                const newConnectorData = newConnector({
-                    source: newClaimData.id,
-                    target: sourceId,
-                    proTarget,
-                    affects,
-                });
-                const connectorAction: ConnectorActions = {
-                    type: "add",
-                    newData: newConnectorData,
-                };
-                actions.push(connectorAction);
-            } else {
-                console.log("no sourceId");
-            }
+        flowDataState.dispatch(actions);
 
-            flowDataState.dispatch(actions);
+        if (fitView) {
+            const { reactFlowInstance, duration, fitViewDelay, padding } = fitView
+            if (fitViewDelay) await delay(fitViewDelay);
+            reactFlowInstance.fitView({ duration, padding, });
+        }
 
-            if (typeOut) {
-                await delay(typeOutDelay)
-                typeOutContent({ flowDataState, content, id });
-            }
+        if (typeOut) {
+            await delay(typeOut.typeOutDelay)
+            typeOutContent({ flowDataState, content, id });
+        }
     }
 };
 

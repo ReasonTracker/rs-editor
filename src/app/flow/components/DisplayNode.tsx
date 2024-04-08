@@ -387,7 +387,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         className="mb-1 !bg-pro"
                         icon="plus"
                         onClick={() => {
-                            addNodes({ nodes: [{ flowDataState, sourceId: id, isNewNodePro: true, targetNodePolarity: data.pol, affects: 'relevance' }] })
+                            addNodes({ flowDataState, nodes: [{ sourceId: id, isNewNodePro: true, targetNodePolarity: data.pol, affects: 'relevance' }] })
                             reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                     />
@@ -399,7 +399,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         className="mb-1 !bg-con"
                         icon="plus"
                         onClick={() => {
-                            addNodes({ nodes: [{ flowDataState, sourceId: id, isNewNodePro: false, targetNodePolarity: data.pol, affects: 'relevance' }] })
+                            addNodes({ flowDataState, nodes: [{ sourceId: id, isNewNodePro: false, targetNodePolarity: data.pol, affects: 'relevance' }] })
                             reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                     />
@@ -411,7 +411,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         className="mb-1 !bg-pro"
                         icon="plus"
                         onClick={() => {
-                            addNodes({ nodes: [{ flowDataState, sourceId: id, isNewNodePro: true, targetNodePolarity: data.pol, affects: 'confidence' }] })
+                            addNodes({ flowDataState, nodes: [{ sourceId: id, isNewNodePro: true, targetNodePolarity: data.pol, affects: 'confidence' }] })
                             reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                     />
@@ -422,7 +422,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         small
                         className="!bg-con"
                         onClick={() => {
-                            addNodes({ nodes: [{ flowDataState, sourceId: id, isNewNodePro: false, targetNodePolarity: data.pol, affects: 'confidence' }] })
+                            addNodes({ flowDataState, nodes: [{ sourceId: id, isNewNodePro: false, targetNodePolarity: data.pol, affects: 'confidence' }] })
                             reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                         icon="plus"

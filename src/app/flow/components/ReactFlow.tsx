@@ -42,7 +42,7 @@ export default function Flow() {
 
     // // addNode({ x }) for dev
     useEffect(() => {
-        addNodes({ nodes: [{ flowDataState, isNewNodePro: true, claimId: "mainClaim" }] })
+        addNodes({ flowDataState, nodes: [{ isNewNodePro: true, claimId: "mainClaim" }] })
     }, [])
 
     const mainScore = flowDataState.displayNodes.find((n) => n.id === flowDataState.debate.mainClaimId )?.data?.score;

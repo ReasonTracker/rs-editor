@@ -70,7 +70,6 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
             const data: ArgumentMapSchemaType = await response.json();
 
             const mainClaim: AddNodeType = {
-                flowDataState,
                 isNewNodePro: true,
                 claimId: "mainClaim",
                 claimContent: claim
@@ -79,7 +78,6 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
             const proMainClaims: AddNodeType[] = []
             data.pros.forEach((pro) => {
                 const proMainClaim: AddNodeType = {
-                    flowDataState,
                     isNewNodePro: true,
                     claimContent: pro,
                     sourceId: "mainClaim",
@@ -91,7 +89,6 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
             const conMainClaims: AddNodeType[] = []
             data.cons.forEach((con) => {
                 const conMainClaim: AddNodeType = {
-                    flowDataState,
                     isNewNodePro: false,
                     claimContent: con,
                     sourceId: "mainClaim",
@@ -100,7 +97,7 @@ const ClaimInput = ({ flowDataState }: { flowDataState: FlowDataState }) => {
                 conMainClaims.push(conMainClaim);
             });
 
-            addNodes({ nodes: [mainClaim, ...proMainClaims, ...conMainClaims] });
+            addNodes({ flowDataState, nodes: [mainClaim, ...proMainClaims, ...conMainClaims] });
 
         } catch (error) {
             console.error("Failed to fetch the argument map:", error);
