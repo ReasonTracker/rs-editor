@@ -42,7 +42,7 @@ export default function Flow() {
 
     // // addNode({ x }) for dev
     useEffect(() => {
-        addNodes({ flowDataState, nodes: [{ isNewNodePro: true, claimId: "mainClaim" }] })
+        // addNodes({ flowDataState, nodes: [{ isNewNodePro: true, claimId: flowDataState.debate.mainClaimId }] })
     }, [])
 
     const mainScore = flowDataState.displayNodes.find((n) => n.id === flowDataState.debate.mainClaimId )?.data?.score;
@@ -62,7 +62,7 @@ export default function Flow() {
                 fitView
             >
             <VideoPlayer />
-            <ScoreBoard score={mainScore?.confidence} />
+            <ScoreBoard score={mainScore?.confidence} isAddingNode={flowDataState.isAddingNode} />
                 <Controls
                     position='top-left'
                 />

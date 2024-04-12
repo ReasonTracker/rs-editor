@@ -21,12 +21,13 @@ const VideoPlayer = () => {
         return () => controller?.abort();
     }, [abortController]);
 
+    const mainClaim = flowDataState.debate.mainClaimId
     const tempNodeSequence: { delay: number, nodes: AddNodeType[]}[]  = [
-        { delay: 1500, nodes: [{ isNewNodePro: true, claimContent: "insects are Gorgeous and Handcrafted.", claimId: "mainClaim" }] },
-        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "cats are Small and Gorgeous.", sourceId: "mainClaim", claimId: "claim1" }] },
-        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "birds are Bespoke and Unbranded.", sourceId: "mainClaim", claimId: "claim2" }] },
-        { delay: 1000, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "cetaceans are Bespoke and Recycled.", sourceId: "mainClaim", claimId: "claim3" }] },
-        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cetaceans are Small and Elegant.", sourceId: "mainClaim", claimId: "claim4" }] },
+        { delay: 1500, nodes: [{ isNewNodePro: true, claimContent: "insects are Gorgeous and Handcrafted.", claimId: mainClaim }] },
+        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cats are Small and Gorgeous.", sourceId: mainClaim, claimId: "claim1" }] },
+        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "birds are Bespoke and Unbranded.", sourceId: mainClaim, claimId: "claim2" }] },
+        { delay: 1000, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "cetaceans are Bespoke and Recycled.", sourceId: mainClaim, claimId: "claim3" }] },
+        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cetaceans are Small and Elegant.", sourceId: mainClaim, claimId: "claim4" }] },
         { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "snakes are Incredible and Bespoke.", sourceId: "claim1", claimId: "claim5" }] },
         { delay: 1000, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "horses are Handcrafted and Ergonomic.", sourceId: "claim1", claimId: "claim6" }] },
         { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "bears are Sleek and Ergonomic.", sourceId: "claim1", claimId: "claim7" }] },

@@ -2,11 +2,17 @@
 import { useEffect, useState } from "react";
 import "./ScoreBoard.css";
 
-export default function ScoreBoard({ score }: { score: number | undefined }) {
+export default function ScoreBoard({ score, isAddingNode }: { score: number | undefined, isAddingNode: boolean }) {
 
     const [scoreString, setScoreString] = useState<string>("    ")
 
     useEffect(() => {
+        if (isAddingNode) return
+        if (score === undefined) {
+            setScoreString("    ");
+            return;
+        }
+
         const abortController = new AbortController();
 
         async function effect() {
@@ -23,7 +29,7 @@ export default function ScoreBoard({ score }: { score: number | undefined }) {
 
         effect();
         return () => abortController.abort();
-    }, [score])
+    }, [score, isAddingNode])
 
 
     return <div className="scoreBoard">

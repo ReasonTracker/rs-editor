@@ -26,6 +26,8 @@ const initialFlowDataState: FlowDataState = {
     debateData: { claims: {}, connectors: {} },
     animating: false,
     debate: newDebate({mainClaimId: newId()}),
+    isAddingNode: false,
+    setIsAddingNode: () => { },
 };
 
 const initialDevContextState: DevContextState = {
@@ -43,6 +45,7 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
     const [debate, setDebate] = useState<Debate>(initialFlowDataState.debate)
     const [isDev, setDevMode] = useState<boolean>(false);
     const [animating, setAnimating] = useState<boolean>(false);
+    const [isAddingNode, setisAddingNode] = useState<boolean>(false);
     const flowDataState = { debate, dispatch, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }
 
     useEffect(() => {
@@ -58,7 +61,7 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
     }
 
     return (
-        <FlowDataContext.Provider value={{ debate, dispatch, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }}>
+        <FlowDataContext.Provider value={{ debate, dispatch, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating, isAddingNode, setIsAddingNode: setisAddingNode }}>
             <DevContext.Provider value={{ isDev, setDevMode }}>
                 {children}
             </DevContext.Provider>

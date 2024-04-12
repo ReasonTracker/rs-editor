@@ -72,6 +72,8 @@ export type FlowDataState = {
     debateData: DebateData
     animating: boolean
     debate:Debate
+    setIsAddingNode: Dispatch<SetStateAction<boolean>>
+    isAddingNode: boolean
   }
 
 export type OnChange<ChangesType> = (changes: ChangesType[]) => void;

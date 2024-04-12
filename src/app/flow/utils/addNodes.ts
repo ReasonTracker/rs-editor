@@ -115,6 +115,7 @@ const addNodes = async ({
             console.log("no sourceId");
         }
 
+        flowDataState.setIsAddingNode(true)
         flowDataState.dispatch(actions);
 
         if (fitView) {
@@ -131,6 +132,7 @@ const addNodes = async ({
             await delay(typeOut.typeOutDelay)
             await typeOutContent({ flowDataState, content, id });
         }
+        flowDataState.setIsAddingNode(false)
     }
 };
 
