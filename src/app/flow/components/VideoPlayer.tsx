@@ -1,7 +1,7 @@
 'use client'
 import React, { useContext, useEffect, useState } from 'react';
-import { FlowDataContext } from '../FlowDataProvider';
-import addNodes, { AddNodeType, typeOutContent } from '../../utils/addNodes';
+import { FlowDataContext } from './FlowDataProvider';
+import addNodes, { AddNodeType, typeOutContent } from '../utils/addNodes';
 import { Button } from '@blueprintjs/core';
 import { useReactFlow } from 'reactflow';
 import { ClaimActions, ConnectorActions } from '@/reasonScoreNext/ActionTypes';

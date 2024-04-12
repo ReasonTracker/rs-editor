@@ -9,7 +9,7 @@ import { DisplayNodeData } from '../types/types';
 import ContextMenu, { ContextMenuData } from './ContextMenu';
 import addNodes from '../utils/addNodes';
 import ScoreBoard from '../../../components/ScoreBoard';
-import VideoPlayer from './VideoPlayer/VideoPlayer';
+import VideoPlayer from './VideoPlayer';
 
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };
