@@ -1,7 +1,7 @@
 'use client'
 import React, { useContext, useEffect, useState } from 'react';
 import { FlowDataContext } from '../FlowDataProvider';
-import addNodes, { typeOutContent } from '../../utils/addNodes';
+import addNodes, { AddNodeType, typeOutContent } from '../../utils/addNodes';
 import { Button } from '@blueprintjs/core';
 import { useReactFlow } from 'reactflow';
 import { ClaimActions, ConnectorActions } from '@/reasonScoreNext/ActionTypes';
@@ -21,16 +21,16 @@ const VideoPlayer = () => {
         return () => controller?.abort();
     }, [abortController]);
 
-    const tempNodeSequence = [
-        { delay: 1500, nodes: [{ flowDataState, isNewNodePro: true, claimContent: "insects are Gorgeous and Handcrafted.", claimId: "mainClaim" }] },
-        { delay: 1500, nodes: [{ flowDataState, isNewNodePro: true, claimContent: "cats are Small and Gorgeous.", sourceId: "mainClaim", claimId: "claim1" }] },
-        { delay: 1500, nodes: [{ flowDataState, isNewNodePro: false, claimContent: "birds are Bespoke and Unbranded.", sourceId: "mainClaim", claimId: "claim2" }] },
-        { delay: 1000, nodes: [{ flowDataState, isNewNodePro: true, claimContent: "cetaceans are Bespoke and Recycled.", sourceId: "mainClaim", claimId: "claim3" }] },
-        { delay: 1500, nodes: [{ flowDataState, isNewNodePro: false, claimContent: "cetaceans are Small and Elegant.", sourceId: "mainClaim", claimId: "claim4" }] },
-        { delay: 1500, nodes: [{ flowDataState, isNewNodePro: true, claimContent: "snakes are Incredible and Bespoke.", sourceId: "claim1", claimId: "claim5" }] },
-        { delay: 1000, nodes: [{ flowDataState, isNewNodePro: false, claimContent: "horses are Handcrafted and Ergonomic.", sourceId: "claim1", claimId: "claim6" }] },
-        { delay: 1500, nodes: [{ flowDataState, isNewNodePro: true, claimContent: "bears are Sleek and Ergonomic.", sourceId: "claim1", claimId: "claim7" }] },
-        { delay: 1500, nodes: [{ flowDataState, isNewNodePro: false, claimContent: "dogs are Gorgeous and Oriental.", sourceId: "claim7", claimId: "claim8" }] },
+    const tempNodeSequence: { delay: number, nodes: AddNodeType[]}[]  = [
+        { delay: 1500, nodes: [{ isNewNodePro: true, claimContent: "insects are Gorgeous and Handcrafted.", claimId: "mainClaim" }] },
+        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "cats are Small and Gorgeous.", sourceId: "mainClaim", claimId: "claim1" }] },
+        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "birds are Bespoke and Unbranded.", sourceId: "mainClaim", claimId: "claim2" }] },
+        { delay: 1000, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "cetaceans are Bespoke and Recycled.", sourceId: "mainClaim", claimId: "claim3" }] },
+        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cetaceans are Small and Elegant.", sourceId: "mainClaim", claimId: "claim4" }] },
+        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "snakes are Incredible and Bespoke.", sourceId: "claim1", claimId: "claim5" }] },
+        { delay: 1000, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "horses are Handcrafted and Ergonomic.", sourceId: "claim1", claimId: "claim6" }] },
+        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "bears are Sleek and Ergonomic.", sourceId: "claim1", claimId: "claim7" }] },
+        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "dogs are Gorgeous and Oriental.", sourceId: "claim7", claimId: "claim8" }] },
     ]
 
     const playVideo = async () => {
@@ -47,7 +47,7 @@ const VideoPlayer = () => {
                     nodes: tempNodeSequence[i].nodes,
                     options: { 
                         fitView: { reactFlowInstance, duration: nodeDelay, padding: 0.5 }, 
-                        typeOut: { typeOutDelay: nodeDelay } 
+                        typeOut: { typeOutDelay: 100 } 
                     },
                 });
 

@@ -26,20 +26,26 @@ export const typeOutContent = async ({
     content: string;
     id: string;
 }) => {
-    for (let i = 0; i <= content.length; i++) {
-        setTimeout(() => {
-            flowDataState.dispatch([
-                {
-                    type: "modify",
-                    newData: {
-                        id,
-                        content: content.substring(0, i),
-                        type: "claim",
+    await new Promise<void>((resolve) => {
+        for (let i = 0; i <= content.length; i++) {
+            setTimeout(() => {
+                flowDataState.dispatch([
+                    {
+                        type: "modify",
+                        newData: {
+                            id,
+                            content: content.substring(0, i),
+                            type: "claim",
+                        },
                     },
-                },
-            ]);
-        }, i * 100);
-    }
+                ]);
+                // Resolve the promise on the last iteration
+                if (i === content.length) {
+                    resolve();
+                }
+            }, i * 100);
+        }
+    });
 };
 
 type FitViewType = {
@@ -114,12 +120,16 @@ const addNodes = async ({
         if (fitView) {
             const { reactFlowInstance, duration, fitViewDelay, padding } = fitView
             if (fitViewDelay) await delay(fitViewDelay);
-            reactFlowInstance.fitView({ duration, padding, });
+            // skip a beat so reactflow can get proper bounds
+            setTimeout(() => {
+                reactFlowInstance.fitView({ duration, padding, });
+            }, 1000);
+            await delay(duration || 0);
         }
 
         if (typeOut) {
             await delay(typeOut.typeOutDelay)
-            typeOutContent({ flowDataState, content, id });
+            await typeOutContent({ flowDataState, content, id });
         }
     }
 };
