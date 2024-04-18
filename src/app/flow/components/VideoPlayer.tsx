@@ -13,8 +13,8 @@ type AudioClipType = {
     delay?: number | true
 }
 type SequenceType = {
-    delay: number,
-    nodes: AddNodeType[],
+    delay?: number,
+    nodes?: AddNodeType[],
     audio?: AudioClipType
 }
 
@@ -35,15 +35,56 @@ const VideoPlayer = () => {
 
     const mainClaim = flowDataState.debate.mainClaimId
     const tempNodeSequence: SequenceType[] = [
-        { delay: 1500, nodes: [{ isNewNodePro: true, claimContent: "insects are Gorgeous and Handcrafted.", claimId: mainClaim }], audio: { start: 0, end: 5, delay: true } },
-        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cats are Small and Gorgeous.", sourceId: mainClaim, claimId: "claim1" }], audio: { start: 10, end: 15, delay: true } },
-        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "birds are Bespoke and Unbranded.", sourceId: mainClaim, claimId: "claim2" }], audio: { start: 15, end: 20, delay: true } },
-        { delay: 1000, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "cetaceans are Bespoke and Recycled.", sourceId: mainClaim, claimId: "claim3" }], audio: { start: 20, end: 25, delay: true } },
-        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cetaceans are Small and Elegant.", sourceId: mainClaim, claimId: "claim4" }], audio: { start: 30, end: 35, delay: true } },
-        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "snakes are Incredible and Bespoke.", sourceId: "claim1", claimId: "claim5" }], audio: { start: 40, end: 45, delay: true } },
-        { delay: 1000, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "horses are Handcrafted and Ergonomic.", sourceId: "claim1", claimId: "claim6" }], audio: { start: 50, end: 55, delay: true } },
-        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "bears are Sleek and Ergonomic.", sourceId: "claim1", claimId: "claim7" }], audio: { start: 60, end: 65, delay: true } },
-        { delay: 1500, nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "dogs are Gorgeous and Oriental.", sourceId: "claim7", claimId: "claim8" }], audio: { start: 65, end: 70, delay: true } },
+        {
+            audio: { start: 0, end: 14.5 }
+        },
+        {
+            nodes: [{ isNewNodePro: true, claimContent: "insects are Gorgeous and Handcrafted.", claimId: mainClaim }],
+            audio: { start: 15, end: 31 }
+        },
+        {
+            delay: 1500,
+            nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cats are Small and Gorgeous.", sourceId: mainClaim, claimId: "claim1" }],
+            audio: { start: 31, end: 44, delay: true }
+        },
+        {
+            delay: 1500,
+            nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "birds are Bespoke and Unbranded.", sourceId: mainClaim, claimId: "claim2" }],
+            audio: { start: 45, end: 56.5, delay: true }
+        },
+        {
+            delay: 1000,
+            nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "cetaceans are Bespoke and Recycled.", sourceId: mainClaim, claimId: "claim3" }],
+            audio: { start: 56.5, end: 70.5, delay: true }
+        },
+        {
+            delay: 1500,
+            nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cetaceans are Small and Elegant.", sourceId: mainClaim, claimId: "claim4" }],
+            audio: { start: 70.5, end: 79, delay: true }
+        },
+        {
+            delay: 1500,
+            nodes: [{ targetNodePolarity: "con", isNewNodePro: true, claimContent: "snakes are Incredible and Bespoke.", sourceId: "claim1", claimId: "claim5" }],
+            audio: { start: 80, end: 89, delay: true }
+        },
+        {
+            delay: 1000,
+            nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "horses are Handcrafted and Ergonomic.", sourceId: "claim1", claimId: "claim6" }],
+            audio: { start: 89, end: 100, delay: true }
+        },
+        {
+            delay: 1500,
+            nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "bears are Sleek and Ergonomic.", sourceId: "claim1", claimId: "claim7" }],
+            audio: { start: 100, end: 111, delay: true }
+        },
+        {
+            delay: 1500,
+            nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "dogs are Gorgeous and Oriental.", sourceId: "claim7", claimId: "claim8" }],
+            audio: { start: 111, end: 122.5, delay: true }
+        },
+        {
+            audio: { start: 122.5, end: 144 }
+        },
     ]
 
     const manageAudio = (action: 'play' | 'pause') => {
@@ -62,7 +103,7 @@ const VideoPlayer = () => {
         if (!audioRef.current || !audio) return;
 
         if (audio?.delay) {
-            if (audio.delay === true) await delay(sequence.delay)
+            if (audio.delay === true) await delay(sequence.delay || 0)
             if (typeof audio.delay === 'number') await delay(audio.delay)
         }
 
@@ -91,16 +132,20 @@ const VideoPlayer = () => {
                 const sequence = tempNodeSequence[i]
                 const audio = sequence.audio
 
-                if (audio) handleAudioPlayback({ audio, sequence });
-
-                await addNodes({
-                    flowDataState,
-                    nodes: sequence.nodes,
-                    options: {
-                        fitView: { reactFlowInstance, duration: sequence.delay, padding: 0.5 },
-                        typeOut: { typeOutDelay: 100 }
-                    },
-                });
+                const toRun = []
+                if (audio) toRun.push(handleAudioPlayback({ audio, sequence }));
+                if (sequence.nodes)
+                    toRun.push(
+                        addNodes({
+                            flowDataState,
+                            nodes: sequence.nodes || [],
+                            options: {
+                                fitView: { reactFlowInstance, duration: sequence.delay, padding: 0.5, },
+                                typeOut: { typeOutDelay: 100 },
+                            },
+                        })
+                    );
+                await Promise.all(toRun)
 
                 setCurrentStep(i + 1);
                 await delay(2000)
@@ -125,16 +170,20 @@ const VideoPlayer = () => {
             const delay = sequence.delay
             const audio = sequence.audio
 
-            if (audio) handleAudioPlayback({ audio, sequence });
+            const toRun = []
+            if (audio) toRun.push(handleAudioPlayback({ audio, sequence }));
+            if (sequence.nodes)
+                toRun.push(
+                    addNodes({
+                        flowDataState,
+                        nodes: tempNodeSequence[currentStep].nodes || [],
+                        options: {
+                            fitView: { reactFlowInstance, duration: delay, padding: 0.5 },
+                            typeOut: { typeOutDelay: delay || 0 }
+                        },
+                    }));
+            await Promise.all(toRun)
 
-            addNodes({
-                flowDataState,
-                nodes: tempNodeSequence[currentStep].nodes,
-                options: {
-                    fitView: { reactFlowInstance, duration: delay, padding: 0.5 },
-                    typeOut: { typeOutDelay: delay }
-                },
-            });
             setCurrentStep(currentStep + 1);
             reactFlowInstance.fitView({ padding: 0.5, duration: 1500 });
         }
@@ -157,7 +206,7 @@ const VideoPlayer = () => {
 
     return (
         <div className='flex gap-2 absolute bottom-0 right-1/2 z-10'>
-            <audio ref={audioRef} src="/dev/monolog.webm" />
+            <audio ref={audioRef} src="/dev/elevenlabs-generated-claims.mp3" />
             <Button onClick={playVideo} disabled={isPlaying} icon={'play'} />
             <Button onClick={pauseVideo} disabled={!isPlaying} icon={'pause'} />
             <Button onClick={stepForward} disabled={isPlaying || currentStep >= tempNodeSequence.length} icon={'step-forward'} />
