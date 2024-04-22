@@ -2,23 +2,35 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { FlowDataContext } from './FlowDataProvider';
 import addNodes, { AddNodeType, typeOutContent } from '../utils/addNodes';
-import { Button } from '@blueprintjs/core';
+import { Button, HTMLSelect } from '@blueprintjs/core';
 import { useReactFlow } from 'reactflow';
 import { ClaimActions, ConnectorActions } from '@/reasonScoreNext/ActionTypes';
+import { animalAudioUrl, getAnimalSequence } from '../data/demo-animal-flow';
+import { newId } from '@/reasonScoreNext/newId';
+import { fictionalCityAudioUrl, fictionalCitySequence } from '../data/fictional-city-flow';
 
 
-type AudioClipType = {
+type AudioClip = {
     start: number,
     end: number,
     delay?: number | true
 }
-type SequenceType = {
+
+interface SequenceGroup {
+    id: string;
+    label: string;
+    sequence: SequenceStep[];
+    audioUrl: string
+}
+
+export type SequenceStep = {
     delay?: number,
     nodes?: AddNodeType[],
-    audio?: AudioClipType
+    audio?: AudioClip
 }
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 
 const VideoPlayer = () => {
     const flowDataState = useContext(FlowDataContext);
@@ -27,65 +39,39 @@ const VideoPlayer = () => {
     const [abortController, setAbortController] = useState<AbortController | null>(null);
     const [currentStep, setCurrentStep] = useState(0);
     const audioRef = useRef<HTMLAudioElement>(null);
+    const [sequenceGroups, setSequenceGroups] = useState<SequenceGroup[] | null>(null);
+    
+    const mainClaimId = flowDataState.debate.mainClaimId || newId()
+    
+    const fictionalCitySequenceGroup = {
+        id: "fictional-city",
+        label: "Fictional City Flow",
+        sequence: fictionalCitySequence(mainClaimId),
+        audioUrl: fictionalCityAudioUrl
+    }
+    const demoAnimalSequenceGroup = {
+        id: "demo-animal",
+        label: "Demo Animal Flow",
+        sequence: getAnimalSequence(mainClaimId),
+        audioUrl: animalAudioUrl
+    }
+    const [selectedSequenceGroup, setSelectedSequenceGroup] = useState<SequenceGroup>(fictionalCitySequenceGroup);
+
+    useEffect(() => {
+        setSequenceGroups([demoAnimalSequenceGroup, fictionalCitySequenceGroup]);
+    }, []);
 
     useEffect(() => {
         const controller = abortController;
         return () => controller?.abort();
     }, [abortController]);
 
-    const mainClaim = flowDataState.debate.mainClaimId
-    const tempNodeSequence: SequenceType[] = [
-        {
-            audio: { start: 0, end: 14.5 }
-        },
-        {
-            nodes: [{ isNewNodePro: true, claimContent: "insects are Gorgeous and Handcrafted.", claimId: mainClaim }],
-            audio: { start: 15, end: 31 }
-        },
-        {
-            delay: 1500,
-            nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cats are Small and Gorgeous.", sourceId: mainClaim, claimId: "claim1" }],
-            audio: { start: 31, end: 44, delay: true }
-        },
-        {
-            delay: 1500,
-            nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "birds are Bespoke and Unbranded.", sourceId: mainClaim, claimId: "claim2" }],
-            audio: { start: 45, end: 56.5, delay: true }
-        },
-        {
-            delay: 1000,
-            nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "cetaceans are Bespoke and Recycled.", sourceId: mainClaim, claimId: "claim3" }],
-            audio: { start: 56.5, end: 70.5, delay: true }
-        },
-        {
-            delay: 1500,
-            nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "cetaceans are Small and Elegant.", sourceId: mainClaim, claimId: "claim4" }],
-            audio: { start: 70.5, end: 79, delay: true }
-        },
-        {
-            delay: 1500,
-            nodes: [{ targetNodePolarity: "con", isNewNodePro: true, claimContent: "snakes are Incredible and Bespoke.", sourceId: "claim1", claimId: "claim5" }],
-            audio: { start: 80, end: 89, delay: true }
-        },
-        {
-            delay: 1000,
-            nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "horses are Handcrafted and Ergonomic.", sourceId: "claim1", claimId: "claim6" }],
-            audio: { start: 89, end: 100, delay: true }
-        },
-        {
-            delay: 1500,
-            nodes: [{ targetNodePolarity: "pro", isNewNodePro: true, claimContent: "bears are Sleek and Ergonomic.", sourceId: "claim1", claimId: "claim7" }],
-            audio: { start: 100, end: 111, delay: true }
-        },
-        {
-            delay: 1500,
-            nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "dogs are Gorgeous and Oriental.", sourceId: "claim7", claimId: "claim8" }],
-            audio: { start: 111, end: 122.5, delay: true }
-        },
-        {
-            audio: { start: 122.5, end: 144 }
-        },
-    ]
+    const handleSequenceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const sequence = sequenceGroups?.find(seq => seq.id === event.target.value);
+        if (sequence) setSelectedSequenceGroup(sequence);
+    };
+
+
 
     const manageAudio = (action: 'play' | 'pause') => {
         if (!audioRef.current) return;
@@ -99,7 +85,7 @@ const VideoPlayer = () => {
         if (action === 'remove') audioRef.current.removeEventListener('timeupdate', callback);
     };
 
-    const handleAudioPlayback = async ({ audio, sequence }: { audio: AudioClipType, sequence: SequenceType }) => {
+    const handleAudioPlayback = async ({ audio, sequence }: { audio: AudioClip, sequence: SequenceStep }) => {
         if (!audioRef.current || !audio) return;
 
         if (audio?.delay) {
@@ -126,21 +112,22 @@ const VideoPlayer = () => {
         const abortController = new AbortController();
         setAbortController(abortController);
 
+        const sequence = selectedSequenceGroup?.sequence || []
         try {
-            for (let i = currentStep; i < tempNodeSequence.length; i++) {
+            for (let i = currentStep; i < sequence.length; i++) {
                 if (abortController.signal.aborted) break;
-                const sequence = tempNodeSequence[i]
-                const audio = sequence.audio
+                const sequenceStep = sequence[i]
+                const audio = sequenceStep.audio
 
                 const toRun = []
-                if (audio) toRun.push(handleAudioPlayback({ audio, sequence }));
-                if (sequence.nodes)
+                if (audio) toRun.push(handleAudioPlayback({ audio, sequence: sequenceStep }));
+                if (sequenceStep.nodes)
                     toRun.push(
                         addNodes({
                             flowDataState,
-                            nodes: sequence.nodes || [],
+                            nodes: sequenceStep.nodes || [],
                             options: {
-                                fitView: { reactFlowInstance, duration: sequence.delay, padding: 0.5, },
+                                fitView: { reactFlowInstance, duration: sequenceStep.delay, padding: 0.5, },
                                 typeOut: { typeOutDelay: 100 },
                             },
                         })
@@ -165,18 +152,19 @@ const VideoPlayer = () => {
     };
 
     const stepForward = async () => {
-        if (currentStep < tempNodeSequence.length) {
-            const sequence = tempNodeSequence[currentStep]
-            const delay = sequence.delay
-            const audio = sequence.audio
+        const sequence = selectedSequenceGroup?.sequence || []
+        if (currentStep < sequence.length) {
+            const sequenceStep = sequence[currentStep]
+            const delay = sequenceStep.delay
+            const audio = sequenceStep.audio
 
             const toRun = []
-            if (audio) toRun.push(handleAudioPlayback({ audio, sequence }));
-            if (sequence.nodes)
+            if (audio) toRun.push(handleAudioPlayback({ audio, sequence: sequenceStep }));
+            if (sequenceStep.nodes)
                 toRun.push(
                     addNodes({
                         flowDataState,
-                        nodes: tempNodeSequence[currentStep].nodes || [],
+                        nodes: sequence[currentStep].nodes || [],
                         options: {
                             fitView: { reactFlowInstance, duration: delay, padding: 0.5 },
                             typeOut: { typeOutDelay: delay || 0 }
@@ -206,10 +194,17 @@ const VideoPlayer = () => {
 
     return (
         <div className='flex gap-2 absolute bottom-0 right-1/2 z-10'>
-            <audio ref={audioRef} src="/dev/elevenlabs-generated-claims.mp3" />
-            <Button onClick={playVideo} disabled={isPlaying} icon={'play'} />
+            <audio ref={audioRef} src={selectedSequenceGroup?.audioUrl} />
+            <HTMLSelect
+                options={sequenceGroups?.map(seq => ({label: seq.label, value: seq.id}))}
+                onChange={handleSequenceChange}
+                value={selectedSequenceGroup?.id}
+                iconName={'caret-down'}
+                
+            />
+            <Button onClick={playVideo} disabled={isPlaying || !selectedSequenceGroup?.sequence?.length} icon={'play'} />
             <Button onClick={pauseVideo} disabled={!isPlaying} icon={'pause'} />
-            <Button onClick={stepForward} disabled={isPlaying || currentStep >= tempNodeSequence.length} icon={'step-forward'} />
+            <Button onClick={stepForward} disabled={isPlaying || currentStep >= (selectedSequenceGroup?.sequence?.length || 0)} icon={'step-forward'} />
             <Button onClick={reset} icon={'reset'} />
         </div>
     );
