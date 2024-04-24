@@ -4,7 +4,7 @@ export const fictionalCityAudioUrl = "/dev/fictional-city.webm"
 export const fictionalCitySequence = (mainClaim: string): SequenceStep[] => [
     {
         delay: 500,
-        audio: { start: 0, end: 9.5 },
+        audio: { start: 0, end: 9.7 },
         nodes: [{ isNewNodePro: true, claimContent: "Would Fictional City benefit overall from converting Elm Street to pedestrian use only?", claimId: mainClaim }],
     },
     {
@@ -24,7 +24,7 @@ export const fictionalCitySequence = (mainClaim: string): SequenceStep[] => [
     },
     {
         delay: 500,
-        nodes: [{ targetNodePolarity: "con", isNewNodePro: false, claimContent: "Child safety is more important than local shops profit.", sourceId: "resedential", claimId: "children" }],
+        nodes: [{ targetNodePolarity: "con", isNewNodePro: false, claimContent: "Child safety is more important than local shops profit.", sourceId: "resedential", claimId: "children", affects: "relevance" }],
         audio: { start: 40.95, end: 50.3, delay: true }
     },
     {

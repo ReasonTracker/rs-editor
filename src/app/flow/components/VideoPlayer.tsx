@@ -196,11 +196,10 @@ const VideoPlayer = () => {
         <div className='flex gap-2 absolute bottom-0 right-1/2 z-10'>
             <audio ref={audioRef} src={selectedSequenceGroup?.audioUrl} />
             <HTMLSelect
-                options={sequenceGroups?.map(seq => ({label: seq.label, value: seq.id}))}
+                options={sequenceGroups?.map(seq => ({ label: seq.label, value: seq.id }))}
                 onChange={handleSequenceChange}
                 value={selectedSequenceGroup?.id}
                 iconName={'caret-down'}
-                
             />
             <Button onClick={playVideo} disabled={isPlaying || !selectedSequenceGroup?.sequence?.length} icon={'play'} />
             <Button onClick={pauseVideo} disabled={!isPlaying} icon={'pause'} />
