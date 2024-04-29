@@ -3,6 +3,7 @@ import { DevContext, FlowDataContext } from "./FlowDataProvider";
 import { Drawer, Button, IconName, Divider } from "@blueprintjs/core";
 import { ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
 import { calculateScores } from "@/reasonScoreNext/scoring/TypeA/calculateScores";
+import addNodes from "../utils/addNodes";
 
 const DevButton = ({
     label,
@@ -28,6 +29,7 @@ const DevPanel = () => {
     const flowDataState = useContext(FlowDataContext);
     const dev = useContext(DevContext);
 
+    const mainClaimId = flowDataState.debate.mainClaimId
     const deleteAll = () => {
         const nodeActions: Array<ClaimActions> = flowDataState.displayNodes.map((node) => ({
             type: "delete",
@@ -67,11 +69,11 @@ const DevPanel = () => {
                 autoFocus={false}
             >
                 <div className="flex flex-col space-y-2 mt-4">
-                    {/* <DevButton
+                    <DevButton
                         icon={"send-to-graph"}
-                        onClick={() => addNode({ x })}
-                        label={"Add Node"}
-                    /> */}
+                        onClick={() => addNodes({flowDataState, nodes: [{isNewNodePro: true, claimId: mainClaimId}]})}
+                        label={"Add Main Claim"}
+                    />
                     <Divider />
                     <DevButton
                         icon={"console"}
@@ -87,6 +89,11 @@ const DevPanel = () => {
                         icon={"console"}
                         onClick={() => { console.log("claims", flowDataState.debateData.claims); console.log("connectors", flowDataState.debateData.connectors) }}
                         label={"DebateData"}
+                    />
+                    <DevButton
+                        icon={"console"}
+                        onClick={() => { console.log("debate", flowDataState.debate);}}
+                        label={"debate"}
                     />
                     <Divider />
                     <DevButton
