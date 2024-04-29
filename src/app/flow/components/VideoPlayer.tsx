@@ -177,6 +177,12 @@ const VideoPlayer = () => {
         }
     };
 
+    const addAll = () => {
+        selectedSequenceGroup.sequence.map(step => {
+            if (step.nodes) addNodes({flowDataState, nodes: step.nodes})
+        })
+    }
+
     const reset = () => {
         const nodeActions: Array<ClaimActions> = flowDataState.displayNodes.map((node) => ({
             type: "delete",
@@ -204,6 +210,7 @@ const VideoPlayer = () => {
             <Button onClick={playVideo} disabled={isPlaying || !selectedSequenceGroup?.sequence?.length} icon={'play'} />
             <Button onClick={pauseVideo} disabled={!isPlaying} icon={'pause'} />
             <Button onClick={stepForward} disabled={isPlaying || currentStep >= (selectedSequenceGroup?.sequence?.length || 0)} icon={'step-forward'} />
+            <Button onClick={addAll} disabled={isPlaying || currentStep >= (selectedSequenceGroup?.sequence?.length || 0)} icon={'add-to-artifact'} />
             <Button onClick={reset} icon={'reset'} />
         </div>
     );
