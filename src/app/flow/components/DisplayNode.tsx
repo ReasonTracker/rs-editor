@@ -339,9 +339,9 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     {/* <p>claimId: {data.claim.id}</p> */}
                     <p>{data.claim.content}</p>
                     <br />
-                    <p>{id}</p>
                     <table className='overflow-hidden'>
-                        <tbody>
+                        <tbody className='text-xs text-gray-400'>
+                        <td>id: {id}</td>
                             {
                                 Object.entries(data.score).map(([key, value]) => {
                                     const values = [
@@ -360,8 +360,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     <div
                         className="absolute -left-14 bottom-0 transform"
                     >
-                        <div><span className='text-gray-400'>x:</span> {props.xPos}</div>
-                        <div><span className='text-gray-400'>y:</span> {props.yPos}</div>
+                        <div><span className='text-gray-400'>x:</span> {Math.round(props.xPos)}</div>
+                        <div><span className='text-gray-400'>y:</span> {Math.round(props.yPos)}</div>
                     </div>
                 </>
                 : <TextArea

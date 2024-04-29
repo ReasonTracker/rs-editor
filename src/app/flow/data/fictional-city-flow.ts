@@ -16,7 +16,7 @@ export const fictionalCitySequence = (mainClaim: string): SequenceStep[] => [
     },
     {
         delay: 500,
-        nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "The conversion will divert traffic down residential streets endangering the lives of children.", sourceId: mainClaim, claimId: "resedential" }],
+        nodes: [{ targetNodePolarity: "pro", isNewNodePro: false, claimContent: "The conversion will divert traffic down residential streets endangering the lives of children.", sourceId: mainClaim, claimId: "residential" }],
         audio: { start: 29.2, end: 35.8, delay: true }
     },
     {
@@ -24,7 +24,7 @@ export const fictionalCitySequence = (mainClaim: string): SequenceStep[] => [
     },
     {
         delay: 500,
-        nodes: [{ targetNodePolarity: "con", isNewNodePro: false, claimContent: "Child safety is more important than local shops profit.", sourceId: "resedential", claimId: "children", affects: "relevance" }],
+        nodes: [{ targetNodePolarity: "con", isNewNodePro: false, claimContent: "Child safety is more important than local shops profit.", sourceId: "residential", claimId: "children", affects: "relevance" }],
         audio: { start: 40.95, end: 50.3, delay: true }
     },
     {
@@ -32,7 +32,7 @@ export const fictionalCitySequence = (mainClaim: string): SequenceStep[] => [
     },
     {
         delay: 500,
-        nodes: [{ targetNodePolarity: "con", isNewNodePro: true, claimContent: "A set of railroad tracks are no longer in use and the City can convert that to a new street.", sourceId: "resedential", claimId: "traintracks" }],
+        nodes: [{ targetNodePolarity: "con", isNewNodePro: true, claimContent: "A set of railroad tracks are no longer in use and the City can convert that to a new street.", sourceId: "residential", claimId: "traintracks" }],
         audio: { start: 55.5, end: 63.7, delay: true }
     },
     {
