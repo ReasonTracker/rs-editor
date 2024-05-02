@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, EdgeText, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { ConfidenceEdgeData, RelevanceEdgeData } from '@/app/flow/types/types'
-import { isConfidenceEdgeData } from '@/app/flow/types/typeGuards'
+import { isConfidenceEdgeData, isRelevanceEdgeData } from '@/app/flow/types/typeGuards'
 import { DevContext } from './FlowDataProvider';
 
 const maxStrokeWidth = 25;
@@ -38,8 +38,12 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
     let newSourceY = sourceY;
     let width = maxStrokeWidth;
     if (isConfidenceEdgeData(data)) {
-        newTargetY += (data.targetTop * maxStrokeWidth) + (data.maxImpact * halfStroke);
+        newTargetY += (data.targetConfidenceTop * maxStrokeWidth) + (data.maxImpact * halfStroke);
         width = maxStrokeWidth * data.impact;
+    }
+    if (isRelevanceEdgeData(data)) {
+        newTargetY -= (data.targetRelevanceBottom * maxStrokeWidth) + (data.maxImpact * halfStroke);
+        width = maxStrokeWidth;
     }
     if (data) newSourceY += data?.maxImpact * halfStroke;
 
@@ -96,16 +100,10 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
                 transform={`translate(-1em, -.65em) translate(${sourceX}px,${newSourceY}px)`}
                 label='◀'
             />
-            {data?.type === "confidence" ?
                 <EdgeLabel
                     transform={`translate(.1em, -.65em) translate(${targetX}px,${newTargetY}px)`}
                     label={'◀'}
-                /> :
-                <EdgeLabel
-                    transform={`translate(-.5em, -1em) translate(${targetX}px,${newTargetY}px)`}
-                    label={`▼`}
                 />
-            }
         </EdgeLabelRenderer>
 
     </g>

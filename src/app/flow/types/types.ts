@@ -35,7 +35,7 @@ export type ConfidenceEdgeData = {
 
     // TODO: Remove all below
     impact: number
-    targetTop: number
+    targetConfidenceTop: number
     maxImpact: number
 }
 
@@ -45,6 +45,7 @@ export type RelevanceEdgeData = {
     sourceScore?: Score
     type: "relevance"
     maxImpact: number
+    targetRelevanceBottom: number
 }
 
 export type DisplayEdgeData = ConfidenceEdgeData | RelevanceEdgeData

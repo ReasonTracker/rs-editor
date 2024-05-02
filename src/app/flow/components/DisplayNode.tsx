@@ -28,9 +28,17 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         }])
     };
 
+    const allRelevanceSources = useStore((s: ReactFlowState) => {
+        const originalSources = s.edges.filter(
+            (e) => e.target === id && e.data?.type == 'relevance'
+        );
+
+        return originalSources;
+    })
+
     const allSources = useStore((s: ReactFlowState) => {
         const originalSources = s.edges.filter(
-            (e) => e.target === id && e.data?.type !== 'relevance'
+            (e) => e.target === id && e.data?.type === 'confidence'
         );
 
         return originalSources;
@@ -141,7 +149,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     )
 
     const calculatedHeight = (
-        (allSources[allSources.length - 1]?.data?.targetTop || 1) +
+        (allSources[allSources.length - 1]?.data?.targetConfidenceTop || 1) +
         (allSources[allSources.length - 1]?.data?.maxImpact || 0)
     ) * MAX_STROKE_WIDTH
 
@@ -268,7 +276,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         }
     </>)
     const weightByConfidence = (
-        <div className="rsCalc rs-weightByConfidence" style={{ gridArea: 'weightByConfidence' }}>
+        <div className="rsCalc rs-weightByConfidence" 
+        style={{ gridArea: 'weightByConfidence' }}>
             <svg
                 height={calculatedHeight}
                 width={MAX_STROKE_WIDTH}>
@@ -276,6 +285,72 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             </svg>
         </div>
     )
+
+    const calculatedRelevanceHeight = (
+        (allRelevanceSources[allRelevanceSources.length - 1]?.data?.targetRelevanceBottom || 1) +
+        (allRelevanceSources[allRelevanceSources.length - 1]?.data?.maxImpact || 0)
+    ) * MAX_STROKE_WIDTH
+
+    const incomingRelevancePolygon = (
+        <>
+            {allRelevanceSources.map((r, i) => {
+                if (!r.data) return null;
+                const { impactStacked, reducedImpactStacked, maxImpactStacked, reducedMaxImpactStacked, targetRelevanceBottom} = r.data;
+
+                const top = impactStacked.top * MAX_STROKE_WIDTH;
+                const reducedTop = reducedImpactStacked.top * MAX_STROKE_WIDTH;
+                const reducedMaxTop = reducedMaxImpactStacked.top * MAX_STROKE_WIDTH;
+                const maxTop = maxImpactStacked.top * MAX_STROKE_WIDTH;
+    
+                const bottom = impactStacked.bottom * MAX_STROKE_WIDTH;
+                const reducedBottom = reducedImpactStacked.bottom * MAX_STROKE_WIDTH;
+                const reducedMaxBottom = reducedMaxImpactStacked.bottom * MAX_STROKE_WIDTH;
+                const maxBottom = maxImpactStacked.bottom * MAX_STROKE_WIDTH;
+                return (
+                    <Fragment key={`relevance-${r.id}`}>
+                   <polygon
+                        style={{ fill: `var(--${r.data?.pol})` }}
+                        points={`
+                            0                   , ${0}
+                            0                   , ${MAX_STROKE_WIDTH}
+                            ${MAX_STROKE_WIDTH} , ${MAX_STROKE_WIDTH}
+                            ${MAX_STROKE_WIDTH} , ${0}
+                        `}
+                    />
+                    </Fragment>
+                );
+            })}
+        </>
+    );
+
+
+
+    const incomingRelevance = (
+        <div
+            className="rsCalc rs-incomingRelevance"
+            style={{ 
+                gridArea: "weightByConfidence", 
+                background: 'white',
+                opacity: .5,
+                // position: 'absolute',
+                // marginTop: - calculatedRelevanceHeight,
+                // right: 0,
+                transform: `translateY(-${calculatedRelevanceHeight}px)`,
+                transformOrigin: 'center'
+            }}
+        >
+            <svg
+                height={calculatedRelevanceHeight}
+                width={MAX_STROKE_WIDTH}
+                style={{
+
+                }}
+            >
+                    
+                {incomingRelevancePolygon}
+            </svg>
+        </div>
+    );
 
     const devButtons = (
         <>
@@ -462,6 +537,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             <div className="rsNode" >
                 <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * MAX_STROKE_WIDTH }}>
 
+                    {incomingRelevance}
                     {relevance}
                     {cancelOut}
                     {scaleTo1}
