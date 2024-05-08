@@ -98,21 +98,12 @@ export function flowDataReducer({
                 const skipConfidence = connector.affects === "confidence"
                 const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
 
-                // {calculatedHeight}
                 const maxImpact = sourceScore.relevance || 1;
-
-                // {weightByConfidence}
                 const maxImpactStacked = maxImpactStack(skipRelevance ? 0 : sourceScore.relevance);
-                
-                // {weightByConfidencePolygon} {consolidate}
                 const impactStacked = sizeStacked(maxImpactStacked, impact);
                 const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence);
                 const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
-                
-                // {consolidate} {scaleTo1}
                 const consolidatedStacked = consolidatedStack(impact * (skipRelevance ? 0 : sourceScore.confidence));
-                
-                // {incomingRelevance}
                 const relevanceStacked = relevanceStack(impact * (skipConfidence ? 0 : sourceScore.confidence));
                 const maxImpactStackedRelevance = maxImpactStackRelevance(skipConfidence ? 0 : sourceScore.relevance);
 

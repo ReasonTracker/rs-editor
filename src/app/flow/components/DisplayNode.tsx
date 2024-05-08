@@ -30,7 +30,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
     const allRelevanceSources = useStore((s: ReactFlowState) => {
         const originalSources = s.edges.filter(
-            (e) => e.target === id && e.data?.type == 'relevance'
+            (e) => e.target === id && e.data?.type === 'relevance'
         );
         return originalSources;
     })
@@ -278,9 +278,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     </>)
     const weightByConfidence = (
         <div className="rsCalc rs-weightByConfidence" 
-        style={{ gridArea: 'weightByConfidence', 
-        // background: 'lightblue', 
-        opacity: .7 }}>
+        style={{ gridArea: 'weightByConfidence' }}>
             <svg
                 height={calculatedHeight}
                 width={MAX_STROKE_WIDTH}>
@@ -298,18 +296,9 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         <>
             {allRelevanceSources.map((r, i) => {
                 if (!r.data) return null;
-                const { impactStacked, reducedImpactStacked, maxImpactStacked, reducedMaxImpactStacked, targetRelevanceBottom, maxImpactStackedRelevance } = r.data;
+                const { maxImpactStackedRelevance } = r.data;
             
-                const top = impactStacked.top * MAX_STROKE_WIDTH;
-                const reducedTop = reducedImpactStacked.top * MAX_STROKE_WIDTH;
-                const reducedMaxTop = reducedMaxImpactStacked.top * MAX_STROKE_WIDTH;
-                const maxTop = maxImpactStacked.top * MAX_STROKE_WIDTH;
                 const relTop = maxImpactStackedRelevance.top * MAX_STROKE_WIDTH;
-
-                const bottom = impactStacked.bottom * MAX_STROKE_WIDTH;
-                const reducedBottom = reducedImpactStacked.bottom * MAX_STROKE_WIDTH;
-                const reducedMaxBottom = reducedMaxImpactStacked.bottom * MAX_STROKE_WIDTH;
-                const maxBottom = maxImpactStacked.bottom * MAX_STROKE_WIDTH;
                 const relBottom = maxImpactStackedRelevance.bottom * MAX_STROKE_WIDTH;
 
                 return (
@@ -357,19 +346,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
     const devButtons = (
         <>
-            <Tooltip content="calculatedRelevanceHeight" position="right">
-                <Button
-                    minimal
-                    small
-                    className="mb-1"
-                    icon="satellite"
-                    onClick={() => {
-                        const bottom = (allRelevanceSources[allRelevanceSources.length - 1]?.data?.targetRelevanceBottom || 1)
-                        const top = (allRelevanceSources[allRelevanceSources.length - 1]?.data?.maxImpact || 0)
-                        console.log("originalSources", bottom, top)
-                    }}
-                />
-            </Tooltip>
+
             <Tooltip content="calculatedHeight" position="right">
                 <Button
                     minimal
@@ -563,8 +540,6 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     {rsContent}
 
                 </div>
-                {calculatedRelevanceHeight}
-
             </div>
 
             <Handle type="target"
