@@ -70,6 +70,7 @@ export function flowDataReducer({
             let lastConfidenceBottom = 0;
             let lastRelevanceTop = 0;
             const maxImpactStack = stackSpace(GUTTER);
+            const maxImpactStackRelevance = stackSpace(GUTTER);
             const consolidatedStack = stackSpace();
             const relevanceStack = stackSpace();
 
@@ -96,14 +97,24 @@ export function flowDataReducer({
                 const skipRelevance = connector.affects === "relevance"
                 const skipConfidence = connector.affects === "confidence"
                 const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
+
+                // {calculatedHeight}
                 const maxImpact = sourceScore.relevance || 1;
 
+                // {weightByConfidence}
                 const maxImpactStacked = maxImpactStack(skipRelevance ? 0 : sourceScore.relevance);
+                
+                // {weightByConfidencePolygon} {consolidate}
                 const impactStacked = sizeStacked(maxImpactStacked, impact);
                 const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence);
                 const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
+                
+                // {consolidate} {scaleTo1}
                 const consolidatedStacked = consolidatedStack(impact * (skipRelevance ? 0 : sourceScore.confidence));
+                
+                // {incomingRelevance}
                 const relevanceStacked = relevanceStack(impact * (skipConfidence ? 0 : sourceScore.confidence));
+                const maxImpactStackedRelevance = maxImpactStackRelevance(skipConfidence ? 0 : sourceScore.relevance);
 
                 const sourceScorePolarity = newDebateData.claims[sourceScore.id].pol
                 const type = connector.affects
@@ -116,6 +127,7 @@ export function flowDataReducer({
                 }
                 const calculatedData = {
                     maxImpactStacked,
+                    maxImpactStackedRelevance,
                     impactStacked,
                     reducedImpactStacked,
                     reducedMaxImpactStacked,

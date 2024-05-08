@@ -14,6 +14,7 @@ export function stackSpace(gutter: number = 0) {
         const result = { top: position, center: position + (value / 2), bottom: position + value };
         notFirst = true;
         position = result.bottom;
+
         return result;
     }
 }

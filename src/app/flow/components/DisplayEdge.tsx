@@ -62,7 +62,6 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
 
         {dev.isDev &&
             <EdgeText
-
                 labelShowBg={false}
                 x={labelX-30}
                 y={labelY-30}
@@ -104,6 +103,25 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
                     transform={`translate(.1em, -.65em) translate(${targetX}px,${newTargetY}px)`}
                     label={'◀'}
                 />
+                {/* @ts-ignore */}
+                <button onClick={() => console.log("impactStacked", props.data?.impactStacked)} className="text-white"
+                    style={{ transform: `translate(.1em, -.65em) translate(${targetX}px,${newTargetY}px)`, 
+                    zIndex: 1000,
+                    position:"relative",
+                    width: 20,
+                    height: 20,
+                    background: "eee",
+                    border: "1px solid #fff",
+                    cursor: "pointer",
+                    borderRadius: "50%",
+                    fontSize: 12,
+                    lineHeight: 1,
+                    pointerEvents: 'all',
+                 }}
+                >
+                x
+                </button>
+
         </EdgeLabelRenderer>
 
     </g>
