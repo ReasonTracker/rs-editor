@@ -300,7 +300,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             
                 const relTop = maxImpactStackedRelevance.top * MAX_STROKE_WIDTH;
                 const relBottom = maxImpactStackedRelevance.bottom * MAX_STROKE_WIDTH;
-
+    
                 return (
                     <Fragment key={`relevance-${r.id}`}>
                         <polygon
@@ -312,35 +312,29 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                                 ${MAX_STROKE_WIDTH} , ${relBottom}
                             `}
                         >
-
                         </polygon>
                     </Fragment>
                 );
             })}
         </>
     );
-
-
-
+    
     const incomingRelevance = (
         <div
-            className="rsCalc rs-incomingRelevance"
+            className="rsCalc rs-incomingRelevance rotate-180"
             style={{
-                gridArea: "weightByConfidence",
+                gridArea: "incomingRelevance",
                 transform: `scaleY(-1)`,
-                transformOrigin: 'top'
             }}
         >
-            <svg
-                height={calculatedRelevanceHeight}
-                width={MAX_STROKE_WIDTH}
-                style={{
-
-                }}
-            >
-
-                {incomingRelevancePolygon}
-            </svg>
+            <div style={{ transform: `rotate(180deg)` }}>
+                <svg
+                    height={calculatedRelevanceHeight}
+                    width={MAX_STROKE_WIDTH}
+                >
+                    {incomingRelevancePolygon}
+                </svg>
+            </div>
         </div>
     );
 
@@ -551,7 +545,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
             <Handle type="source"
                 position={Position.Left}
-                style={{ top: 0 }}
+                style={{ top: `0` }}
                 isConnectableStart={false}
                 className={dev.isDev ? 'opacity-100' : 'opacity-0'}
             />

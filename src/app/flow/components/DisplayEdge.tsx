@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, EdgeText, ReactFlowState, getBezierPath, useStore } from 'reactflow';
 import { ConfidenceEdgeData, RelevanceEdgeData } from '@/app/flow/types/types'
 import { isConfidenceEdgeData, isRelevanceEdgeData } from '@/app/flow/types/typeGuards'
@@ -31,6 +31,14 @@ function EdgeLabel({ transform, label }: { transform: string, label: string }) {
 export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | RelevanceEdgeData>) {
     let { style, source, data, target, targetY, targetX, sourceX, sourceY, sourcePosition, targetPosition, id } = props
     const dev = useContext(DevContext);
+
+    useEffect(() => {
+        console.log("------------------")
+        console.log(props.id)
+        // @ts-ignore
+        console.log("targetRelevanceBottom", data?.targetRelevanceBottom)
+        console.log("maxImpact", data?.maxImpact)
+    }, [])
     
     sourceX += 4;
     targetX -= 4;
@@ -38,14 +46,14 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
     let newSourceY = sourceY;
     let width = maxStrokeWidth;
     if (isConfidenceEdgeData(data)) {
-        newTargetY += (data.targetConfidenceTop * maxStrokeWidth) + (data.maxImpact * halfStroke);
+        newTargetY += (data.targetConfidenceTop * maxStrokeWidth) + (data.maxImpact * halfStroke) + maxStrokeWidth;
         width = maxStrokeWidth * data.impact;
     }
     if (isRelevanceEdgeData(data)) {
-        newTargetY -= (data.targetRelevanceBottom * maxStrokeWidth) + (data.maxImpact * halfStroke);
+        newTargetY -= (data.targetRelevanceBottom * maxStrokeWidth) + (data.maxImpact * halfStroke) - maxStrokeWidth;
         width = maxStrokeWidth;
     }
-    if (data) newSourceY += data?.maxImpact * halfStroke;
+    if (data) newSourceY += data?.maxImpact * halfStroke + maxStrokeWidth;
 
 
     const [edgePath, labelX, labelY] = getBezierPath({
