@@ -84,33 +84,45 @@ export default function DisplayEdge(props: EdgeProps<ConfidenceEdgeData | Releva
                 }}
             />
         }
-        <BaseEdge {...props}
-            style={{
-                ...(props.style),
-                stroke: `var(--${data?.pol})`,
-                strokeWidth: (data?.maxImpact || 1) * maxStrokeWidth,
-                strokeOpacity: .4
-            }}
-            path={edgePath}
 
-        />
+        {/* Edge */}
 
-        <BaseEdge id={id}
-            style={{
-                ...(props.style),
-                stroke: `var(--${data?.pol})`,
-                strokeWidth: width,
-            }}
-            path={edgePath} />
+            {/* Outer Connector */}
+            <BaseEdge {...props}
+                style={{
+                    ...(props.style),
+                    stroke: `var(--${data?.pol})`,
+                    strokeWidth: (data?.maxImpact || 1) * maxStrokeWidth,
+                    strokeOpacity: .4
+                }}
+                path={edgePath}
+            />
+
+            {/* Inner Connector */}
+            <BaseEdge id={id}
+                style={{
+                    ...(props.style),
+                    stroke: `var(--${data?.pol})`,
+                    strokeWidth: width,
+                }}
+                path={edgePath} 
+            />
+
+        {/* Labels */}
         <EdgeLabelRenderer>
+
+            {/* Source Arrow */}
             <EdgeLabel
                 transform={`translate(-1em, -.65em) translate(${sourceX}px,${newSourceY}px)`}
                 label='◀'
             />
+            
+            {/* Target Arrow */}
             <EdgeLabel
                 transform={`translate(.1em, -.65em) translate(${targetX}px,${newTargetY}px)`}
                 label={'◀'}
             />
+
         </EdgeLabelRenderer>
 
     </g>

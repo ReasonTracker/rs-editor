@@ -250,6 +250,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
             return (
                 <Fragment key={`weight-${s.id}`}>
+                    {/* Outer bar */}
                     <polygon
                         style={{
                             opacity: .4,
@@ -262,6 +263,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                             ${MAX_STROKE_WIDTH} , ${maxTop}
                         `}
                     />
+                    {/* Inner bar */}
                     <polygon
                         style={{ fill: `var(--${s.data?.pol})` }}
                         points={`
@@ -281,7 +283,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         style={{ gridArea: 'weightByConfidence' }}>
             <svg
                 height={calculatedHeight}
-                width={MAX_STROKE_WIDTH}>
+                width={MAX_STROKE_WIDTH}
+            >
                 {weightByConfidencePolygon}
             </svg>
         </div>

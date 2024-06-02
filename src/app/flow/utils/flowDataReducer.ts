@@ -69,10 +69,10 @@ export function flowDataReducer({
             // 
             let lastConfidenceBottom = 0;
             let lastRelevanceTop = 0;
-            const maxImpactStack = stackSpace(GUTTER);
+            const maxImpactStack = stackSpace(GUTTER); //Stacked space for the max relevance of a child claim
             const maxImpactStackRelevance = stackSpace(GUTTER);
-            const consolidatedStack = stackSpace();
-            const relevanceStack = stackSpace();
+            const consolidatedStack = stackSpace(); // Consolidated stacked bar of final confidence*relevance
+            // const relevanceStack = stackSpace(); 
 
             // Get all connectors where this score is the target
             const connectorsArray = Object.values(connectors).filter(conn => conn.target === score.id)
@@ -116,7 +116,7 @@ export function flowDataReducer({
                 const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence);
                 const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
                 const consolidatedStacked = consolidatedStack(impact * (skipRelevance ? 0 : sourceScore.confidence));
-                const relevanceStacked = relevanceStack(impact * (skipConfidence ? 0 : sourceScore.confidence));
+                // const relevanceStacked = relevanceStack(impact * (skipConfidence ? 0 : sourceScore.confidence));
                 const maxImpactStackedRelevance = maxImpactStackRelevance(skipConfidence ? 0 : sourceScore.relevance);
 
                 const sourceScorePolarity = newDebateData.claims[sourceScore.id].pol
@@ -139,7 +139,7 @@ export function flowDataReducer({
                     reducedImpactStacked,
                     reducedMaxImpactStacked,
                     consolidatedStacked,
-                    relevanceStacked,
+                    // relevanceStacked,
                     impact,
                     targetConfidenceTop: lastConfidenceBottom,
                     targetRelevanceBottom: lastRelevanceTop,
