@@ -1,13 +1,25 @@
 import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useReactFlow, useStore } from 'reactflow';
-import { Fragment, useContext, useState } from 'react';
+import { Fragment, useContext, useMemo, useState } from 'react';
 import { Button, TextArea, Tooltip } from '@blueprintjs/core';
-import { DisplayNodeData, ConfidenceEdgeData } from '@/app/flow/types/types';
+import { DisplayNodeData, ConfidenceEdgeData, DisplayEdgeData, RelevanceEdgeData } from '@/app/flow/types/types';
 import { DevContext, FlowDataContext, FlowDataProvider } from './FlowDataProvider';
 import addNode from '../utils/addNode';
 import { stackSpace } from '@/utils/stackSpace';
 
 const MAX_STROKE_WIDTH = 25
 const HALF_STROKE_WIDTH = MAX_STROKE_WIDTH / 2
+
+const calculateRelevanceHeight = (relevanceSources: Edge<RelevanceEdgeData>[]) => {
+    const maxRelevanceSource = relevanceSources.reduce((maxSource: Edge<RelevanceEdgeData> | null, currentSource: Edge<RelevanceEdgeData>) => {
+        if (!maxSource || (currentSource.data?.targetRelevanceBottom ?? 0) > (maxSource.data?.targetRelevanceBottom ?? 0)) {
+            return currentSource;
+        }
+        return maxSource;
+    }, null);
+    const maxTargetRelevanceBottom = maxRelevanceSource?.data?.targetRelevanceBottom ?? 1;
+    const maxImpact = maxRelevanceSource?.data?.maxImpact ?? 0;
+    return (maxTargetRelevanceBottom + maxImpact) * MAX_STROKE_WIDTH;
+};
 
 export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const { data, id, xPos, yPos } = props
@@ -28,7 +40,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         }])
     };
 
-    const allRelevanceSources = useStore((s: ReactFlowState) => {
+    const allRelevanceSources: Edge<RelevanceEdgeData>[] = useStore((s: ReactFlowState) => {
         const originalSources = s.edges.filter(
             (e) => e.target === id && e.data?.type === 'relevance'
         );
@@ -290,10 +302,11 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         </div>
     )
 
-    const calculatedRelevanceHeight = (
-        (allRelevanceSources[allRelevanceSources.length - 1]?.data?.targetRelevanceBottom || 1) +
-        (allRelevanceSources[allRelevanceSources.length - 1]?.data?.maxImpact || 0)
-    ) * MAX_STROKE_WIDTH
+
+    const calculatedRelevanceHeight = useMemo(
+      () => calculateRelevanceHeight(allRelevanceSources),
+      [allRelevanceSources]
+    );
 
     const incomingRelevancePolygon = (
         <>
@@ -324,7 +337,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     
     const incomingRelevance = (
         <div
-            className="rsCalc rs-incomingRelevance rotate-180"
+            className="rsCalc rs-incomingRelevance"
             style={{
                 gridArea: "incomingRelevance",
                 transform: `scaleY(-1)`,

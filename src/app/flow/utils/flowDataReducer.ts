@@ -10,6 +10,7 @@ import {
     EdgeArray,
     DispatchType,
     DisplayEdgeData,
+    RelevanceEdgeData,
 } from "@/app/flow/types/types";
 import getLayoutedElements from "./getLayoutedElements";
 import { scaleStacked, sizeStacked, stackSpace } from "@/utils/stackSpace";
@@ -68,31 +69,20 @@ export function flowDataReducer({
             // Process Connectors
             // 
             let lastConfidenceBottom = 0;
-            let lastRelevanceTop = 0;
             const maxImpactStack = stackSpace(GUTTER); //Stacked space for the max relevance of a child claim
             const maxImpactStackRelevance = stackSpace(GUTTER);
             const consolidatedStack = stackSpace(); // Consolidated stacked bar of final confidence*relevance
             // const relevanceStack = stackSpace(); 
 
             // Get all connectors where this score is the target
-            const connectorsArray = Object.values(connectors).filter(conn => conn.target === score.id)
-            const scoreConnectors: { [id: string]: Connector } = connectorsArray
+            const scoreConnectors: { [id: string]: Connector } = Object.values(connectors)
+                .filter(conn => conn.target === score.id)
                 .sort(sortConnectors)
                 .reduce((acc, conn) => ({ ...acc, [conn.id]: conn }), {})
 
-            const totalRelevanceEdges = connectorsArray.filter(c => c.affects === 'relevance').length
-            const totalConfidenceEdges = connectorsArray.filter(c => c.affects === 'confidence').length
-            const totalEdges = totalRelevanceEdges + totalConfidenceEdges
-
-            if (Object.keys(scoreConnectors).length !== 0) {
-                for (const connector of Object.values(scoreConnectors)) {
-                    console.log("sorted", connector.id, connector.affects, connector.proTarget)
-                }
-            }
-
             let newConfidenceEdges: Edge<DisplayEdgeData>[] = []
-            let newProTargetRelevanceEdges: Edge<DisplayEdgeData>[] = []
-            let newConTargetRelevanceEdges: Edge<DisplayEdgeData>[] = []
+            let newProTargetRelevanceEdges: Edge<RelevanceEdgeData>[] = []
+            let newConTargetRelevanceEdges: Edge<RelevanceEdgeData>[] = []
             for (const connector of Object.values(scoreConnectors)) {
 
                 // 
@@ -122,16 +112,12 @@ export function flowDataReducer({
                 const sourceScorePolarity = newDebateData.claims[sourceScore.id].pol
                 const type = connector.affects
 
-                const targetRelevanceTop = totalEdges * GUTTER
-
                 const persistedData = {
                     pol: sourceScorePolarity,
                     // claimEdge: ClaimEdge,
                     sourceScore,
                     type,
                 }
-                // console.log("sourceScore.relevance", sourceScore.relevance)
-                // console.log("maxImpact", maxImpact)
                 const calculatedData = {
                     maxImpactStacked,
                     maxImpactStackedRelevance,
@@ -142,15 +128,14 @@ export function flowDataReducer({
                     // relevanceStacked,
                     impact,
                     targetConfidenceTop: lastConfidenceBottom,
-                    targetRelevanceBottom: lastRelevanceTop,
+                    targetRelevanceBottom: 0,
                     maxImpact,
                 }
                 const data = {
                     ...persistedData,
                     ...calculatedData
                 }
-                console.log("connector.id", connector.id)
-                if (connector.affects === "confidence") {
+                if (type === "confidence") {
                     newConfidenceEdges.push({
                         id: connector.id,
                         source: connector.source,
@@ -159,45 +144,43 @@ export function flowDataReducer({
                         type: "rsEdge",
                         data
                     })
-                }
-                if (connector.affects === "relevance") {
-                    if (connector.proTarget) {
-                        newProTargetRelevanceEdges.push({
-                            id: connector.id,
-                            source: connector.source,
-                            targetHandle: connector.affects,
-                            target: connector.target,
-                            type: "rsEdge",
-                            data
-                        });
-                    } else {
-                        newConTargetRelevanceEdges.push({
-                            id: connector.id,
-                            source: connector.source,
-                            targetHandle: connector.affects,
-                            target: connector.target,
-                            type: "rsEdge",
-                            data
-                        });
-                    }
-                }
-
-                if (type === "confidence") {
                     lastConfidenceBottom += maxImpact;
                 }
                 if (type === "relevance") {
-                    lastRelevanceTop += maxImpact;
+                    const edge: Edge<RelevanceEdgeData> = {
+                        id: connector.id,
+                        source: connector.source,
+                        targetHandle: connector.affects,
+                        target: connector.target,
+                        type: "rsEdge",
+                        data: {
+                            ...data,
+                            type: "relevance"
+                        },
+                    };
+                    if (connector.proTarget)
+                        newProTargetRelevanceEdges.push(edge);
+                    else
+                        newConTargetRelevanceEdges.push(edge);
                 }
                 lastConfidenceBottom += GUTTER;
-                lastRelevanceTop += GUTTER;
+
             }
 
             const sortedRelevanceEdges = [
                 ...newProTargetRelevanceEdges.reverse(),
                 ...newConTargetRelevanceEdges.reverse()
             ]
-            newDisplayEdges.push(...sortedRelevanceEdges, ...newConfidenceEdges)
 
+            // Calculate targetRelevanceBottom after reversing
+            let adjustedRelevanceTop = 0;
+            for (const edge of [...sortedRelevanceEdges].reverse()) {
+                if (!edge.data) continue;
+                edge.data.targetRelevanceBottom = adjustedRelevanceTop;
+                adjustedRelevanceTop += edge.data.maxImpact + GUTTER;
+            }
+
+            newDisplayEdges.push(...sortedRelevanceEdges, ...newConfidenceEdges)
             newDisplayNodes.push({
                 id: score.id,
                 type: "rsNode",
