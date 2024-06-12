@@ -72,7 +72,7 @@ export function flowDataReducer({
             const maxImpactStack = stackSpace(GUTTER); //Stacked space for the max relevance of a child claim
             const maxImpactStackRelevance = stackSpace(GUTTER);
             const consolidatedStack = stackSpace(); // Consolidated stacked bar of final confidence*relevance
-            // const relevanceStack = stackSpace(); 
+            const relevanceStack = stackSpace(); 
 
             // Get all connectors where this score is the target
             const scoreConnectors: { [id: string]: Connector } = Object.values(connectors)
@@ -106,7 +106,7 @@ export function flowDataReducer({
                 const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence);
                 const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
                 const consolidatedStacked = consolidatedStack(impact * (skipRelevance ? 0 : sourceScore.confidence));
-                // const relevanceStacked = relevanceStack(impact * (skipConfidence ? 0 : sourceScore.confidence));
+                const relevanceStacked = relevanceStack(impact * (skipConfidence ? 0 : sourceScore.confidence));
                 const maxImpactStackedRelevance = maxImpactStackRelevance(skipConfidence ? 0 : sourceScore.relevance);
 
                 const sourceScorePolarity = newDebateData.claims[sourceScore.id].pol
@@ -125,7 +125,7 @@ export function flowDataReducer({
                     reducedImpactStacked,
                     reducedMaxImpactStacked,
                     consolidatedStacked,
-                    // relevanceStacked,
+                    relevanceStacked,
                     impact,
                     targetConfidenceTop: lastConfidenceBottom,
                     targetRelevanceBottom: 0,

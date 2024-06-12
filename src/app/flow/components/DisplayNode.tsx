@@ -354,6 +354,112 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         </div>
     );
 
+    const consolidateRelevancePolygon = (<>
+        {allRelevanceSources.map(s => {
+            if (!s.data) return null;
+            const { maxImpactStackedRelevance, relevanceStacked } = s.data;
+
+            const reducedCenter = maxImpactStackedRelevance.center * MAX_STROKE_WIDTH
+            const consolidatedCenter = relevanceStacked.center * MAX_STROKE_WIDTH
+            const reducedImpact = (maxImpactStackedRelevance.bottom - maxImpactStackedRelevance.top) * MAX_STROKE_WIDTH
+
+            const [edgePath, labelX, labelY] = getBezierPath({
+                sourceX: 100,
+                sourceY: consolidatedCenter,
+                sourcePosition: Position.Left,
+                targetX: 0,
+                targetY: reducedCenter,
+                targetPosition: Position.Right,
+            });
+
+            return (
+                <Fragment key={`consolidateRelevance-${s.id}`}>
+                    <path
+                        style={{
+                            stroke: `var(--${s.data?.pol})`,
+                            strokeWidth: reducedImpact,
+                        }}
+                        d={edgePath}
+                    />
+                </Fragment>
+            );
+        }
+        )}
+    </>);
+    const consolidateRelevance = (
+      <div
+        className="rsCalc rs-consolidateRelevance"
+        style={{ gridArea: "consolidateRelevance", transform: `scaleY(-1)` }}
+      >
+        <div style={{ transform: `rotate(180deg)` }}>
+          <svg
+            height={calculatedRelevanceHeight}
+            width={"100px"}
+            // viewBox={`-10 -10 120 ${calculatedRelevanceHeight + 20}`}
+          >
+            {consolidateRelevancePolygon}
+          </svg>
+        </div>
+      </div>
+    );
+
+    const scaledTo1StackRelevance = stackSpace();
+    let proTarget: Edge<RelevanceEdgeData>[] = []
+    let conTarget: Edge<RelevanceEdgeData>[] = []
+    allRelevanceSources.map((s) => {
+        if (s.data?.pol === "pro") proTarget.push(s)
+        if (s.data?.pol === "con") conTarget.push(s)
+    })
+    const reSortedRelevanceSources = [...conTarget, ...proTarget]
+
+    const scaleTo1RelevancePolygon = (<>
+        {reSortedRelevanceSources.map(s => {
+            if (!s.data) return null;
+
+            const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
+            const scaledTo1Stacked = scaledTo1StackRelevance(percentOfWeight)
+            const { relevanceStacked } = s.data;
+
+            const scaledBottom = calculatedRelevanceHeight - scaledTo1Stacked.top * MAX_STROKE_WIDTH
+            const scaledTop = calculatedRelevanceHeight - scaledTo1Stacked.bottom * MAX_STROKE_WIDTH
+            const consolidatedTop = relevanceStacked.top * MAX_STROKE_WIDTH
+            const consolidatedBottom = relevanceStacked.bottom * MAX_STROKE_WIDTH
+
+            const points = [
+                { x: 50, y: scaledTop },
+                { x: 50, y: scaledBottom },
+                { x: 0,  y: consolidatedBottom },
+                { x: 0,  y: consolidatedTop },
+              ];
+              
+            return (
+                <Fragment key={`scale-${s.id}`}>
+                    <polygon
+                        style={{ fill: `var(--${s.data.pol})` }}
+                        points={points.map(p => `${p.x},${p.y}`).join(' ')}
+                    />
+                </Fragment>
+            );
+        })}
+    </>)
+    const scaleTo1Relevance = (
+      <div
+        className="rsCalc rs-scaleTo1Relevance"
+        style={{ 
+            gridArea: "scaleTo1Relevance", 
+            transform: `scaleY(-1)` 
+        }}
+      >
+        <div style={{
+             transform: `rotate(180deg)` 
+             }}>
+          <svg height={calculatedRelevanceHeight} width={"50px"}>
+            {scaleTo1RelevancePolygon}
+          </svg>
+        </div>
+      </div>
+    );
+
     const devButtons = (
         <>
 
@@ -541,6 +647,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * MAX_STROKE_WIDTH }}>
 
                     {incomingRelevance}
+                    {consolidateRelevance}
+                    {scaleTo1Relevance}
                     {relevance}
                     {cancelOut}
                     {scaleTo1}

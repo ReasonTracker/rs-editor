@@ -47,6 +47,7 @@ export type RelevanceEdgeData = {
     maxImpact: number
     targetRelevanceBottom: number
     maxImpactStackedRelevance: Stacked
+    relevanceStacked: Stacked
 }
 
 export type DisplayEdgeData = ConfidenceEdgeData | RelevanceEdgeData
