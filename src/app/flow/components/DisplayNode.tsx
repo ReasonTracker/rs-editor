@@ -47,9 +47,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         return originalSources;
     })
 
-    
-
-    const allSources = useStore((s: ReactFlowState) => {
+    const allConfidenceSources = useStore((s: ReactFlowState) => {
         const originalSources = s.edges.filter(
             (e) => e.target === id && e.data?.type === 'confidence'
         );
@@ -64,56 +62,30 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         return originalTargets;
     });
 
-    const totalConfidence = allSources.reduce((acc, s) => {
+    const totalConfidence = allConfidenceSources.reduce((acc, s) => {
+        if (!s.data?.sourceScore) return acc;
+        return acc + s.data.sourceScore.confidence;
+    }, 0);
+    const totalRelevanceConfidence = allRelevanceSources.reduce((acc, s) => {
         if (!s.data?.sourceScore) return acc;
         return acc + s.data.sourceScore.confidence;
     }, 0);
 
-    const relevanceHalf = data.score.relevance * HALF_STROKE_WIDTH
-    const relevanceMax = data.score.relevance * MAX_STROKE_WIDTH
+
+
     const confidenceMax = data.score.confidence * MAX_STROKE_WIDTH
     const confidenceHalf = data.score.confidence * HALF_STROKE_WIDTH
 
-
-    const relevance = (<>
-        {allTargets.length > 0 && (
-            <div className="rsCalc rs-relevance" style={{ gridArea: 'relevance', width: '50px' }}>
-                <svg
-                    height={relevanceMax}
-                    width={'50px'}
-                >
-                    <polygon
-                        style={{ opacity: .4, fill: `var(--${data.pol})` }}
-                        points={`
-                        0  , 0
-                        0  , ${relevanceMax}
-                        50 , ${MAX_STROKE_WIDTH}
-                        50 , 0
-                    `}
-                    />
-                    <polygon
-                        style={{ fill: `var(--${data.pol})` }}
-                        points={`
-                        0  , ${relevanceHalf - (confidenceMax * data.score.relevance / 2)}
-                        0  , ${relevanceHalf + (confidenceMax * data.score.relevance / 2)}
-                        50 , ${confidenceMax}
-                        50 , 0
-                    `}
-                    />
-                </svg>
-            </div>
-        )}</>)
-
+    // 
+    // CONFIDENCE SVGS
+    // 
     const cancelOutTop = data?.cancelOutStacked?.top ?? 0 * MAX_STROKE_WIDTH
     const cancelOutBottom = data?.cancelOutStacked?.bottom ?? 0 * MAX_STROKE_WIDTH
 
     const cancelOut = (
         <div className="rsCalc rs-cancelOut" style={{ gridArea: 'cancelOut', position: "relative" }}>
-            <div style={{
-                opacity: .4,
-                backgroundColor: `var(--${data.pol})`,
-                height: `${MAX_STROKE_WIDTH}px`
-            }} />
+
+            {/* Part That Flows Through */}
             <div style={{
                 backgroundColor: `var(--${data.pol})`,
                 height: `${confidenceMax}px`,
@@ -121,8 +93,14 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 width: '100%',
                 zIndex: 10
             }} />
+            {/* Lighter, canceled out part */}
+            <div style={{
+                opacity: .4,
+                backgroundColor: `var(--${data.pol})`,
+                height: `${MAX_STROKE_WIDTH}px`
+            }} />
 
-            {allSources.length > 0 && <>
+            {allConfidenceSources.length > 0 && <>
                 <svg
                     style={{ position: 'absolute', right: '0px', top: '0px' }}
 
@@ -135,6 +113,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                             <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
                         </pattern>
                     </defs>
+
+                    {/* Bricks pattern */}
                     <polygon
                         fill='url(#cancelOutPattern)'
                         points={`
@@ -147,6 +127,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
                     {/* <svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><rect width='800%' height='800%' transform='translate(0,0)' fill='url(#a)' /></svg> */}
 
+                    {/* Unsure what this part is */}
                     <polygon
                         style={{ fill: `var(--${data.pol})` }}
                         points={`
@@ -162,13 +143,13 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     )
 
     const calculatedHeight = (
-        (allSources[allSources.length - 1]?.data?.targetConfidenceTop || 1) +
-        (allSources[allSources.length - 1]?.data?.maxImpact || 0)
+        (allConfidenceSources[allConfidenceSources.length - 1]?.data?.targetConfidenceTop || 1) +
+        (allConfidenceSources[allConfidenceSources.length - 1]?.data?.maxImpact || 0)
     ) * MAX_STROKE_WIDTH
 
     const scaledTo1Stack = stackSpace();
     const scaleTo1Polygon = (<>
-        {allSources.map(s => {
+        {allConfidenceSources.map(s => {
             if (!s.data) return null;
 
             const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
@@ -204,7 +185,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     )
 
     const consolidatePolygon = (<>
-        {allSources.map(s => {
+        {allConfidenceSources.map(s => {
             if (!s.data) return null;
             const { reducedImpactStacked, consolidatedStacked } = s.data;
 
@@ -246,7 +227,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     )
 
     const weightByConfidencePolygon = (<>
-        {allSources.map(s => {
+        {allConfidenceSources.map(s => {
             if (!s.data) return null;
             const { impactStacked, reducedImpactStacked, maxImpactStacked, reducedMaxImpactStacked } = s.data;
 
@@ -302,6 +283,105 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         </div>
     )
 
+    const relevanceMax = Math.min(data.score.relevance * MAX_STROKE_WIDTH, MAX_STROKE_WIDTH)
+    const relevanceHalf = data.score.relevance * HALF_STROKE_WIDTH
+
+    // 
+    // RELEVANCE SVGS
+    // 
+
+    const cancelOutRelevance = (
+        <div className="rsCalc rs-cancelOutRelevance" 
+            style={{ 
+                gridArea: 'cancelOutRelevance', 
+                position: "relative", 
+                // transform: 'scaleY(-1)',  
+            }}>
+            {/* Part That Flows Through */}
+            <div style={{
+                backgroundColor: `var(--${data.pol})`,
+                height: `${relevanceMax}px`,
+                position: 'absolute', top: '0px', left: '0px',
+                width: '100%',
+                zIndex: 10,
+                
+            }} />
+            {/* Lighter, canceled out part */}
+            <div style={{
+                opacity: .4,
+                backgroundColor: `var(--${data.pol})`,
+                height: `${MAX_STROKE_WIDTH}px`,
+                
+                
+            }} />
+
+            {allRelevanceSources.length > 0 && <>
+                <svg
+                    style={{ position: 'absolute', right: '0px', top: '0px' }}
+
+                    height={MAX_STROKE_WIDTH}
+                    width={MAX_STROKE_WIDTH * 2}>
+                    <defs>
+                        <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
+                            <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />
+                            <path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' />
+                            <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
+                        </pattern>
+                    </defs>
+                    <polygon
+                        fill='url(#cancelOutPattern)'
+                        points={`
+                            ${MAX_STROKE_WIDTH}     , 0
+                            ${MAX_STROKE_WIDTH}     , ${MAX_STROKE_WIDTH}
+                            ${MAX_STROKE_WIDTH * 2} , ${MAX_STROKE_WIDTH}
+                            ${MAX_STROKE_WIDTH * 2} , 0
+                        `}
+                    />
+
+                    {/* <svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><rect width='800%' height='800%' transform='translate(0,0)' fill='url(#a)' /></svg> */}
+
+                    <polygon
+                        style={{ fill: `var(--${data.pol})` }}
+                        points={`
+                            0                       , ${cancelOutTop}
+                            0                       , ${cancelOutBottom}
+                            ${MAX_STROKE_WIDTH * 2} , ${cancelOutBottom}
+                            ${MAX_STROKE_WIDTH * 2} , ${cancelOutTop}
+                        `}
+                    />
+                </svg>
+            </>}
+        </div>
+    )
+
+    const relevance = (<>
+        {allTargets.length > 0 && (
+            <div className="rsCalc rs-relevance" style={{ gridArea: 'relevance', width: '50px' }}>
+                <svg
+                    height={relevanceMax}
+                    width={'50px'}
+                >
+                    <polygon
+                        style={{ opacity: .4, fill: `var(--${data.pol})` }}
+                        points={`
+                        0  , 0
+                        0  , ${relevanceMax}
+                        50 , ${MAX_STROKE_WIDTH}
+                        50 , 0
+                    `}
+                    />
+                    <polygon
+                        style={{ fill: `var(--${data.pol})` }}
+                        points={`
+                        0  , ${relevanceHalf - (confidenceMax * data.score.relevance / 2)}
+                        0  , ${relevanceHalf + (confidenceMax * data.score.relevance / 2)}
+                        50 , ${confidenceMax}
+                        50 , 0
+                    `}
+                    />
+                </svg>
+            </div>
+        )}</>)
 
     const calculatedRelevanceHeight = useMemo(
       () => calculateRelevanceHeight(allRelevanceSources),
@@ -334,7 +414,6 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             })}
         </>
     );
-    
     const incomingRelevance = (
         <div
             className="rsCalc rs-incomingRelevance"
@@ -415,8 +494,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const scaleTo1RelevancePolygon = (<>
         {reSortedRelevanceSources.map(s => {
             if (!s.data) return null;
-
-            const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
+            
+            const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalRelevanceConfidence
             const scaledTo1Stacked = scaledTo1StackRelevance(percentOfWeight)
             const { relevanceStacked } = s.data;
 
@@ -463,14 +542,14 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const devButtons = (
         <>
 
-            <Tooltip content="calculatedHeight" position="right">
+            <Tooltip content="impactStacked" position="right">
                 <Button
                     minimal
                     small
                     className="mb-1"
                     icon="helicopter"
                     onClick={() => {
-                        console.log("calculatedHeight", calculatedHeight)
+                        console.log("impactStacked", data)
                     }}
                 />
             </Tooltip>
@@ -482,8 +561,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     icon="database"
                     onClick={() => {
                         console.log(id, data)
-                        console.log("confidence", data.score.confidence)
-                        console.log("totalConfidence", totalConfidence)
+                        // console.log("confidence", data.score.confidence)
+                        // console.log("totalConfidence", totalConfidence)
                         console.log("cancelOutStacked", data.cancelOutStacked)
                     }}
                 />
@@ -495,7 +574,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     className="mb-1"
                     icon="sort-numerical"
                     onClick={() => {
-                        allSources.map(s => {
+                        allConfidenceSources.map(s => {
                             if (!s.data) return null;
                             // const { cancelOutStacked, consolidatedStacked, scaledTo1Stacked } = s.data;
                             console.log(`${s.id}----`)
@@ -508,7 +587,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                             console.log("scaledTo1Stacked", scaledTo1Stacked)
 
                         })
-                        console.log("allSources", allSources)
+                        console.log("allSources", allConfidenceSources)
                     }}
                 />
             </Tooltip>
@@ -644,11 +723,12 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     return (
         <div className='group relative'>
             <div className="rsNode" >
-                <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * MAX_STROKE_WIDTH }}>
+                <div className="rsNodeGrid" style={{ minHeight: (allConfidenceSources?.length || 1) * MAX_STROKE_WIDTH }}>
 
                     {incomingRelevance}
                     {consolidateRelevance}
                     {scaleTo1Relevance}
+                    {cancelOutRelevance}
                     {relevance}
                     {cancelOut}
                     {scaleTo1}

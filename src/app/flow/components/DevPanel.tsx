@@ -85,6 +85,17 @@ const DevPanel = () => {
                     />
                     <DevButton
                         icon={"console"}
+                        onClick={() => {
+                            console.log("-----------")
+
+                            flowDataState.displayEdges.map(edge => {
+                                console.log(edge.id, edge.data?.relevanceStacked.center * 25)
+                            })
+                        }}
+                        label={"Edges"}
+                    />
+                    <DevButton
+                        icon={"console"}
                         onClick={() => { console.log("claims", flowDataState.debateData.claims); console.log("connectors", flowDataState.debateData.connectors) }}
                         label={"DebateData"}
                     />

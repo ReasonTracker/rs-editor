@@ -162,7 +162,7 @@ button.react-flow__controls-button:hover{
     grid-template-columns: 50px auto;
     grid-template-rows: minmax(auto, 25px) auto auto;
     grid-template-areas:
-        ".         .         scaleTo1Relevance        consolidateRelevance  incomingRelevance"
+        ".         cancelOutRelevance         scaleTo1Relevance        consolidateRelevance  incomingRelevance"
         "relevance cancelOut scaleTo1 consolidate           weightByConfidence"
         "relevance content   scaleTo1 consolidate           weightByConfidence"
         ".         content   scaleTo1 consolidate           weightByConfidence";

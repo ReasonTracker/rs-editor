@@ -5,13 +5,30 @@ export interface Stacked {
     center: number
 }
 
+export function stackRelevanceSpace() {
+    let position = 0;
+    return (value: number) => {
+        const result = { 
+            top: position, 
+            center: position + (value / 2), 
+            bottom: position + value
+        };
+        position = result.bottom;
+        return result;
+    }
+}
+
 export function stackSpace(gutter: number = 0) {
     let notFirst = false;
     let position = 0;
     return (value: number, gap: number = 0) => {
         if (notFirst) position += gutter;
         position += gap;
-        const result = { top: position, center: position + (value / 2), bottom: position + value };
+        const result = { 
+            top: position, 
+            center: position + (value / 2), 
+            bottom: position + value 
+        };
         notFirst = true;
         position = result.bottom;
         return result;

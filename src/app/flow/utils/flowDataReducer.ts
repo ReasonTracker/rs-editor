@@ -13,7 +13,7 @@ import {
     RelevanceEdgeData,
 } from "@/app/flow/types/types";
 import getLayoutedElements from "./getLayoutedElements";
-import { scaleStacked, sizeStacked, stackSpace } from "@/utils/stackSpace";
+import { scaleStacked, sizeStacked, stackRelevanceSpace, stackSpace } from "@/utils/stackSpace";
 import { GUTTER } from "../data/config";
 import { getNewScore } from "@/reasonScoreNext/scoring/TypeA/Score";
 import { Connector } from "@/reasonScoreNext/Connector";
@@ -69,10 +69,10 @@ export function flowDataReducer({
             // Process Connectors
             // 
             let lastConfidenceBottom = 0;
-            const maxImpactStack = stackSpace(GUTTER); //Stacked space for the max relevance of a child claim
+            const maxImpactStack = stackSpace(GUTTER); // Stacked space for the max relevance of a child claim
             const maxImpactStackRelevance = stackSpace(GUTTER);
             const consolidatedStack = stackSpace(); // Consolidated stacked bar of final confidence*relevance
-            const relevanceStack = stackSpace(); 
+            const relevanceStack = stackRelevanceSpace(); 
 
             // Get all connectors where this score is the target
             const scoreConnectors: { [id: string]: Connector } = Object.values(connectors)
@@ -83,7 +83,9 @@ export function flowDataReducer({
             let newConfidenceEdges: Edge<DisplayEdgeData>[] = []
             let newProTargetRelevanceEdges: Edge<RelevanceEdgeData>[] = []
             let newConTargetRelevanceEdges: Edge<RelevanceEdgeData>[] = []
+            const ZERO_STACKED = {top: 0, bottom: 0, center: 0}
             for (const connector of Object.values(scoreConnectors)) {
+
 
                 // 
                 // TODO: Separate confidence and relevance edges
@@ -96,18 +98,30 @@ export function flowDataReducer({
                     sourceScore = getNewScore({ id: connector.id, type: "score" })
                     console.log("new score generated")
                 }
-                const skipRelevance = connector.affects === "relevance"
-                const skipConfidence = connector.affects === "confidence"
+                const affectsRelevance = connector.affects === "relevance" // used to skip relevance edges
+                const affectsConfidence = connector.affects === "confidence" // used to skip confidence edges
                 const impact = Math.max(sourceScore.confidence, 0) * sourceScore.relevance;
-
                 const maxImpact = sourceScore.relevance || 1;
-                const maxImpactStacked = maxImpactStack(skipRelevance ? 0 : sourceScore.relevance);
-                const impactStacked = sizeStacked(maxImpactStacked, impact);
-                const reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence);
-                const reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
-                const consolidatedStacked = consolidatedStack(impact * (skipRelevance ? 0 : sourceScore.confidence));
-                const relevanceStacked = relevanceStack(impact * (skipConfidence ? 0 : sourceScore.confidence));
-                const maxImpactStackedRelevance = maxImpactStackRelevance(skipConfidence ? 0 : sourceScore.relevance);
+
+                let maxImpactStacked = ZERO_STACKED
+                let impactStacked = ZERO_STACKED
+                let reducedImpactStacked = ZERO_STACKED
+                let reducedMaxImpactStacked = ZERO_STACKED
+                let consolidatedStacked = ZERO_STACKED
+                if (affectsConfidence) {
+                    maxImpactStacked = maxImpactStack(sourceScore.relevance);
+                    impactStacked = sizeStacked(maxImpactStacked, 1);
+                    reducedImpactStacked = scaleStacked(impactStacked, sourceScore.confidence);
+                    reducedMaxImpactStacked = scaleStacked(maxImpactStacked, sourceScore.confidence);
+                    consolidatedStacked = consolidatedStack(impact * sourceScore.confidence);
+                }
+
+                let relevanceStacked = ZERO_STACKED
+                let maxImpactStackedRelevance = ZERO_STACKED
+                if (affectsRelevance) {
+                    relevanceStacked = relevanceStack(sourceScore.confidence);
+                    maxImpactStackedRelevance = maxImpactStackRelevance(sourceScore.relevance);
+                }
 
                 const sourceScorePolarity = newDebateData.claims[sourceScore.id].pol
                 const type = connector.affects
@@ -144,7 +158,7 @@ export function flowDataReducer({
                         type: "rsEdge",
                         data
                     })
-                    lastConfidenceBottom += maxImpact;
+                    lastConfidenceBottom += maxImpact + GUTTER;
                 }
                 if (type === "relevance") {
                     const edge: Edge<RelevanceEdgeData> = {
@@ -163,7 +177,6 @@ export function flowDataReducer({
                     else
                         newConTargetRelevanceEdges.push(edge);
                 }
-                lastConfidenceBottom += GUTTER;
 
             }
 
