@@ -315,42 +315,40 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 
             }} />
 
-            {allRelevanceSources.length > 0 && <>
-                <svg
-                    style={{ position: 'absolute', right: '0px', top: '0px' }}
+            <svg
+                style={{ position: 'absolute', right: '0px', top: '0px' }}
 
-                    height={MAX_STROKE_WIDTH}
-                    width={MAX_STROKE_WIDTH * 2}>
-                    <defs>
-                        <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
-                            <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />
-                            <path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' />
-                            <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
-                        </pattern>
-                    </defs>
-                    <polygon
-                        fill='url(#cancelOutPattern)'
-                        points={`
-                            ${MAX_STROKE_WIDTH}     , 0
-                            ${MAX_STROKE_WIDTH}     , ${MAX_STROKE_WIDTH}
-                            ${MAX_STROKE_WIDTH * 2} , ${MAX_STROKE_WIDTH}
-                            ${MAX_STROKE_WIDTH * 2} , 0
-                        `}
-                    />
+                height={MAX_STROKE_WIDTH}
+                width={MAX_STROKE_WIDTH * 2}>
+                <defs>
+                    <pattern id='cancelOutPattern' patternUnits='userSpaceOnUse' width='60' height='30' patternTransform='scale(.25) rotate(0)'>
+                        <rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 0%, 1)' />
+                        <path d='M1-6.5v13h28v-13H1zm15 15v13h28v-13H16zm-15 15v13h28v-13H1z' strokeWidth='1' stroke='none' fill='var(--pro)' />
+                        <path d='M31-6.5v13h28v-13H31zm-45 15v13h28v-13h-28zm60 0v13h28v-13H46zm-15 15v13h28v-13H31z' strokeWidth='1' stroke='none' fill='var(--con)' />
+                    </pattern>
+                </defs>
+                <polygon
+                    fill='url(#cancelOutPattern)'
+                    points={`
+                        ${MAX_STROKE_WIDTH}     , 0
+                        ${MAX_STROKE_WIDTH}     , ${MAX_STROKE_WIDTH}
+                        ${MAX_STROKE_WIDTH * 2} , ${MAX_STROKE_WIDTH}
+                        ${MAX_STROKE_WIDTH * 2} , 0
+                    `}
+                />
 
-                    {/* <svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><rect width='800%' height='800%' transform='translate(0,0)' fill='url(#a)' /></svg> */}
+                {/* <svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><rect width='800%' height='800%' transform='translate(0,0)' fill='url(#a)' /></svg> */}
 
-                    <polygon
-                        style={{ fill: `var(--${data.pol})` }}
-                        points={`
-                            0                       , ${cancelOutTop}
-                            0                       , ${cancelOutBottom}
-                            ${MAX_STROKE_WIDTH * 2} , ${cancelOutBottom}
-                            ${MAX_STROKE_WIDTH * 2} , ${cancelOutTop}
-                        `}
-                    />
-                </svg>
-            </>}
+                <polygon
+                    style={{ fill: `var(--${data.pol})` }}
+                    points={`
+                        0                       , ${cancelOutTop}
+                        0                       , ${cancelOutBottom}
+                        ${MAX_STROKE_WIDTH * 2} , ${cancelOutBottom}
+                        ${MAX_STROKE_WIDTH * 2} , ${cancelOutTop}
+                    `}
+                />
+            </svg>
         </div>
     )
 
@@ -728,7 +726,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     {incomingRelevance}
                     {consolidateRelevance}
                     {scaleTo1Relevance}
-                    {cancelOutRelevance}
+                    {allRelevanceSources.length > 0 && cancelOutRelevance}
                     {relevance}
                     {cancelOut}
                     {scaleTo1}
