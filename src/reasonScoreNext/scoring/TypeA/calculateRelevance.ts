@@ -11,7 +11,7 @@ export function calculateRelevance(children: { score: Score, connector?: Connect
     // If there are no relevance Children then we assume a relevance of 1
     if (children.length < 1) { return 1; }
 
-    let relevance = 0;
+    let relevance = 1;
     for (const child of children) {
         if (child?.score?.confidence > 0) { // skip if the confidence is less than zero (not reversable)
             if (child.connector?.proTarget){
