@@ -19,7 +19,8 @@ export default async function readFromLocalFile<T>(): Promise<T> {
                 }
             });
             fileInput.click();
+        } else { 
+            reject("unable to add file input element");
         }
-        reject("unable to add file input element");
     });
 }
