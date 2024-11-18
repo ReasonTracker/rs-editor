@@ -126,12 +126,13 @@ const DevPanel = () => {
                             console.log("reading from file");
                             const data = await readFromLocalFile().catch((e) => {
                                 console.error(e);
-                            }) as {claims:Claim[], connectors:Connector[]}; ;
-                            console.log("data:", data);
+                            }) as {
+                                debateData: { claims: Claim[], connectors: Connector[] }
+                            };;
 
                             deleteAll();
                             let actions: ActionTypes[] = [];
-                            for (const claim of Object.values(data.claims)) { 
+                            for (const claim of Object.values(data.debateData.claims)) { 
                                 const claimAction: ClaimActions = {
                                     type: "add",
                                     newData: claim,
@@ -139,7 +140,7 @@ const DevPanel = () => {
                                 actions.push(claimAction);
                             }
 
-                            for (const connector of Object.values(data.connectors)) { 
+                            for (const connector of Object.values(data.debateData.connectors)) { 
                                 const connectorAction: ConnectorActions = {
                                     type: "add",
                                     newData: connector,
