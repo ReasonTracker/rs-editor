@@ -27,9 +27,6 @@ export function calculateConfidence(children: { score: Score, connector?: Connec
 
     if (confidence < 0) confidence = 0;
 
-// @ts-ignore
-    //if (confidence === NaN) 
-    console.log(ChildrenWeight,confidence,children);
     return confidence;
 }
 

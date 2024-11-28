@@ -9,6 +9,8 @@ import { DisplayNodeData } from '../types/types';
 import ContextMenu, { ContextMenuData } from './ContextMenu';
 import addNode from '../utils/addNode';
 import ScoreBoard from '../../../components/ScoreBoard';
+import Dev from '../components/DevPanel';
+
 
 const nodeTypes = { rsNode: DisplayNode };
 const edgeTypes = { rsEdge: DisplayEdge };
@@ -44,7 +46,7 @@ export default function Flow() {
     //     addNode({ flowDataState, isNewNodePro: true, claimId: "mainClaim" })
     // }, [])
 
-    const mainScore = flowDataState.displayNodes.find((n) => n.id === flowDataState.debate.mainClaimId )?.data?.score;
+    const mainScore = flowDataState.displayNodes.find((n) => n.id === flowDataState.debate.mainClaimId)?.data?.score;
 
     return (
         <div className={flowDataState.animating ? "autoAnimate" : ''} style={{ width: '100vw', height: '100vh', margin: 'auto' }} >
@@ -60,7 +62,7 @@ export default function Flow() {
                 // onNodeContextMenu={onNodeContextMenu}
                 fitView
             >
-            <ScoreBoard score={mainScore?.confidence} />
+                <ScoreBoard score={mainScore?.confidence} />
                 <Controls
                     position='top-left'
                 />
@@ -71,6 +73,7 @@ export default function Flow() {
                     nodeColor={n => `var(--${n.data.pol})`}
                     position='bottom-left'
                 />
+                <Dev />
             </ReactFlow>
             {menu && <ContextMenu {...menu} />}
 

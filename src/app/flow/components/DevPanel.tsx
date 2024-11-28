@@ -10,6 +10,7 @@ import generateSimpleAnimalClaim from "../utils/generateClaimContent";
 import { Connector } from "@/reasonScoreNext/Connector";
 import { Debate } from "@/reasonScoreNext/Debate";
 import { DebateData } from "@/reasonScoreNext/DebateData";
+import { useReactFlow } from "reactflow";
 
 const DevButton = ({
     label,
@@ -34,7 +35,7 @@ const DevButton = ({
 const DevPanel = () => {
     const flowDataState = useContext(FlowDataContext);
     const dev = useContext(DevContext);
-
+    const reactFlowInstance= useReactFlow()
     const deleteAll = () => {
         const nodeActions: Array<ClaimActions> = flowDataState.displayNodes.map((node) => ({
             type: "delete",
@@ -49,10 +50,10 @@ const DevPanel = () => {
     };
 
     return (
-        <div className="bp5-dark">
+        <div className="bp5-dark react-flow__panel react-flow__controls top right">
             <Button
                 hidden={dev.isDev}
-                className={"absolute top-0 right-0 focus:outline-none"}
+                // className={"absolute top-0 right-0 focus:outline-none"}
                 onClick={() => dev.setDevMode(true)}
                 icon="chevron-left"
                 minimal
@@ -60,7 +61,7 @@ const DevPanel = () => {
                 Dev
             </Button>
             <Drawer
-                hasBackdrop={false}
+                hasBackdrop={true}
                 isOpen={dev.isDev}
                 onClose={() => dev.setDevMode(false)}
                 title="Dev"
@@ -149,6 +150,9 @@ const DevPanel = () => {
                             // }
                             flowDataState.dispatchReset([], debateData, debate);
 
+                            setTimeout(() => {
+                                reactFlowInstance.fitView();
+                            }, 500);
                         }}
                         icon={"console"}
                         label={"load Data from a file"}

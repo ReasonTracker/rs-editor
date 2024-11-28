@@ -8,8 +8,7 @@ export default function Home() {
     return (
         <FlowDataProvider>
             <Flow />
-            <Dev />
-            <FilesPanel />
+            {/* <FilesPanel /> */}
         </FlowDataProvider>
     )
 }
