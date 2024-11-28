@@ -65,6 +65,8 @@ export type DevContextState = {
 
 export type FlowDataState = {
     dispatch: (actions: ActionTypes[]) => void
+    dispatchReset: (actions: ActionTypes[], debateData: DebateData, debate:Debate) => void
+
     displayNodes: Node<DisplayNodeData, string | undefined>[]
     setDisplayNodes: Dispatch<SetStateAction<Node<DisplayNodeData, string | undefined>[]>>
     displayEdges: Edge<DisplayEdgeData>[]

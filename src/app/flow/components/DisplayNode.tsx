@@ -5,6 +5,7 @@ import { DisplayNodeData, ConfidenceEdgeData, DisplayEdgeData, RelevanceEdgeData
 import { DevContext, FlowDataContext, FlowDataProvider } from './FlowDataProvider';
 import addNode from '../utils/addNode';
 import { stackSpace } from '@/utils/stackSpace';
+import { ClaimActions } from '@/reasonScoreNext/ActionTypes';
 
 const MAX_STROKE_WIDTH = 25
 const HALF_STROKE_WIDTH = MAX_STROKE_WIDTH / 2
@@ -47,7 +48,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         return originalSources;
     })
 
-    
+
 
     const allSources = useStore((s: ReactFlowState) => {
         const originalSources = s.edges.filter(
@@ -291,8 +292,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         }
     </>)
     const weightByConfidence = (
-        <div className="rsCalc rs-weightByConfidence" 
-        style={{ gridArea: 'weightByConfidence' }}>
+        <div className="rsCalc rs-weightByConfidence"
+            style={{ gridArea: 'weightByConfidence' }}>
             <svg
                 height={calculatedHeight}
                 width={MAX_STROKE_WIDTH}
@@ -304,8 +305,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
 
 
     const calculatedRelevanceHeight = useMemo(
-      () => calculateRelevanceHeight(allRelevanceSources),
-      [allRelevanceSources]
+        () => calculateRelevanceHeight(allRelevanceSources),
+        [allRelevanceSources]
     );
 
     const incomingRelevancePolygon = (
@@ -313,10 +314,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             {allRelevanceSources.map((r, i) => {
                 if (!r.data) return null;
                 const { maxImpactStackedRelevance } = r.data;
-            
+
                 const relTop = maxImpactStackedRelevance.top * MAX_STROKE_WIDTH;
                 const relBottom = maxImpactStackedRelevance.bottom * MAX_STROKE_WIDTH;
-    
+
                 return (
                     <Fragment key={`relevance-${r.id}`}>
                         <polygon
@@ -334,7 +335,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             })}
         </>
     );
-    
+
     const incomingRelevance = (
         <div
             className="rsCalc rs-incomingRelevance"
@@ -387,20 +388,20 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         )}
     </>);
     const consolidateRelevance = (
-      <div
-        className="rsCalc rs-consolidateRelevance"
-        style={{ gridArea: "consolidateRelevance", transform: `scaleY(-1)` }}
-      >
-        <div style={{ transform: `rotate(180deg)` }}>
-          <svg
-            height={calculatedRelevanceHeight}
-            width={"100px"}
-            // viewBox={`-10 -10 120 ${calculatedRelevanceHeight + 20}`}
-          >
-            {consolidateRelevancePolygon}
-          </svg>
+        <div
+            className="rsCalc rs-consolidateRelevance"
+            style={{ gridArea: "consolidateRelevance", transform: `scaleY(-1)` }}
+        >
+            <div style={{ transform: `rotate(180deg)` }}>
+                <svg
+                    height={calculatedRelevanceHeight}
+                    width={"100px"}
+                // viewBox={`-10 -10 120 ${calculatedRelevanceHeight + 20}`}
+                >
+                    {consolidateRelevancePolygon}
+                </svg>
+            </div>
         </div>
-      </div>
     );
 
     const scaledTo1StackRelevance = stackSpace();
@@ -428,10 +429,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             const points = [
                 { x: 50, y: scaledTop },
                 { x: 50, y: scaledBottom },
-                { x: 0,  y: consolidatedBottom },
-                { x: 0,  y: consolidatedTop },
-              ];
-              
+                { x: 0, y: consolidatedBottom },
+                { x: 0, y: consolidatedTop },
+            ];
+
             return (
                 <Fragment key={`scale-${s.id}`}>
                     <polygon
@@ -443,21 +444,21 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         })}
     </>)
     const scaleTo1Relevance = (
-      <div
-        className="rsCalc rs-scaleTo1Relevance"
-        style={{ 
-            gridArea: "scaleTo1Relevance", 
-            transform: `scaleY(-1)` 
-        }}
-      >
-        <div style={{
-             transform: `rotate(180deg)` 
-             }}>
-          <svg height={calculatedRelevanceHeight} width={"50px"}>
-            {scaleTo1RelevancePolygon}
-          </svg>
+        <div
+            className="rsCalc rs-scaleTo1Relevance"
+            style={{
+                gridArea: "scaleTo1Relevance",
+                transform: `scaleY(-1)`
+            }}
+        >
+            <div style={{
+                transform: `rotate(180deg)`
+            }}>
+                <svg height={calculatedRelevanceHeight} width={"50px"}>
+                    {scaleTo1RelevancePolygon}
+                </svg>
+            </div>
         </div>
-      </div>
     );
 
     const devButtons = (
@@ -604,7 +605,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     <Button
                         minimal
                         small
-                        className="!bg-con"
+                        className="mb-1 !bg-con"
                         onClick={() => {
                             addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
                             reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
@@ -612,6 +613,31 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         icon="plus"
                     />
                 </Tooltip>
+
+
+                {/* <Tooltip content="Delete this claim" position="right">
+                    <Button
+                        minimal
+                        small
+                        className=""
+                        onClick={() => {
+                            console.log("delete")
+                            const claimAction: ClaimActions = {
+                                type: "delete",
+                                newData: { id, type: "claim" },
+                            };
+                    
+                            console.log("deleteNode", claimAction);
+                    
+                            flowDataState.dispatch([claimAction]);
+                            // addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
+                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        }}
+                        icon="trash"
+                    />
+                </Tooltip> */}
+
+
                 {/* <Tooltip content="Collapse" position="right">
                     <Button
                         minimal
@@ -663,7 +689,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             <Handle type="target"
                 id="relevance"
                 position={Position.Right}
-                style={{ top:0 }}
+                style={{ top: 0 }}
                 className={dev.isDev ? 'opacity-100' : 'opacity-0'}
             />
 

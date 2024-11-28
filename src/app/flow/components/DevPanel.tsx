@@ -8,6 +8,8 @@ import readFromLocalFile from "@/utils/localFiles/readFromLocalFile";
 import { Claim, newClaim } from "@/reasonScoreNext/Claim";
 import generateSimpleAnimalClaim from "../utils/generateClaimContent";
 import { Connector } from "@/reasonScoreNext/Connector";
+import { Debate } from "@/reasonScoreNext/Debate";
+import { DebateData } from "@/reasonScoreNext/DebateData";
 
 const DevButton = ({
     label,
@@ -111,7 +113,7 @@ const DevPanel = () => {
 
                     <DevButton
                         onClick={() => {
-                            const {debate,debateData } = flowDataState
+                            const { debate, debateData } = flowDataState
                             saveToLocalFile(JSON.stringify({
                                 debate,
                                 debateData
@@ -124,31 +126,28 @@ const DevPanel = () => {
                     <DevButton
                         onClick={async () => {
                             console.log("reading from file");
-                            const data = await readFromLocalFile().catch((e) => {
+                            const { debate, debateData } = await readFromLocalFile().catch((e) => {
                                 console.error(e);
-                            }) as {
-                                debateData: { claims: Claim[], connectors: Connector[] }
-                            };;
+                            }) as { debate: Debate, debateData: DebateData };
 
-                            deleteAll();
-                            let actions: ActionTypes[] = [];
-                            for (const claim of Object.values(data.debateData.claims)) { 
-                                const claimAction: ClaimActions = {
-                                    type: "add",
-                                    newData: claim,
-                                };
-                                actions.push(claimAction);
-                            }
+                            // deleteAll();
+                            // let actions: ActionTypes[] = [];
+                            // for (const claim of Object.values(data.debateData.claims)) { 
+                            //     const claimAction: ClaimActions = {
+                            //         type: "add",
+                            //         newData: claim,
+                            //     };
+                            //     actions.push(claimAction);
+                            // }
 
-                            for (const connector of Object.values(data.debateData.connectors)) { 
-                                const connectorAction: ConnectorActions = {
-                                    type: "add",
-                                    newData: connector,
-                                };
-                                actions.push(connectorAction);
-                            }
-
-                            flowDataState.dispatch(actions);
+                            // for (const connector of Object.values(data.debateData.connectors)) { 
+                            //     const connectorAction: ConnectorActions = {
+                            //         type: "add",
+                            //         newData: connector,
+                            //     };
+                            //     actions.push(connectorAction);
+                            // }
+                            flowDataState.dispatchReset([], debateData, debate);
 
                         }}
                         icon={"console"}

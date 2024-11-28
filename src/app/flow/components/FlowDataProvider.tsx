@@ -18,6 +18,7 @@ import { newId } from '@/reasonScore/newId';
 
 const initialFlowDataState: FlowDataState = {
     dispatch: () => { },
+    dispatchReset: () => { },
     displayNodes: [],
     setDisplayNodes: () => { },
     setDisplayEdges: () => { },
@@ -26,7 +27,7 @@ const initialFlowDataState: FlowDataState = {
     onEdgesChange: () => { },
     debateData: { claims: {}, connectors: {} },
     animating: false,
-    debate: newDebate({mainClaimId: newId()}),
+    debate: newDebate({ mainClaimId: newId() }),
 };
 
 const initialDevContextState: DevContextState = {
@@ -44,23 +45,31 @@ export function FlowDataProvider({ children }: { children: ReactNode[] | ReactNo
     const [debate, setDebate] = useState<Debate>(initialFlowDataState.debate)
     const [isDev, setDevMode] = useState<boolean>(false);
     const [animating, setAnimating] = useState<boolean>(false);
-    const flowDataState = { debate, dispatch, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }
+    const flowDataState: FlowDataState = { debate, dispatch, dispatchReset, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }
 
     useEffect(() => {
         if (debateData.claims[debate.mainClaimId || ""]) return
         addNode({ flowDataState, isNewNodePro: true, claimId: debate.mainClaimId })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     async function dispatch(actions: ActionTypes[]) {
         flowDataReducer({
-            debate, setDebate, actions, setDisplayNodes, setDisplayEdges, setDebateData, setAnimating,
+            setDebate, actions, setDisplayNodes, setDisplayEdges, setDebateData, setAnimating,
             displayNodes // TODO: remove this, add position to debateData
         })
     }
 
+    async function dispatchReset(actions: ActionTypes[], debateData: DebateData, debate: Debate) {
+        flowDataReducer({
+            debate, debateData, actions, displayNodes,
+            setDebate, setDisplayNodes, setDisplayEdges, setDebateData, setAnimating,
+            // TODO: displayNodes remove this, add position to debateData
+        })
+    }
+
     return (
-        <FlowDataContext.Provider value={{ debate, dispatch, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }}>
+        <FlowDataContext.Provider value={{ debate, dispatch, dispatchReset, displayNodes, setDisplayNodes, displayEdges, setDisplayEdges, onNodesChange, onEdgesChange, debateData, animating }}>
             <DevContext.Provider value={{ isDev, setDevMode }}>
                 {children}
             </DevContext.Provider>

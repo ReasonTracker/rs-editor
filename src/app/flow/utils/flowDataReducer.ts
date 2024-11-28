@@ -35,6 +35,7 @@ export function flowDataReducer({
     setDisplayNodes,
     debate,
     setDebate,
+    debateData,
 }: {
     actions: ActionTypes[]
     setDisplayEdges: DispatchType<EdgeArray>
@@ -42,17 +43,28 @@ export function flowDataReducer({
     setAnimating: Dispatch<boolean>
     displayNodes: Node<DisplayNodeData>[]
     setDisplayNodes: DispatchType<NodeArray>
-    debate: Debate
+    debate?: Debate
     setDebate: Dispatch<SetStateAction<Debate>>
+    debateData?: DebateData
 }) {
     // TODO: Right now all data changes so does a lot of screen updating. Refactor
     //  * Apply actions to reasonScore debate data
+
+
     setDebateData((oldDebateData) => {
+
+        if (debate) setDebate(debate)
+        if (debateData) (oldDebateData = debateData)
+
         let newDisplayNodes: Node<DisplayNodeData>[] = [];
         let newDisplayEdges: Edge<DisplayEdgeData>[] = [];
 
         const newDebateData = rsReducer(actions, oldDebateData);
         const newScores = calculateScores(newDebateData);
+
+        // @ts-expect-error
+        console.log("--",newScores[debate?.mainClaimId]);
+
         const connectors = newDebateData.connectors;
         // 
         // Process Nodes
@@ -72,7 +84,7 @@ export function flowDataReducer({
             const maxImpactStack = stackSpace(GUTTER); //Stacked space for the max relevance of a child claim
             const maxImpactStackRelevance = stackSpace(GUTTER);
             const consolidatedStack = stackSpace(); // Consolidated stacked bar of final confidence*relevance
-            const relevanceStack = stackSpace(); 
+            const relevanceStack = stackSpace();
 
             // Get all connectors where this score is the target
             const scoreConnectors: { [id: string]: Connector } = Object.values(connectors)
