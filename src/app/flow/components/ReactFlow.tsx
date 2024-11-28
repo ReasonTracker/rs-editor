@@ -61,6 +61,7 @@ export default function Flow() {
                 onPaneClick={onPaneClick}
                 // onNodeContextMenu={onNodeContextMenu}
                 fitView
+                minZoom={0.01}
             >
                 <ScoreBoard score={mainScore?.confidence} />
                 <Controls
