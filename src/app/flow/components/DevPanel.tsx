@@ -1,15 +1,8 @@
 import React, { useContext } from "react";
 import { DevContext, FlowDataContext } from "./FlowDataProvider";
 import { Drawer, Button, IconName, Divider } from "@blueprintjs/core";
-import { ActionTypes, ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
+import { ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
 import { calculateScores } from "@/reasonScoreNext/scoring/TypeA/calculateScores";
-import saveToLocalFile from "@/utils/localFiles/saveToLocalFile";
-import readFromLocalFile from "@/utils/localFiles/readFromLocalFile";
-import { Claim, newClaim } from "@/reasonScoreNext/Claim";
-import generateSimpleAnimalClaim from "../utils/generateClaimContent";
-import { Connector } from "@/reasonScoreNext/Connector";
-import { Debate } from "@/reasonScoreNext/Debate";
-import { DebateData } from "@/reasonScoreNext/DebateData";
 import { useReactFlow } from "reactflow";
 
 const DevButton = ({
@@ -50,18 +43,20 @@ const DevPanel = () => {
     };
 
     return (
-        <div className="bp5-dark react-flow__panel react-flow__controls top right">
+        <div >
             <Button
                 hidden={dev.isDev}
                 // className={"absolute top-0 right-0 focus:outline-none"}
                 onClick={() => dev.setDevMode(true)}
                 icon="chevron-left"
                 minimal
+                style={{opacity: 0.25}}
+
             >
                 Dev
             </Button>
             <Drawer
-                hasBackdrop={true}
+                hasBackdrop={false}
                 isOpen={dev.isDev}
                 onClose={() => dev.setDevMode(false)}
                 title="Dev"
@@ -73,6 +68,10 @@ const DevPanel = () => {
                 usePortal={false}
                 enforceFocus={false}
                 autoFocus={false}
+                style={
+                    { position: "fixed" } // Odd that this is needed Otherwise the drawer is transparent
+                }
+
             >
                 <div className="flex flex-col space-y-2 mt-4">
                     {/* <DevButton
@@ -110,52 +109,6 @@ const DevPanel = () => {
                         onClick={deleteAll}
                         icon={"trash"}
                         label={"Delete All"}
-                    />
-
-                    <DevButton
-                        onClick={() => {
-                            const { debate, debateData } = flowDataState
-                            saveToLocalFile(JSON.stringify({
-                                debate,
-                                debateData
-                            }), "debateData.json");
-                        }}
-                        icon={"console"}
-                        label={"Save Data to a file"}
-                    />
-
-                    <DevButton
-                        onClick={async () => {
-                            console.log("reading from file");
-                            const { debate, debateData } = await readFromLocalFile().catch((e) => {
-                                console.error(e);
-                            }) as { debate: Debate, debateData: DebateData };
-
-                            // deleteAll();
-                            // let actions: ActionTypes[] = [];
-                            // for (const claim of Object.values(data.debateData.claims)) { 
-                            //     const claimAction: ClaimActions = {
-                            //         type: "add",
-                            //         newData: claim,
-                            //     };
-                            //     actions.push(claimAction);
-                            // }
-
-                            // for (const connector of Object.values(data.debateData.connectors)) { 
-                            //     const connectorAction: ConnectorActions = {
-                            //         type: "add",
-                            //         newData: connector,
-                            //     };
-                            //     actions.push(connectorAction);
-                            // }
-                            flowDataState.dispatchReset([], debateData, debate);
-
-                            setTimeout(() => {
-                                reactFlowInstance.fitView();
-                            }, 500);
-                        }}
-                        icon={"console"}
-                        label={"load Data from a file"}
                     />
 
                 </div>

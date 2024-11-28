@@ -1,13 +1,11 @@
 import React, { useContext, useState } from "react";
-import { DevContext, FlowDataContext } from "./FlowDataProvider";
-import { Drawer, Button, IconName, Divider } from "@blueprintjs/core";
-import { ActionTypes, ClaimActions, ConnectorActions } from "@/reasonScoreNext/ActionTypes";
-import { calculateScores } from "@/reasonScoreNext/scoring/TypeA/calculateScores";
+import { FlowDataContext } from "./FlowDataProvider";
+import { Drawer, Button, IconName } from "@blueprintjs/core";
 import saveToLocalFile from "@/utils/localFiles/saveToLocalFile";
 import readFromLocalFile from "@/utils/localFiles/readFromLocalFile";
-import { Claim, newClaim } from "@/reasonScoreNext/Claim";
-import generateSimpleAnimalClaim from "../utils/generateClaimContent";
-import { Connector } from "@/reasonScoreNext/Connector";
+import { useReactFlow } from "reactflow";
+import { Debate } from "@/reasonScoreNext/Debate";
+import { DebateData } from "@/reasonScoreNext/DebateData";
 
 const FilesPanelButton = ({
     label,
@@ -31,32 +29,21 @@ const FilesPanelButton = ({
 
 const FilesPanel = () => {
     const flowDataState = useContext(FlowDataContext);
-    const dev = useContext(DevContext);
-    const [isPanelOpen,setIsPanelOpen] = useState(false);
-
-    const deleteAll = () => {
-        const nodeActions: Array<ClaimActions> = flowDataState.displayNodes.map((node) => ({
-            type: "delete",
-            newData: { id: node.id, type: "claim" },
-        }));
-        const edgeActions: Array<ConnectorActions> = flowDataState.displayEdges.map((edge) => ({
-            type: "delete",
-            newData: { id: edge.id, type: "connector" },
-        }));
-
-        flowDataState.dispatch([...nodeActions, ...edgeActions]);
-    };
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const reactFlowInstance = useReactFlow()
 
     return (
-        <div className="bp5-dark">
+        <div>
             <Button
                 hidden={isPanelOpen}
-                className={"absolute bottom-0 right-0 focus:outline-none"}
-                onClick={() =>{
+                // className={"absolute bottom-0 right-0 focus:outline-none"}
+                onClick={() => {
                     console.log("open panel")
-                    setIsPanelOpen(true)}}
+                    setIsPanelOpen(true)
+                }}
                 icon="chevron-left"
                 minimal
+                style={{opacity: 0.25}}
             >
                 Files
             </Button>
@@ -73,12 +60,15 @@ const FilesPanel = () => {
                 usePortal={false}
                 enforceFocus={false}
                 autoFocus={false}
+                style={
+                    { position: "fixed" } // Odd that this is needed Otherwise the drawer is transparent
+                }
             >
                 <div className="flex flex-col space-y-2 mt-4">
 
                     <FilesPanelButton
                         onClick={() => {
-                            const {debate,debateData } = flowDataState
+                            const { debate, debateData } = flowDataState
                             saveToLocalFile(JSON.stringify({
                                 debate,
                                 debateData
@@ -91,32 +81,15 @@ const FilesPanel = () => {
                     <FilesPanelButton
                         onClick={async () => {
                             console.log("reading from file");
-                            const data = await readFromLocalFile().catch((e) => {
+                            const { debate, debateData } = await readFromLocalFile().catch((e) => {
                                 console.error(e);
-                            }) as {
-                                debateData: { claims: Claim[], connectors: Connector[] }
-                            };;
+                            }) as { debate: Debate, debateData: DebateData };
 
-                            deleteAll();
-                            let actions: ActionTypes[] = [];
-                            for (const claim of Object.values(data.debateData.claims)) { 
-                                const claimAction: ClaimActions = {
-                                    type: "add",
-                                    newData: claim,
-                                };
-                                actions.push(claimAction);
-                            }
+                            flowDataState.dispatchReset([], debateData, debate);
 
-                            for (const connector of Object.values(data.debateData.connectors)) { 
-                                const connectorAction: ConnectorActions = {
-                                    type: "add",
-                                    newData: connector,
-                                };
-                                actions.push(connectorAction);
-                            }
-
-                            flowDataState.dispatch(actions);
-
+                            setTimeout(() => {
+                                reactFlowInstance.fitView();
+                            }, 500);
                         }}
                         icon={"console"}
                         label={"load Data from a file"}

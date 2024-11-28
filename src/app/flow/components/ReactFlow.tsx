@@ -9,7 +9,8 @@ import { DisplayNodeData } from '../types/types';
 import ContextMenu, { ContextMenuData } from './ContextMenu';
 import addNode from '../utils/addNode';
 import ScoreBoard from '../../../components/ScoreBoard';
-import Dev from '../components/DevPanel';
+import DevPanel from '../components/DevPanel';
+import FilesPanel from './FilesPanel';
 
 
 const nodeTypes = { rsNode: DisplayNode };
@@ -63,10 +64,13 @@ export default function Flow() {
                 fitView
                 minZoom={0.01}
             >
+
                 <ScoreBoard score={mainScore?.confidence} />
+
                 <Controls
                     position='top-left'
                 />
+
                 <MiniMap
                     maskColor='rgb(240, 240, 240, 0.3)'
                     pannable
@@ -74,7 +78,12 @@ export default function Flow() {
                     nodeColor={n => `var(--${n.data.pol})`}
                     position='bottom-left'
                 />
-                <Dev />
+
+                <div className="bp5-dark react-flow__panel react-flow__controls top right">
+                    <FilesPanel />
+                    <DevPanel />
+                </div>
+
             </ReactFlow>
             {menu && <ContextMenu {...menu} />}
 
