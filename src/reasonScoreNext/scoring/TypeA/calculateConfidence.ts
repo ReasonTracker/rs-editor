@@ -16,15 +16,20 @@ export function calculateConfidence(children: { score: Score, connector?: Connec
     }
 
     let confidence = 0;
-    for (const child of children) {
-        confidence +=
-            child.score.confidence
-            * weight(child.score) / ChildrenWeight // multiply by the percentage of the total children weight
-            * (child.connector?.proTarget === false? -1 : 1); // Flip it if it is a con (not pro)
+    if (ChildrenWeight !== 0) {
+        for (const child of children) {
+            confidence +=
+                child.score.confidence
+                * weight(child.score) / ChildrenWeight // multiply by the percentage of the total children weight
+                * (child.connector?.proTarget === false ? -1 : 1); // Flip it if it is a con (not pro)
+        }
     }
 
     if (confidence < 0) confidence = 0;
-    
+
+// @ts-ignore
+    //if (confidence === NaN) 
+    console.log(ChildrenWeight,confidence,children);
     return confidence;
 }
 

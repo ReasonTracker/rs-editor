@@ -62,9 +62,6 @@ export function flowDataReducer({
         const newDebateData = rsReducer(actions, oldDebateData);
         const newScores = calculateScores(newDebateData);
 
-        // @ts-expect-error
-        console.log("--",newScores[debate?.mainClaimId]);
-
         const connectors = newDebateData.connectors;
         // 
         // Process Nodes
