@@ -1,11 +1,9 @@
-import { DebateData } from "../..//DebateData";
+import { DebateData } from "../../DebateData";
 import { Connector } from "../../Connector";
-import { Score, getNewScore } from "./Score";
+import { Score } from "./Score";
 import { sortSourceIdsFirst } from "../../sortSourceIdsFirst";
 import { calculateRelevance } from "./calculateRelevance";
 import { calculateConfidence } from "./calculateConfidence";
-import { DisplayNodeData } from "@/app/flow/types/types";
-import { Node } from "reactflow";
 
 export function calculateScores(debateData: DebateData) {
     let ids = sortSourceIdsFirst(debateData.connectors);
@@ -30,7 +28,7 @@ export function calculateScores(debateData: DebateData) {
     for (const id of ids) {
         const claim = debateData.claims[id];
         if (!claim) {
-            console.error("No claim found for id:", id);
+            console.log("No claim found for id:", id);
             continue;
         }
         const children = connectorsByTarget[id]?.map(connector => {

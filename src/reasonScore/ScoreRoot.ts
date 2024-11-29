@@ -1,4 +1,4 @@
-import { newId } from "./newId";
+import { newId } from "../utils/newId";
 import { Item } from "./Item";
 import { ItemTypes } from "./Item";
 /**

@@ -10,4 +10,4 @@ export * from "./hasItemChanged";
 export * from "./calculateScore";
 export * from "./repositories/iRepository";
 export * from "./calculateScoreActions";
-export * from "./newId";
+export * from "../utils/newId";

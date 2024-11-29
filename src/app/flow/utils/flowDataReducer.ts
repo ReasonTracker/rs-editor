@@ -70,7 +70,7 @@ export function flowDataReducer({
         for (const score of Object.values(newScores)) {
             const claim = newDebateData.claims[score.id]
             if (!claim) {
-                console.error("No claim found for id:", score.id);
+                console.log("No claim found for id:", score.id);
                 continue;
             }
 
@@ -118,7 +118,7 @@ export function flowDataReducer({
                 const relevanceStacked = relevanceStack(impact * (skipConfidence ? 0 : sourceScore.confidence));
                 const maxImpactStackedRelevance = maxImpactStackRelevance(skipConfidence ? 0 : sourceScore.relevance);
 
-                const sourceScorePolarity = newDebateData.claims[sourceScore.id].pol
+                const sourceScorePolarity = newDebateData.claims[sourceScore.id]?.pol || "pro";
                 const type = connector.affects
 
                 const persistedData = {

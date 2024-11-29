@@ -1,7 +1,5 @@
 import dagre from "dagre";
 // import { Node, Edge } from "reactflow";
-import { DisplayNodeData, DisplayEdgeData } from "../types/types";
-import { ClaimEdge } from "@/reasonScore/ClaimEdge";
 
 const nodeWidth = 600;
 const nodeHeight = 125;
@@ -18,7 +16,6 @@ interface Node {
 interface Edge {
     source: string;
     target: string;
-    claimEdge?: ClaimEdge
     sourceHandle?: string | null | undefined;
     targetHandle?: string | null | undefined;
 }

@@ -12,12 +12,14 @@ export function calculateConfidence(children: { score: Score, connector?: Connec
 
     let ChildrenWeight = 0;
     for (const child of children) {
+        if (!child.score) continue;
         ChildrenWeight += weight(child.score);
     }
 
     let confidence = 0;
     if (ChildrenWeight !== 0) {
         for (const child of children) {
+            if (!child.score) continue;
             confidence +=
                 child.score.confidence
                 * weight(child.score) / ChildrenWeight // multiply by the percentage of the total children weight
@@ -31,5 +33,6 @@ export function calculateConfidence(children: { score: Score, connector?: Connec
 }
 
 function weight(score: Score) {
+    if (!score) return 0;
     return Math.abs(score.confidence) * score.relevance
 }

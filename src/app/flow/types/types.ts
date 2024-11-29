@@ -1,5 +1,4 @@
 // starting to put types in here, then can separate out into separate files later
-import { ClaimEdge } from '@/reasonScore/rs';
 import { Score } from "@/reasonScoreNext/scoring/TypeA/Score";
 import { Claim } from "@/reasonScoreNext/Claim";
 import { Dispatch, SetStateAction } from 'react';
@@ -22,7 +21,6 @@ export type DisplayNodeData = {
 
 export type ConfidenceEdgeData = {
     pol: string
-    claimEdge?: ClaimEdge
     sourceScore?: Score
     maxImpactStacked: Stacked
     impactStacked: Stacked
@@ -41,7 +39,6 @@ export type ConfidenceEdgeData = {
 
 export type RelevanceEdgeData = {
     pol: string
-    claimEdge?: ClaimEdge
     sourceScore?: Score
     type: "relevance"
     maxImpact: number

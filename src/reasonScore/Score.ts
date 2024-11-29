@@ -1,4 +1,4 @@
-import { newId } from "./newId";
+import { newId } from "../utils/newId";
 import { Item, ItemTypes } from "./Item";
 import { Affects } from "./ClaimEdge";
 /**

@@ -1,13 +1,10 @@
 'use client'
 
-import ReactFlow, { Controls, MiniMap, Node } from 'reactflow';
+import ReactFlow, { Controls, MiniMap } from 'reactflow';
 import { FlowDataContext } from './FlowDataProvider'
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useRef } from 'react';
 import DisplayNode from './DisplayNode'
 import DisplayEdge from './DisplayEdge'
-import { DisplayNodeData } from '../types/types';
-import ContextMenu, { ContextMenuData } from './ContextMenu';
-import addNode from '../utils/addNode';
 import ScoreBoard from '../../../components/ScoreBoard';
 import DevPanel from '../components/DevPanel';
 import FilesPanel from './FilesPanel';
@@ -19,26 +16,6 @@ const edgeTypes = { rsEdge: DisplayEdge };
 export default function Flow() {
 
     const menuRef = useRef(null);
-    const [menu, setMenu] = useState<ContextMenuData | null>(null);
-
-    const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
-
-    const onNodeContextMenu = useCallback(
-        (event: React.MouseEvent, displayNode: Node<DisplayNodeData>) => {
-            event.preventDefault();
-            if (!menuRef.current) return console.log("no menuRef")
-            const pane = (menuRef.current as HTMLElement).getBoundingClientRect();
-            setMenu({
-                id: displayNode.id,
-                top: event.clientY < pane.height - 200 && event.clientY || "false",
-                left: event.clientX < pane.width - 200 && event.clientX || "false",
-                right: event.clientX >= pane.width - 200 && pane.width - event.clientX || "false",
-                bottom: event.clientY >= pane.height - 200 && pane.height - event.clientY || "false",
-                onPaneClick
-            });
-        },
-        [setMenu, onPaneClick]
-    );
 
     const flowDataState = useContext(FlowDataContext);
 
@@ -59,8 +36,6 @@ export default function Flow() {
                 onEdgesChange={flowDataState.onEdgesChange}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
-                onPaneClick={onPaneClick}
-                // onNodeContextMenu={onNodeContextMenu}
                 fitView
                 minZoom={0.01}
             >
@@ -85,7 +60,6 @@ export default function Flow() {
                 </div>
 
             </ReactFlow>
-            {menu && <ContextMenu {...menu} />}
 
         </div>
     )

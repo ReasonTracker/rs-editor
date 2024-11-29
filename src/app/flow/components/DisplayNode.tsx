@@ -630,7 +630,8 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                             console.log("deleteNode", claimAction);
                     
                             flowDataState.dispatch([claimAction]);
-                            // addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
+                            
+
                             // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                         icon="trash"
