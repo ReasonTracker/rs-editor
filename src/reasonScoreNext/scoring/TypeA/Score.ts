@@ -1,7 +1,6 @@
 import { Item } from "../../Item";
 import { ScoreBase } from "../../ScoreBase";
-import { newId } from "../../newId";
-
+import { newId } from '@/reasonScoreNext/newId';
 
 export interface Score extends ScoreRequired, Omit<Item, 'type'> {
     /** how confident we should be in the claim (how true) based on the child claims so far. Ranges from 0 to 1 */

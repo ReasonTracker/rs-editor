@@ -13,7 +13,7 @@ import {
 } from "@/app/flow/types/types";
 import { Debate, newDebate } from '@/reasonScoreNext/Debate';
 import addNode from '../utils/addNode';
-import { newId } from '@/utils/newId';
+import { newId } from '@/reasonScoreNext/newId';
 
 
 const initialFlowDataState: FlowDataState = {

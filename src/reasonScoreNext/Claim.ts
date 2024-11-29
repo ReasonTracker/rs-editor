@@ -1,4 +1,4 @@
-import { newId } from "./newId";
+import { newId } from '@/reasonScoreNext/newId';
 import { Item } from "./Item";
 
 /**
