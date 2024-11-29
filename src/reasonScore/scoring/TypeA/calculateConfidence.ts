@@ -1,4 +1,4 @@
-import { Connector } from "../../Connector";
+import { Connector } from "../../types/Connector";
 import { Score } from "./Score";
 
 /**

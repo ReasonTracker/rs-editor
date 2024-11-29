@@ -1,4 +1,4 @@
-import { ConnectorRequired } from "./Connector";
+import { ConnectorRequired } from "./types/Connector";
 import { sortSourceIdsFirst } from "./sortSourceIdsFirst";
 
 test('toposort', () => {

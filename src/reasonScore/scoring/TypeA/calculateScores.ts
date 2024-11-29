@@ -1,5 +1,5 @@
-import { DebateData } from "../../DebateData";
-import { Connector } from "../../Connector";
+import { DebateData } from "../../types/DebateData";
+import { Connector } from "../../types/Connector";
 import { Score } from "./Score";
 import { sortSourceIdsFirst } from "../../sortSourceIdsFirst";
 import { calculateRelevance } from "./calculateRelevance";

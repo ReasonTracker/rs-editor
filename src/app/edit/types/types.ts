@@ -1,12 +1,12 @@
 // starting to put types in here, then can separate out into separate files later
 import { Score } from "@/reasonScore/scoring/TypeA/Score";
-import { Claim } from "@/reasonScore/Claim";
+import { Claim } from "@/reasonScore/types/Claim";
 import { Dispatch, SetStateAction } from 'react';
 import { Node, Edge } from "reactflow";
-import { ActionTypes } from '@/reasonScore/ActionTypes';
+import { ActionTypes } from '@/reasonScore/types/ActionTypes';
 import { EdgeChange, NodeChange } from 'reactflow';
-import { DebateData } from '@/reasonScore/DebateData';
-import { Debate } from '@/reasonScore/Debate';
+import { DebateData } from '@/reasonScore/types/DebateData';
+import { Debate } from '@/reasonScore/types/Debate';
 
 export type DisplayNodeData = {
     scoreId: string,

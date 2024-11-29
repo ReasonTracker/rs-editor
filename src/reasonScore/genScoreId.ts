@@ -1,5 +1,5 @@
-import { Claim, isClaim } from "./Claim";
-import { Connector, isConnector } from "./Connector";
+import { Claim, isClaim } from "./types/Claim";
+import { Connector, isConnector } from "./types/Connector";
 
 /**
  *  Generates a consistent scoreId which starts with mainClaimId

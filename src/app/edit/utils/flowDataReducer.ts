@@ -1,8 +1,8 @@
-import { ActionTypes } from "@/reasonScore/ActionTypes";
+import { ActionTypes } from "@/reasonScore/types/ActionTypes";
 import { Dispatch, SetStateAction } from "react";
 import { Node, Edge } from "reactflow";
 import { rsReducer } from "@/reasonScore/rsReducer";
-import { DebateData } from "@/reasonScore/DebateData";
+import { DebateData } from "@/reasonScore/types/DebateData";
 import { calculateScores } from "@/reasonScore/scoring/TypeA/calculateScores";
 import {
     DisplayNodeData,
@@ -16,8 +16,8 @@ import getLayoutedElements from "./getLayoutedElements";
 import { scaleStacked, sizeStacked, stackSpace } from "@/utils/stackSpace";
 import { GUTTER } from "../data/config";
 import { getNewScore } from "@/reasonScore/scoring/TypeA/Score";
-import { Connector } from "@/reasonScore/Connector";
-import { Debate } from "@/reasonScore/Debate";
+import { Connector } from "@/reasonScore/types/Connector";
+import { Debate } from "@/reasonScore/types/Debate";
 
 const sortConnectors = (a: Connector, b: Connector): number => {
     const affects = b.affects.localeCompare(a.affects);

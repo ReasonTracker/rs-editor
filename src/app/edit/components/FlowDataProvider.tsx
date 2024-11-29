@@ -2,16 +2,16 @@
 
 import { ReactNode, createContext, use, useEffect, useState } from 'react';
 import { useEdgesState, useNodesState } from 'reactflow';
-import { ActionTypes } from '@/reasonScore/ActionTypes';
+import { ActionTypes } from '@/reasonScore/types/ActionTypes';
 import { flowDataReducer } from '../utils/flowDataReducer';
-import { DebateData } from '@/reasonScore/DebateData';
+import { DebateData } from '@/reasonScore/types/DebateData';
 import {
     DisplayNodeData,
     DisplayEdgeData,
     DevContextState,
     FlowDataState,
 } from "@/app/edit/types/types";
-import { Debate, newDebate } from '@/reasonScore/Debate';
+import { Debate, newDebate } from '@/reasonScore/types/Debate';
 import addNode from '../utils/addNode';
 import { newId } from '@/reasonScore/newId';
 

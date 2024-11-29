@@ -1,4 +1,4 @@
-import { ConnectorRequired } from "./Connector";
+import { ConnectorRequired } from "./types/Connector";
 const toposort = require('toposort')
 
 export function sortSourceIdsFirst(connectors: { [id: string]: ConnectorRequired }) {

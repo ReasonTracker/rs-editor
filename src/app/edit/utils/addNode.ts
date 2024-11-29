@@ -1,8 +1,8 @@
-import { ClaimActions, ConnectorActions } from "@/reasonScore/ActionTypes";
-import { newClaim } from "@/reasonScore/Claim";
+import { ClaimActions, ConnectorActions } from "@/reasonScore/types/ActionTypes";
+import { newClaim } from "@/reasonScore/types/Claim";
 import { DisplayNodeData, FlowDataState } from "../types/types";
 import generateSimpleAnimalClaim from "./generateClaimContent";
-import { newConnector, Affects } from "@/reasonScore/Connector";
+import { newConnector, Affects } from "@/reasonScore/types/Connector";
 
 
 const addNode = ({

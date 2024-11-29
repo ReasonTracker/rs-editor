@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { DevContext, FlowDataContext } from "./FlowDataProvider";
 import { Drawer, Button, IconName, Divider } from "@blueprintjs/core";
-import { ClaimActions, ConnectorActions } from "@/reasonScore/ActionTypes";
+import { ClaimActions, ConnectorActions } from "@/reasonScore/types/ActionTypes";
 import { calculateScores } from "@/reasonScore/scoring/TypeA/calculateScores";
 import { useReactFlow } from "reactflow";
 

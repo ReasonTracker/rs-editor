@@ -1,5 +1,5 @@
-import { Item } from "../../Item";
-import { ScoreBase } from "../../ScoreBase";
+import { Item } from "../../types/Item";
+import { ScoreBase } from "../../types/ScoreBase";
 import { newId } from '@/reasonScore/newId';
 
 export interface Score extends ScoreRequired, Omit<Item, 'type'> {

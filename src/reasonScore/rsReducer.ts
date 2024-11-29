@@ -1,9 +1,7 @@
-import { log } from "console";
-import { ActionTypes, ClaimActions, ConnectorActions, ItemAction, generateItemActionType, hasItemData } from "./ActionTypes";
-import { Claim, isClaim } from "./Claim";
-import { Connector, isConnector } from "./Connector";
-import { DebateData } from "./DebateData";
-import { Item } from "./Item";
+import { ActionTypes, ClaimActions, ConnectorActions, generateItemActionType, hasItemData } from "./types/ActionTypes";
+import { Claim, isClaim } from "./types/Claim";
+import { Connector, isConnector } from "./types/Connector";
+import { DebateData } from "./types/DebateData";
 
 export function rsReducer(actions: ActionTypes[], debateData: DebateData) {
     const newDebateData = { ...debateData }; //TODO: we assume a change will happen, should we?
