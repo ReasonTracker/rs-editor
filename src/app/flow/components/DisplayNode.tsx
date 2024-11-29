@@ -5,7 +5,7 @@ import { DisplayNodeData, ConfidenceEdgeData, DisplayEdgeData, RelevanceEdgeData
 import { DevContext, FlowDataContext, FlowDataProvider } from './FlowDataProvider';
 import addNode from '../utils/addNode';
 import { stackSpace } from '@/utils/stackSpace';
-import { ClaimActions } from '@/reasonScoreNext/ActionTypes';
+import { ClaimActions } from '@/reasonScore/ActionTypes';
 
 const MAX_STROKE_WIDTH = 25
 const HALF_STROKE_WIDTH = MAX_STROKE_WIDTH / 2

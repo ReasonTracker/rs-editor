@@ -1,5 +1,5 @@
 
-import { Connector } from "@/reasonScoreNext/Connector";
+import { Connector } from "@/reasonScore/Connector";
 import { Score } from "./Score";
 
 /**

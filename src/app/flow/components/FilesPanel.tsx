@@ -4,8 +4,8 @@ import { Drawer, Button, IconName } from "@blueprintjs/core";
 import saveToLocalFile from "@/utils/localFiles/saveToLocalFile";
 import readFromLocalFile from "@/utils/localFiles/readFromLocalFile";
 import { useReactFlow } from "reactflow";
-import { Debate } from "@/reasonScoreNext/Debate";
-import { DebateData } from "@/reasonScoreNext/DebateData";
+import { Debate } from "@/reasonScore/Debate";
+import { DebateData } from "@/reasonScore/DebateData";
 
 const FilesPanelButton = ({
     label,

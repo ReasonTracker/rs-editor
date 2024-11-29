@@ -2,18 +2,18 @@
 
 import { ReactNode, createContext, use, useEffect, useState } from 'react';
 import { useEdgesState, useNodesState } from 'reactflow';
-import { ActionTypes } from '@/reasonScoreNext/ActionTypes';
+import { ActionTypes } from '@/reasonScore/ActionTypes';
 import { flowDataReducer } from '../utils/flowDataReducer';
-import { DebateData } from '@/reasonScoreNext/DebateData';
+import { DebateData } from '@/reasonScore/DebateData';
 import {
     DisplayNodeData,
     DisplayEdgeData,
     DevContextState,
     FlowDataState,
 } from "@/app/flow/types/types";
-import { Debate, newDebate } from '@/reasonScoreNext/Debate';
+import { Debate, newDebate } from '@/reasonScore/Debate';
 import addNode from '../utils/addNode';
-import { newId } from '@/reasonScoreNext/newId';
+import { newId } from '@/reasonScore/newId';
 
 
 const initialFlowDataState: FlowDataState = {
