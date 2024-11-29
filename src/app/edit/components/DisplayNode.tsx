@@ -1,11 +1,12 @@
 import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useReactFlow, useStore } from 'reactflow';
-import { Fragment, useContext, useMemo, useState } from 'react';
+import { Fragment, useContext, useMemo } from 'react';
 import { Button, TextArea, Tooltip } from '@blueprintjs/core';
-import { DisplayNodeData, ConfidenceEdgeData, DisplayEdgeData, RelevanceEdgeData } from '@/app/edit/types/types';
-import { DevContext, FlowDataContext, FlowDataProvider } from './FlowDataProvider';
+import { DisplayNodeData, RelevanceEdgeData } from '@/app/edit/types/types';
+import { DevContext, FlowDataContext } from './FlowDataProvider';
 import addNode from '../utils/addNode';
 import { stackSpace } from '@/utils/stackSpace';
-import { ClaimActions } from '@/reasonScore/types/ActionTypes';
+import { ActionTypes, ClaimActions } from '@/reasonScore/types/ActionTypes';
+import { createConnectorsIndexes } from '@/reasonScore/scoring/TypeA/createConnectorsByTarget';
 
 const MAX_STROKE_WIDTH = 25
 const HALF_STROKE_WIDTH = MAX_STROKE_WIDTH / 2
@@ -615,28 +616,33 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 </Tooltip>
 
 
-                {/* <Tooltip content="Delete this claim" position="right">
+                <Tooltip content="Delete this claim" position="right">
                     <Button
                         minimal
                         small
                         className=""
                         onClick={() => {
-                            console.log("delete")
-                            const claimAction: ClaimActions = {
-                                type: "delete",
-                                newData: { id, type: "claim" },
-                            };
-                    
-                            console.log("deleteNode", claimAction);
-                    
-                            flowDataState.dispatch([claimAction]);
-                            
+                            const { debateData } = flowDataState;
+                            const connectorsIndex = createConnectorsIndexes(debateData);
 
-                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                            const actions: ActionTypes[] = [
+                                { type: "delete", newData: { id, type: "claim" }, },
+                            ];
+
+                            // Disconnect this claim from it's parent
+                            for (const connector of connectorsIndex.bySource[id]) {
+                                actions.push({ type: "delete", newData: { id: connector.id, type: "connector" } });
+                            }
+
+                            // build actions to recursively delete children
+                            deleteConnectorsAndClaims(id, connectorsIndex, actions);
+
+                            flowDataState.dispatch(actions);
+                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                         icon="trash"
                     />
-                </Tooltip> */}
+                </Tooltip>
 
 
                 {/* <Tooltip content="Collapse" position="right">
@@ -711,4 +717,16 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             />
         </div>
     );
+}
+
+function deleteConnectorsAndClaims(id: string, connectorsIndex: any, actions: ActionTypes[]) {
+    if (!connectorsIndex.byTarget[id]) return;
+
+    for (const connector of connectorsIndex.byTarget[id]) {
+        actions.push({ type: "delete", newData: { id: connector.id, type: "connector" } });
+        actions.push({ type: "delete", newData: { id: connector.source, type: "claim" } });
+
+        // Recursively delete connectors and claims for the source
+        deleteConnectorsAndClaims(connector.source, connectorsIndex, actions);
+    }
 }

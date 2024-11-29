@@ -4,6 +4,7 @@ import { Score } from "./Score";
 import { sortSourceIdsFirst } from "../../sortSourceIdsFirst";
 import { calculateRelevance } from "./calculateRelevance";
 import { calculateConfidence } from "./calculateConfidence";
+import { createConnectorsIndexes } from "./createConnectorsByTarget";
 
 export function calculateScores(debateData: DebateData) {
     let ids = sortSourceIdsFirst(debateData.connectors);
@@ -14,16 +15,7 @@ export function calculateScores(debateData: DebateData) {
     let scores: { [id: string]: Score } = {};
 
     /** index for quickly finding connectors by target */
-    let connectorsByTarget: { [id: string]: Connector[] } = {}
-    Object.values(debateData.connectors).forEach(connector => {
-        const sourceId = connector.target;
-
-        if (!connectorsByTarget[sourceId]) {
-            connectorsByTarget[sourceId] = [];
-        }
-
-        connectorsByTarget[sourceId].push(connector);
-    });
+    let connectorsByTarget: { [id: string]: Connector[]; } = createConnectorsIndexes(debateData).byTarget;
 
     for (const id of ids) {
         const claim = debateData.claims[id];

@@ -19,7 +19,7 @@ export type generateItemActionType<Type extends Claim | Connector> = {
     newData: Partial<Type> & { id: string, type: Type["type"]},
 }| {
     type: `delete`,
-    newData: Partial<Type> & { id: string, type: string },
+    newData: Partial<Type> & { id: string, type: Type["type"] },
 }
 
 export function hasItemData(object: any): object is generateItemActionType<Claim | Connector> {
