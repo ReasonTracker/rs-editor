@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import "./ScoreBoard.css";
+import "./ScoreBoard.module.css";
 
 export default function ScoreBoard({ score }: { score: number | undefined }) {
 

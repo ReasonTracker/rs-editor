@@ -10,7 +10,7 @@ import {
     DisplayEdgeData,
     DevContextState,
     FlowDataState,
-} from "@/app/flow/types/types";
+} from "@/app/edit/types/types";
 import { Debate, newDebate } from '@/reasonScore/Debate';
 import addNode from '../utils/addNode';
 import { newId } from '@/reasonScore/newId';

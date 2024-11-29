@@ -6,7 +6,7 @@ import { useContext, useRef } from 'react';
 import DisplayNode from './DisplayNode'
 import DisplayEdge from './DisplayEdge'
 import ScoreBoard from '../../../components/ScoreBoard';
-import DevPanel from '../components/DevPanel';
+import DevPanel from './DevPanel';
 import FilesPanel from './FilesPanel';
 
 

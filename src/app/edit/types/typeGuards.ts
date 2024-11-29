@@ -1,4 +1,4 @@
-import { ConfidenceEdgeData, RelevanceEdgeData } from "@/app/flow/types/types";
+import { ConfidenceEdgeData, RelevanceEdgeData } from "@/app/edit/types/types";
 
 export function isConfidenceEdgeData(data: ConfidenceEdgeData | RelevanceEdgeData | undefined): data is ConfidenceEdgeData {
     return data?.type === "confidence";

@@ -1,7 +1,7 @@
 import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useReactFlow, useStore } from 'reactflow';
 import { Fragment, useContext, useMemo, useState } from 'react';
 import { Button, TextArea, Tooltip } from '@blueprintjs/core';
-import { DisplayNodeData, ConfidenceEdgeData, DisplayEdgeData, RelevanceEdgeData } from '@/app/flow/types/types';
+import { DisplayNodeData, ConfidenceEdgeData, DisplayEdgeData, RelevanceEdgeData } from '@/app/edit/types/types';
 import { DevContext, FlowDataContext, FlowDataProvider } from './FlowDataProvider';
 import addNode from '../utils/addNode';
 import { stackSpace } from '@/utils/stackSpace';

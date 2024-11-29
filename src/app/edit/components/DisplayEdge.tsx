@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { BaseEdge, BezierEdge, EdgeLabelRenderer, EdgeProps, EdgeText, ReactFlowState, getBezierPath, useStore } from 'reactflow';
-import { ConfidenceEdgeData, RelevanceEdgeData } from '@/app/flow/types/types'
-import { isConfidenceEdgeData, isRelevanceEdgeData } from '@/app/flow/types/typeGuards'
+import { ConfidenceEdgeData, RelevanceEdgeData } from '@/app/edit/types/types'
+import { isConfidenceEdgeData, isRelevanceEdgeData } from '@/app/edit/types/typeGuards'
 import { DevContext } from './FlowDataProvider';
 
 const maxStrokeWidth = 25;

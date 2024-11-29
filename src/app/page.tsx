@@ -6,8 +6,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <h1>Reason Score Editor</h1>
-      <Link href="/flow">Flow</Link>
-
+      <Link href="/edit">Editor</Link>
     </main>
   )
 }

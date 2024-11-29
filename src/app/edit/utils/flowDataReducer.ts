@@ -11,7 +11,7 @@ import {
     DispatchType,
     DisplayEdgeData,
     RelevanceEdgeData,
-} from "@/app/flow/types/types";
+} from "@/app/edit/types/types";
 import getLayoutedElements from "./getLayoutedElements";
 import { scaleStacked, sizeStacked, stackSpace } from "@/utils/stackSpace";
 import { GUTTER } from "../data/config";
