@@ -8,6 +8,7 @@ import DisplayEdge from './DisplayEdge'
 import ScoreBoard from '../../../components/ScoreBoard';
 import DevPanel from './DevPanel';
 import FilesPanel from './FilesPanel';
+import TimelinePanel from './TimelinePanel';
 
 
 const nodeTypes = { rsNode: DisplayNode };
@@ -16,14 +17,7 @@ const edgeTypes = { rsEdge: DisplayEdge };
 export default function Flow() {
 
     const menuRef = useRef(null);
-
     const flowDataState = useContext(FlowDataContext);
-
-    // // addNode({ x }) for dev
-    // useEffect(() => {
-    //     addNode({ flowDataState, isNewNodePro: true, claimId: "mainClaim" })
-    // }, [])
-
     const mainScore = flowDataState.displayNodes.find((n) => n.id === flowDataState.debate.mainClaimId)?.data?.score;
 
     return (
@@ -57,6 +51,7 @@ export default function Flow() {
                 <div className="bp5-dark react-flow__panel react-flow__controls top right">
                     <FilesPanel />
                     <DevPanel />
+                    <TimelinePanel />
                 </div>
 
             </ReactFlow>
