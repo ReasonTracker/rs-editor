@@ -6,22 +6,20 @@ import readFromLocalFile from "@/utils/localFiles/readFromLocalFile";
 import { useReactFlow } from "reactflow";
 import { Debate } from "@/reasonScore/types/Debate";
 import { DebateData } from "@/reasonScore/types/DebateData";
+import { Claim } from "@/reasonScore/types/Claim";
+import { createDict } from "@/utils/createDict";
 
 const FilesPanelButton = ({
     label,
-    icon,
     onClick,
 }: {
     label: string;
-    icon: IconName;
     onClick: () => void;
 }) => {
     return (
         <Button
             className="w-full justify-start"
             onClick={onClick}
-            icon={icon}
-            minimal
             text={label}
         />
     );
@@ -43,7 +41,7 @@ const FilesPanel = () => {
                 }}
                 icon="chevron-left"
                 minimal
-                style={{opacity: 0.25}}
+                style={{ opacity: 0.25 }}
             >
                 Files
             </Button>
@@ -60,11 +58,13 @@ const FilesPanel = () => {
                 usePortal={false}
                 enforceFocus={false}
                 autoFocus={false}
-                style={
-                    { position: "fixed" } // Odd that this is needed Otherwise the drawer is transparent
-                }
+                style={{
+                    position: "fixed", // Odd that this is needed Otherwise the drawer is transparent
+                }}
             >
-                <div className="flex flex-col space-y-2 mt-4">
+                <div className="flex flex-col space-y-2 mt-4"
+                    style={{ padding: "0 .5rem" }}
+                >
 
                     <FilesPanelButton
                         onClick={() => {
@@ -74,7 +74,6 @@ const FilesPanel = () => {
                                 debateData
                             }), "debateData.json");
                         }}
-                        icon={"console"}
                         label={"Save Data to a file"}
                     />
 
@@ -91,8 +90,43 @@ const FilesPanel = () => {
                                 reactFlowInstance.fitView();
                             }, 500);
                         }}
-                        icon={"console"}
                         label={"load Data from a file"}
+                    />
+
+                    <FilesPanelButton
+                        onClick={async () => {
+                            console.log("reading from file");
+                            const fileResult = await readFromLocalFile<Array<any>>(
+                                (data) => {
+                                    data = `[${data.slice(0, -1)}]`
+                                    console.log(data)
+                                    return data
+                                }
+                            ).catch((e) => {
+                                console.error(e);
+                            }) as Array<any>;
+
+                            console.log(fileResult)
+                            const debate: Debate = {
+                                "mainClaimId": fileResult[0].id,
+                                "type": "debate",
+                                "name": "",
+                                "description": "",
+                                "id": fileResult[0].id
+                            }
+                            const debateData: DebateData = {
+                                "claims": createDict(fileResult.filter((item: Claim) => item.type === "claim"), "id"),
+                                "connectors": createDict(fileResult.filter((item: any) => item.type === "connector"), "id")
+                            }
+                            flowDataState.dispatchReset([], debateData, debate)
+
+                            console.log({ debateData, debate })
+
+                            setTimeout(() => {
+                                reactFlowInstance.fitView();
+                            }, 500);
+                        }}
+                        label={"Load Airtable data from a file"}
                     />
 
                 </div>

@@ -1,4 +1,4 @@
-export default async function readFromLocalFile<T>(): Promise<T> {
+export default async function readFromLocalFile<T>(processString?: (input: string) => string): Promise<T> {
     return new Promise<T>((resolve, reject) => {
         const element = document.createElement('div');
         element.innerHTML = '<input type="file">';
@@ -10,7 +10,15 @@ export default async function readFromLocalFile<T>(): Promise<T> {
                     if (file.name.match(/\.(txt|json)$/)) {
                         var reader = new FileReader();
                         reader.onload = async function () {
-                            resolve(JSON.parse(reader.result as string));
+                            try {
+                                let result = reader.result as string;
+                                if (processString) {
+                                    result = processString(result);
+                                }
+                                resolve(JSON.parse(result));
+                            } catch (error) {
+                                reject(error);
+                            }
                         }
                         reader.readAsText(file);
                     } else {

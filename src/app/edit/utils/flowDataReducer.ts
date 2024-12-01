@@ -70,7 +70,7 @@ export function flowDataReducer({
         for (const score of Object.values(newScores)) {
             const claim = newDebateData.claims[score.id]
             if (!claim) {
-                console.log("No claim found for id:", score.id);
+                console.log("No claim found for id :", score.id);
                 continue;
             }
 

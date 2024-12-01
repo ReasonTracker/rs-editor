@@ -20,7 +20,7 @@ export function calculateScores(debateData: DebateData) {
     for (const id of ids) {
         const claim = debateData.claims[id];
         if (!claim) {
-            console.log("No claim found for id:", id);
+            console.error("No claim found for id:", id);
             continue;
         }
         const children = connectorsByTarget[id]?.map(connector => {
