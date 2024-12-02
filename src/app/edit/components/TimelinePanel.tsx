@@ -4,6 +4,9 @@ import { Drawer, Button, Slider } from "@blueprintjs/core";
 import { useReactFlow } from "reactflow";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import { newClaim } from "@/reasonScore/types/Claim";
+import { ClaimActions, ConnectorActions } from "@/reasonScore/types/ActionTypes";
+import { newConnector } from "@/reasonScore/types/Connector";
 // import { TextPlugin } from "gsap/TextPlugin";
 // gsap.registerPlugin(TextPlugin)
 
@@ -28,11 +31,53 @@ const TimelinePanel = () => {
             }
         })
         timelineRef.current = tl;
-        tl.to({text:""}, {
-            text: "This is the animated text!",
-            duration: 3,
-            onUpdate: onUpdate
-        });
+        tl
+            .to({ text: "", id: flowDataState.debate.mainClaimId || "", }, {
+                text: "This is the animated text!",
+                duration: 3,
+                onUpdate: onUpdate
+            })
+
+            .call(function () {
+                let actions = [];
+
+                const newClaimData = newClaim({ content: "", id: "1"});
+                const claimAction: ClaimActions = {
+                    type: "add",
+                    newData: { ...newClaimData, pol:"pro" },
+                };
+            
+                actions.push(claimAction);
+                const newConnectorData = newConnector({
+                    source: newClaimData.id,
+                    target: flowDataState.debate.mainClaimId as string,
+                    proTarget: true,
+                    affects: "confidence"
+                });
+                const connectorAction: ConnectorActions = {
+                    type: "add",
+                    newData: newConnectorData,
+                };
+            
+                actions.push(connectorAction);
+                flowDataState.dispatch(actions);
+
+                setTimeout(() => {
+                    reactFlowInstance.fitView();
+                }, 500);
+
+            }, [], ">1")
+        
+        
+            .to({ text: "", id: "1", }, {
+                text: "Second ANimated Text",
+                duration: 3,
+                onUpdate: onUpdate
+            })
+            // .call(function () {
+            //     console.log("called2", tl.progress())
+            // }, [], ">1")
+
 
         // tl.progress(sliderValue);
     }, { dependencies: [] });
@@ -43,7 +88,7 @@ const TimelinePanel = () => {
         // myObject.text = targetText.substring(0, length)
         flowDataState.dispatch([{
             type: "modify", newData: {
-                id: flowDataState.debate.mainClaimId || "",
+                id: target.id,
                 type: "claim",
                 content: target.text,
             }
@@ -105,14 +150,14 @@ const TimelinePanel = () => {
                     <Button style={buttonStyle} onClick={pauseTimeline}>Pause</Button>
                     <Button style={buttonStyle} onClick={resetTimeline}>Reset</Button>
                 </div>
-                <div style={{padding:'0 30px'}}>
-                <Slider
-                    min={0}
-                    max={1}
-                    stepSize={0.01}
-                    onRelease={(value: number) => { timelineRef.current.progress(value) }}
-                    value={sliderValue}
-                // vertical={false}
+                <div style={{ padding: '0 30px' }}>
+                    <Slider
+                        min={0}
+                        max={1}
+                        stepSize={0.01}
+                        onRelease={(value: number) => { timelineRef.current.progress(value) }}
+                        value={sliderValue}
+                    // vertical={false}
                     />
                 </div>
 
