@@ -1,5 +1,4 @@
 'use client';
-import Link from 'next/link'
 import styles from './page.module.css'
 
 export default function Home() {
@@ -8,8 +7,8 @@ export default function Home() {
             <h1 className="">Reason Tracker</h1>
             <h2>COMING SOON</h2>
 
-            <h2>Decision analysis for all<sup style={{opacity:.5}}>*</sup>!</h2>
-            <h3>Videos about hard decisions</h3>
+            {/* <h2>Decision analysis for all<sup style={{opacity:.5}}>*</sup>!</h2> */}
+            <h2>Videos about hard decisions</h2>
             <p>
                 A video series where you help map out all the reasons for and against controvertial decisions.
             </p>
