@@ -14,6 +14,9 @@ export interface Claim extends Item {
 
     /** The polarity of the claim. */
     pol: 'pro' | 'con'
+
+    /** Used to set the confidence in the claim instead of being calculated. Only works if there are no children*/
+    forceConfidence?: number
 }
 
 /** Populates defaults */

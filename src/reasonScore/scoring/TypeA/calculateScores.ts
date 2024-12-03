@@ -34,7 +34,7 @@ export function calculateScores(debateData: DebateData) {
             type: 'score',
             id: claim.id,
             relevance: calculateRelevance(relevanceChildren),
-            confidence: calculateConfidence(confidenceChildren)
+            confidence: claim.forceConfidence || calculateConfidence(confidenceChildren)
         }
         scores[newScore.id] = newScore;
     }
