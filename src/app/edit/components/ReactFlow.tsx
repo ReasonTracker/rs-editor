@@ -9,6 +9,7 @@ import ScoreBoard from '../../../components/ScoreBoard';
 import DevPanel from './DevPanel';
 import FilesPanel from './FilesPanel';
 import TimelinePanel from './TimelinePanel';
+import ScoreVolume from '@/components/ScoreVolume';
 
 
 const nodeTypes = { rsNode: DisplayNode };
@@ -35,6 +36,9 @@ export default function Flow() {
             >
 
                 <ScoreBoard score={mainScore?.confidence} />
+                <ScoreVolume score={mainScore?.confidence}
+                    style={{ width: "410px", height: "20px", top:'220px', left:'80px', position:'absolute' }}
+                 />
 
                 <Controls
                     position='top-left'
