@@ -137,7 +137,7 @@ button.react-flow__controls-button:hover{
     font-size: 12px;
     color: white;
     text-align: left;
-    background-color: rgb(30 30 30 / 70%);
+    /* background-color: rgb(30 30 30 / 70%); */
 }
 
 .pro {
@@ -159,15 +159,15 @@ button.react-flow__controls-button:hover{
     grid-template-columns: 50px auto;
     grid-template-rows: minmax(auto, 25px) auto auto;
     grid-template-areas:
-        ".         .         scaleTo1Relevance        consolidateRelevance  incomingRelevance"
+        ".         .         scaleTo1Relevance              consolidateRelevance  incomingRelevance"
         "relevance cancelOut scaleTo1 consolidate           weightByConfidence"
-        "relevance content   scaleTo1 consolidate           weightByConfidence"
-        ".         content   scaleTo1 consolidate           weightByConfidence";
+        "content   content   scaleTo1 consolidate           weightByConfidence"
+        "content   content   scaleTo1 consolidate           weightByConfidence";
 }
 
 .rsContent {
     padding: 10px;
-    width: 150px;
+    width: 300px;
     border-radius: 0 0 0.5rem 0.5rem;
     border-top: 0;
 }
