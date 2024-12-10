@@ -66,6 +66,8 @@ const DataPanel = () => {
                     style={{ padding: "0 .5rem" }}
                 >
 
+<h1>Local Files</h1>
+
                     <DataPanelButton
                         onClick={() => {
                             const { debate, debateData } = flowDataState
@@ -129,6 +131,7 @@ const DataPanel = () => {
                         label={"Load Airtable data from a file"}
                     />
                     <hr style={{ margin: "20px" }} />
+                    <h1>Cut and paste</h1>
 <TextArea id="dataIn"/>
 <DataPanelButton
                         onClick={async () => {
