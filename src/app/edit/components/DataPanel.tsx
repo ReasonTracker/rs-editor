@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { FlowDataContext } from "./FlowDataProvider";
-import { Drawer, Button, IconName } from "@blueprintjs/core";
+import { Drawer, Button, IconName, TextArea } from "@blueprintjs/core";
 import saveToLocalFile from "@/utils/localFiles/saveToLocalFile";
 import readFromLocalFile from "@/utils/localFiles/readFromLocalFile";
 import { useReactFlow } from "reactflow";
@@ -9,7 +9,7 @@ import { DebateData } from "@/reasonScore/types/DebateData";
 import { Claim } from "@/reasonScore/types/Claim";
 import { createDict } from "@/utils/createDict";
 
-const FilesPanelButton = ({
+const DataPanelButton = ({
     label,
     onClick,
 }: {
@@ -25,7 +25,7 @@ const FilesPanelButton = ({
     );
 };
 
-const FilesPanel = () => {
+const DataPanel = () => {
     const flowDataState = useContext(FlowDataContext);
     const [isPanelOpen, setIsPanelOpen] = useState(false);
     const reactFlowInstance = useReactFlow()
@@ -43,13 +43,13 @@ const FilesPanel = () => {
                 minimal
                 style={{ opacity: 0.25 }}
             >
-                Files
+                Data
             </Button>
             <Drawer
                 hasBackdrop={false}
                 isOpen={isPanelOpen}
                 onClose={() => setIsPanelOpen(false)}
-                title="Files"
+                title="Data"
                 canOutsideClickClose={false}
                 canEscapeKeyClose={true}
                 position="right"
@@ -66,7 +66,7 @@ const FilesPanel = () => {
                     style={{ padding: "0 .5rem" }}
                 >
 
-                    <FilesPanelButton
+                    <DataPanelButton
                         onClick={() => {
                             const { debate, debateData } = flowDataState
                             saveToLocalFile(JSON.stringify({
@@ -77,7 +77,7 @@ const FilesPanel = () => {
                         label={"Save Data to a file"}
                     />
 
-                    <FilesPanelButton
+                    <DataPanelButton
                         onClick={async () => {
                             console.log("reading from file");
                             const { debate, debateData } = await readFromLocalFile().catch((e) => {
@@ -93,7 +93,7 @@ const FilesPanel = () => {
                         label={"load Data from a file"}
                     />
 
-                    <FilesPanelButton
+                    <DataPanelButton
                         onClick={async () => {
                             console.log("reading from file");
                             const fileResult = await readFromLocalFile<Array<any>>(
@@ -128,11 +128,40 @@ const FilesPanel = () => {
                         }}
                         label={"Load Airtable data from a file"}
                     />
+                    <hr style={{ margin: "20px" }} />
+<TextArea id="dataIn"/>
+<DataPanelButton
+                        onClick={async () => {
+                            const dataInElement = document.getElementById("dataIn") as HTMLTextAreaElement;
+                             const dataString = `[${dataInElement.value.slice(0, -1)}]`
+                            const dataObject = JSON.parse(dataString) as any[];
 
+                            console.log(dataObject)
+                            const debate: Debate = {
+                                "mainClaimId": dataObject[0].id,
+                                "type": "debate",
+                                "name": "",
+                                "description": "",
+                                "id": dataObject[0].id
+                            }
+                            const debateData: DebateData = {
+                                "claims": createDict(dataObject.filter((item: Claim) => item.type === "claim"), "id"),
+                                "connectors": createDict(dataObject.filter((item: any) => item.type === "connector"), "id")
+                            }
+                            flowDataState.dispatchReset([], debateData, debate)
+
+                            console.log({ debateData, debate })
+
+                            setTimeout(() => {
+                                reactFlowInstance.fitView();
+                            }, 500);
+                        }}
+                        label={"Load Airtable data from text above"}
+                    />
                 </div>
             </Drawer>
         </div>
     );
 };
 
-export default FilesPanel;
+export default DataPanel;

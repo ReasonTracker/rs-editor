@@ -7,7 +7,7 @@ import DisplayNode from './DisplayNode'
 import DisplayEdge from './DisplayEdge'
 import ScoreBoard from '../../../components/ScoreBoard';
 import DevPanel from './DevPanel';
-import FilesPanel from './FilesPanel';
+import DataPanel from './DataPanel';
 import TimelinePanel from './TimelinePanel';
 import ScoreVolume from '@/components/ScoreVolume';
 
@@ -53,7 +53,7 @@ export default function Flow() {
                 />
 
                 <div className="bp5-dark react-flow__panel react-flow__controls top right">
-                    <FilesPanel />
+                    <DataPanel />
                     <DevPanel />
                     <TimelinePanel />
                 </div>
