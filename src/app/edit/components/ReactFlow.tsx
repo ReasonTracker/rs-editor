@@ -35,8 +35,8 @@ export default function Flow() {
                 minZoom={0.01}
             >
 
-                <ScoreBoard score={mainScore?.confidence} />
-                <ScoreVolume score={mainScore?.confidence}
+                <ScoreBoard score={mainScore?.reversibleConfidence} />
+                <ScoreVolume score={mainScore?.reversibleConfidence}
                     style={{ width: "410px", height: "20px", top:'220px', left:'80px', position:'absolute' }}
                  />
 

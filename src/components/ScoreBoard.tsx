@@ -19,6 +19,7 @@ export default function ScoreBoard({ score }: { score: number | undefined }) {
                 return newScore.toString().padStart(2, " ") +
                     (100 - newScore).toString().padStart(2, " ");
             })
+            console.log("score", score)
         }
 
         effect();

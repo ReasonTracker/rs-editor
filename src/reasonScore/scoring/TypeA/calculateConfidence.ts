@@ -5,10 +5,19 @@ import { Score } from "./Score";
  * an average of all the children confidences weighted by their relevance and reversed if they are a con
  * @param children only child scores that affect confidence
  */
-export function calculateConfidence(children: { score: Score, connector?: Connector }[]) {
+export function calculateConfidence(
+    children: { score: Score, connector?: Connector }[]
+): {
+    confidence: number,
+    reversibleConfidence: number
+} {
 
     // If there are no confidence Children then we assume a confidence of 1
-    if (children.length < 1) { return 1; }
+    if (children.length < 1) {
+        return {
+            confidence: 1,
+            reversibleConfidence: 1
+    }; }
 
     let ChildrenWeight = 0;
     for (const child of children) {
@@ -27,9 +36,13 @@ export function calculateConfidence(children: { score: Score, connector?: Connec
         }
     }
 
+    const reversibleConfidence = confidence;
     if (confidence < 0) confidence = 0;
 
-    return confidence;
+    return {
+        confidence,
+        reversibleConfidence
+    };
 }
 
 function weight(score: Score) {

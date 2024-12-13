@@ -30,11 +30,14 @@ export function calculateScores(debateData: DebateData) {
         const confidenceChildren = children.filter(child => child.connector?.affects === 'confidence');
         const relevanceChildren = children.filter(child => child.connector?.affects === 'relevance');
 
+        const { confidence, reversibleConfidence } = calculateConfidence(confidenceChildren);
+
         const newScore: Score = {
             type: 'score',
             id: claim.id,
             relevance: calculateRelevance(relevanceChildren),
-            confidence: claim.forceConfidence || calculateConfidence(confidenceChildren)
+            confidence: claim.forceConfidence || confidence,
+            reversibleConfidence
         }
         scores[newScore.id] = newScore;
     }
