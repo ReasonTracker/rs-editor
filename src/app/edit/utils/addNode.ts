@@ -1,7 +1,7 @@
 import { ClaimActions, ConnectorActions } from "@/reasonScore/types/ActionTypes";
 import { newClaim } from "@/reasonScore/types/Claim";
 import { DisplayNodeData, FlowDataState } from "../types/types";
-import generateSimpleAnimalClaim from "./generateClaimContent";
+// import generateSimpleAnimalClaim from "./generateClaimContent";
 import { newConnector, Affects } from "@/reasonScore/types/Connector";
 
 
@@ -22,7 +22,10 @@ const addNode = ({
 }) => {
     let actions = [];
 
-    const newClaimData = newClaim({ content: generateSimpleAnimalClaim(), id: claimId});
+    const newClaimData = newClaim({
+        content: "-", //generateSimpleAnimalClaim(),
+        id: claimId
+    });
 
     const pol = isNewNodePro ? "pro" : "con";
 

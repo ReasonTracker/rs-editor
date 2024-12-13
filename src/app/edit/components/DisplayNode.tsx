@@ -1,11 +1,11 @@
 import { Edge, Handle, NodeProps, Position, ReactFlowState, getBezierPath, useReactFlow, useStore } from 'reactflow';
 import { Fragment, useContext, useMemo } from 'react';
-import { Button, TextArea, Tooltip } from '@blueprintjs/core';
+import { Button, TextArea } from '@blueprintjs/core';
 import { DisplayNodeData, RelevanceEdgeData } from '@/app/edit/types/types';
 import { DevContext, FlowDataContext } from './FlowDataProvider';
 import addNode from '../utils/addNode';
 import { stackSpace } from '@/utils/stackSpace';
-import { ActionTypes, ClaimActions } from '@/reasonScore/types/ActionTypes';
+import { ActionTypes } from '@/reasonScore/types/ActionTypes';
 import { createConnectorsIndexes } from '@/reasonScore/scoring/TypeA/createConnectorsByTarget';
 
 const MAX_STROKE_WIDTH = 25
@@ -197,6 +197,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             );
         })}
     </>)
+
     const scaleTo1 = (
         <div className="rsCalc rs-scaleTo1" style={{ gridArea: 'scaleTo1' }}>
             <svg height={calculatedHeight} width={'50px'}>
@@ -465,55 +466,52 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     const devButtons = (
         <>
 
-            <Tooltip content="calculatedHeight" position="right">
-                <Button
-                    minimal
-                    small
-                    className="mb-1"
-                    icon="helicopter"
-                    onClick={() => {
-                        console.log("calculatedHeight", calculatedHeight)
-                    }}
-                />
-            </Tooltip>
-            <Tooltip content="data" position="right">
-                <Button
-                    minimal
-                    small
-                    className="mb-1"
-                    icon="database"
-                    onClick={() => {
-                        console.log(id, data)
-                        console.log("confidence", data.score.confidence)
-                        console.log("totalConfidence", totalConfidence)
-                        console.log("cancelOutStacked", data.cancelOutStacked)
-                    }}
-                />
-            </Tooltip>
-            <Tooltip content="allSources" position="right">
-                <Button
-                    minimal
-                    small
-                    className="mb-1"
-                    icon="sort-numerical"
-                    onClick={() => {
-                        allSources.map(s => {
-                            if (!s.data) return null;
-                            // const { cancelOutStacked, consolidatedStacked, scaledTo1Stacked } = s.data;
-                            console.log(`${s.id}----`)
-                            // console.log("cancelOutStacked", cancelOutStacked)
-                            // console.log("totalConfidence", totalConfidence)
+            <Button
+                title="calculatedHeight"
+                minimal
+                small
+                className="mb-1"
+                icon="helicopter"
+                onClick={() => {
+                    console.log("calculatedHeight", calculatedHeight)
+                }}
+            />
+            <Button
+                title="data"
+                minimal
+                small
+                className="mb-1"
+                icon="database"
+                onClick={() => {
+                    console.log(id, data)
+                    console.log("confidence", data.score.confidence)
+                    console.log("totalConfidence", totalConfidence)
+                    console.log("cancelOutStacked", data.cancelOutStacked)
+                }}
+            />
+            <Button
+                title="allSources"
+                minimal
+                small
+                className="mb-1"
+                icon="sort-numerical"
+                onClick={() => {
+                    allSources.map(s => {
+                        if (!s.data) return null;
+                        // const { cancelOutStacked, consolidatedStacked, scaledTo1Stacked } = s.data;
+                        console.log(`${s.id}----`)
+                        // console.log("cancelOutStacked", cancelOutStacked)
+                        // console.log("totalConfidence", totalConfidence)
 
-                            const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
-                            const scaledTo1Stacked = stackSpace()(percentOfWeight)
-                            console.log("percentOfWeight", percentOfWeight)
-                            console.log("scaledTo1Stacked", scaledTo1Stacked)
+                        const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
+                        const scaledTo1Stacked = stackSpace()(percentOfWeight)
+                        console.log("percentOfWeight", percentOfWeight)
+                        console.log("scaledTo1Stacked", scaledTo1Stacked)
 
-                        })
-                        console.log("allSources", allSources)
-                    }}
-                />
-            </Tooltip>
+                    })
+                    console.log("allSources", allSources)
+                }}
+            />
         </>
     )
     const rsContent = (
@@ -566,83 +564,78 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 }}
             >
                 {dev.isDev ? devButtons : null}
-                <Tooltip content="Add Relevance" position="right">
-                    <Button
-                        minimal
-                        small
-                        className="mb-1 !bg-pro"
-                        icon="plus"
-                        onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })
-                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                        }}
-                    />
-                </Tooltip>
-                <Tooltip content="Add Relevance" position="right">
-                    <Button
-                        minimal
-                        small
-                        className="mb-1 !bg-con"
-                        icon="plus"
-                        onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' });
-                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                        }}
-                    />
-                </Tooltip>
-                <Tooltip content="Add Pro" position="right">
-                    <Button
-                        minimal
-                        small
-                        className="mb-1 !bg-pro"
-                        icon="plus"
-                        onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' });
-                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                        }}
-                    />
-                </Tooltip>
-                <Tooltip content="Add Con" position="right">
-                    <Button
-                        minimal
-                        small
-                        className="mb-1 !bg-con"
-                        onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
-                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                        }}
-                        icon="plus"
-                    />
-                </Tooltip>
+                <Button
+                    title="Add Pro Relevance"
+                    minimal
+                    small
+                    className="mb-1 !bg-pro"
+                    icon="plus"
+                    onClick={() => {
+                        addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })
+                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                    }}
+                />
+                <Button
+                    title="Add Con Relevance"
+                    minimal
+                    small
+                    className="mb-1 !bg-con"
+                    icon="plus"
+                    onClick={() => {
+                        addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' });
+                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                    }}
+                />
+                <Button
+                    title="Add Pro"
+                    minimal
+                    small
+                    className="mb-1 !bg-pro"
+                    icon="plus"
+                    onClick={() => {
+                        addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' });
+                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                    }}
+                />
+                <Button
+                    title="Add Con"
+                    minimal
+                    small
+                    className="mb-1 !bg-con"
+                    onClick={() => {
+                        addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
+                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                    }}
+                    icon="plus"
+                />
 
 
-                <Tooltip content="Delete this claim" position="right">
-                    <Button
-                        minimal
-                        small
-                        className=""
-                        onClick={() => {
-                            const { debateData } = flowDataState;
-                            const connectorsIndex = createConnectorsIndexes(debateData);
+                <Button
+                    title="Delete"
+                    minimal
+                    small
+                    className=""
+                    onClick={() => {
+                        const { debateData } = flowDataState;
+                        const connectorsIndex = createConnectorsIndexes(debateData);
 
-                            const actions: ActionTypes[] = [
-                                { type: "delete", newData: { id, type: "claim" }, },
-                            ];
+                        const actions: ActionTypes[] = [
+                            { type: "delete", newData: { id, type: "claim" }, },
+                        ];
 
-                            // Disconnect this claim from it's parent
-                            for (const connector of connectorsIndex.bySource[id]) {
-                                actions.push({ type: "delete", newData: { id: connector.id, type: "connector" } });
-                            }
+                        // Disconnect this claim from it's parent
+                        for (const connector of connectorsIndex.bySource[id]) {
+                            actions.push({ type: "delete", newData: { id: connector.id, type: "connector" } });
+                        }
 
-                            // build actions to recursively delete children
-                            deleteConnectorsAndClaims(id, connectorsIndex, actions);
+                        // build actions to recursively delete children
+                        deleteConnectorsAndClaims(id, connectorsIndex, actions);
 
-                            flowDataState.dispatch(actions);
-                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                        }}
-                        icon="trash"
-                    />
-                </Tooltip>
+                        flowDataState.dispatch(actions);
+                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                    }}
+                    icon="trash"
+                />
 
 
                 {/* <Tooltip content="Collapse" position="right">
