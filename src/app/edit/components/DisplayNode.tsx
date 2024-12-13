@@ -7,9 +7,12 @@ import addNode from '../utils/addNode';
 import { stackSpace } from '@/utils/stackSpace';
 import { ActionTypes } from '@/reasonScore/types/ActionTypes';
 import { createConnectorsIndexes } from '@/reasonScore/scoring/TypeA/createConnectorsByTarget';
+import { Margarine } from 'next/font/google';
 
 const MAX_STROKE_WIDTH = 25
 const HALF_STROKE_WIDTH = MAX_STROKE_WIDTH / 2
+
+const buttonStyle = { color: 'white', stroke: 'white', strokeWidth: 0, margin: '5px' }
 
 const calculateRelevanceHeight = (relevanceSources: Edge<RelevanceEdgeData>[]) => {
     const maxRelevanceSource = relevanceSources.reduce((maxSource: Edge<RelevanceEdgeData> | null, currentSource: Edge<RelevanceEdgeData>) => {
@@ -557,64 +560,94 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 />
             }
             <div
-                className="absolute -right-7 bottom-0 transform opacity-0 group-hover:opacity-100 transition flex flex-col"
+                className="absolute bottom-0 transform opacity-0 group-hover:opacity-100 transition flex flex-col"
                 style={{
                     scale: '.5',
-                    transformOrigin: 'bottom left'
+                    transformOrigin: 'bottom left',
+                    left: '100%',
+                    marginLeft: '.5rem',
+                    padding: '.5rem',
+                    width: '100px',
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)'
                 }}
             >
                 {dev.isDev ? devButtons : null}
-                <Button
-                    title="Add Pro Relevance"
-                    minimal
-                    small
-                    className="mb-1 !bg-pro"
-                    icon="plus"
-                    onClick={() => {
-                        addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })
-                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                    }}
-                />
-                <Button
-                    title="Add Con Relevance"
-                    minimal
-                    small
-                    className="mb-1 !bg-con"
-                    icon="plus"
-                    onClick={() => {
-                        addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' });
-                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                    }}
-                />
-                <Button
-                    title="Add Pro"
-                    minimal
-                    small
-                    className="mb-1 !bg-pro"
-                    icon="plus"
-                    onClick={() => {
-                        addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' });
-                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                    }}
-                />
-                <Button
-                    title="Add Con"
-                    minimal
-                    small
-                    className="mb-1 !bg-con"
-                    onClick={() => {
-                        addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
-                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                    }}
-                    icon="plus"
-                />
 
+                <h1>Confidence</h1>
+                <div>
+                    <Button
+                        title="Add Pro"
+                        minimal
+                        small
+                        className="mb-1 !bg-pro"
+                        icon="plus"
+                        intent="primary"
+                        style={buttonStyle}
+                        onClick={() => {
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' });
+                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        }}
+                    />
+                    <Button
+                        title="Add Con"
+                        minimal
+                        small
+                        intent="primary"
+                        className="mb-1 !bg-con"
+                        style={buttonStyle}
+                        onClick={() => {
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
+                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        }}
+                        icon="plus"
+                    />
+                </div>
 
+                <div
+                style={{marginTop: '1rem'}}
+                >Relevance</div>
+
+                <div>
+                    <Button
+                        title="Add Pro Relevance"
+                        minimal
+                        small
+                        className="mb-1 !bg-pro"
+                        icon="plus"
+                        style={buttonStyle}
+                        intent="primary"
+
+                        onClick={() => {
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })
+                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        }}
+                    />
+                    <Button
+                        title="Add Con Relevance"
+                        minimal
+                        small
+                        className="mb-1 !bg-con"
+                        icon="plus"
+                        style={buttonStyle}
+                        intent="primary"
+
+                        onClick={() => {
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' });
+                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        }}
+                    /></div>
+
+<div
+                style={{marginTop: '1rem'}}
+                ></div>
+                
                 <Button
                     title="Delete"
                     minimal
                     small
                     className=""
+                    style={buttonStyle}
+                    intent='primary'
                     onClick={() => {
                         const { debateData } = flowDataState;
                         const connectorsIndex = createConnectorsIndexes(debateData);
