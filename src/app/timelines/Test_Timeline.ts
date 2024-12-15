@@ -1,9 +1,12 @@
 import { ClaimActions, ConnectorActions } from "@/reasonScore/types/ActionTypes";
 import { newClaim } from "@/reasonScore/types/Claim";
 import { newConnector } from "@/reasonScore/types/Connector";
-import { TimelineProps } from "./_timelines"
+import { timelineMeta, TimelineProps } from "./_timelines"
 
-export const Test_Timeline = function (props: TimelineProps) {
+export const Test_Timeline: timelineMeta = {
+    name: "Test",
+    id: "Test_Timeline",
+    timelineConstructor: function (props: TimelineProps) {
     const { refs, gsap } = props
 
     function onUpdate(this: any) {
@@ -32,15 +35,15 @@ export const Test_Timeline = function (props: TimelineProps) {
     });
 
     tl
-        .to({ text: "", id: refs.current.flowDataState.debate.mainClaimId || "", }, {
-            text: "first text",
-            duration: 3,
-            onUpdate: onUpdate
-        })
+        // .to({ text: "", id: refs.current.flowDataState.debate.mainClaimId || "", }, {
+        //     text: "first text",
+        //     duration: 2,
+        //     onUpdate: onUpdate
+        // })
 
         .to({ text: "", id: refs.current.flowDataState.debate.mainClaimId || "", }, {
             text: "This is the animated text!",
-            duration: 3,
+            duration: 2,
             onUpdate: onUpdate
         })
 
@@ -124,9 +127,7 @@ export const Test_Timeline = function (props: TimelineProps) {
             }
         })
 
-    return {
-        name: "Test",
-        id: "Test_Timeline",
-        timeline: tl
+    return tl
+    
     }
 }

@@ -1,15 +1,18 @@
 import { ActionTypes } from "@/reasonScore/types/ActionTypes";
-import { Fictional_Clity } from "./Fictional_City";
+import { Fictional_City } from "./Fictional_City";
 import { ReactFlowInstance } from "reactflow";
 import { FlowDataState } from "../edit/types/types";
 import { Test_Timeline } from "./Test_Timeline";
 
-export const timelines: {[id:string]:(props: TimelineProps) => {
+export const timelines:{[id:string]:timelineMeta} = {
+    Test_Timeline,
+    Fictional_City,
+}
+
+export type timelineMeta = {
     name: string;
     id: string;
-    timeline: gsap.core.Timeline;
-}} = {
-    Test_Timeline,
+    timelineConstructor: (props: TimelineProps)=>gsap.core.Timeline;
 }
 
 export type TimelineProps = {

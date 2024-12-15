@@ -14,7 +14,7 @@ import { Test_Timeline } from "@/app/timelines/Test_Timeline";
 // gsap.registerPlugin(TextPlugin)
 
 const buttonStyle = {
-    width: "min-content",
+    // width: "min-content",
     margin: "10px",
     display: "inline-block",
 }
@@ -24,6 +24,7 @@ const TimelinePanel = () => {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
     const reactFlowInstance = useReactFlow()
     const [sliderValue, setsliderValue] = useState(0)
+    const [timeline, _setTimeline] = useState<gsap.core.Timeline | null>(null);
     const timelineRef = useRef<any>(null);
 
     const refs = useRef({ flowDataState, reactFlowInstance });
@@ -32,147 +33,30 @@ const TimelinePanel = () => {
         refs.current = { flowDataState, reactFlowInstance };
     }, [flowDataState, reactFlowInstance, timelineRef]);
 
-    useGSAP(() => {
-        // let tl = gsap.timeline({
-        //     paused: true,
-        //     onUpdate: () => {
-        //         setsliderValue(tl.progress());
-        //     }
-        // })
-        // timelineRef.current = tl;
-        // tl
-        //     .to({ text: "", id: flowDataState.debate.mainClaimId || "", }, {
-        //         text: "first text",
-        //         duration: 3,
-        //         onUpdate: onUpdate
-        //     })
+    const { contextSafe } = useGSAP(() => { });
 
-        //     .to({ text: "", id: flowDataState.debate.mainClaimId || "", }, {
-        //         text: "This is the animated text!",
-        //         duration: 3,
-        //         onUpdate: onUpdate
-        //     })
+    const setTimeline = contextSafe((id?: string) => {
+        if (timelineRef.current) {
+            timelineRef.current.kill();
+        }
+        let newTimeline = null;
+        if (id) {
+            newTimeline = timelines[id].timelineConstructor({
+                dispatch: flowDataState.dispatch,
+                refs,
+                gsap,
+            })
+            newTimeline.eventCallback("onUpdate", function (this: any) {
+                setsliderValue(this.time());
+            })
+        }
 
-        //     .call(function (this: any) {
-        //         // if (tl.progress() < lastProgress) {
-        //         if (tl.time() < this.startTime()) {
-        //             flowDataState.dispatch([
-        //                 { type: "delete", newData: { id: "1", type: "claim", } },
-        //                 { type: "delete", newData: { id: "l1", type: "connector", } },
-        //                 { type: "delete", newData: { id: "2", type: "claim", } },
-        //                 { type: "delete", newData: { id: "l2", type: "connector", } }
-        //             ])
-        //             fitView(.3);
-        //             return;
-        //         }
-
-        //         let actions = [];
-        //         const newClaimData = newClaim({ content: "", id: "1" });
-        //         newClaimData.forceConfidence = 0;
-        //         const claimAction: ClaimActions = {
-        //             type: "add",
-        //             newData: { ...newClaimData, pol: "con" },
-        //         };
-
-        //         const newClaimData2 = newClaim({ content: "", id: "2" });
-        //         const claimAction2: ClaimActions = {
-        //             type: "add",
-        //             newData: { ...newClaimData2, pol: "pro" },
-        //         };
-
-        //         actions.push(claimAction, claimAction2);
-
-        //         const newConnectorData = newConnector({
-        //             id: "l1",
-        //             source: newClaimData.id,
-        //             target: flowDataState.debate.mainClaimId as string,
-        //             proTarget: false,
-        //             affects: "confidence"
-        //         });
-        //         const connectorAction: ConnectorActions = {
-        //             type: "add",
-        //             newData: newConnectorData,
-        //         };
-        //         const newConnectorData2 = newConnector({
-        //             id: "l2",
-        //             source: newClaimData2.id,
-        //             target: flowDataState.debate.mainClaimId as string,
-        //             proTarget: true,
-        //             affects: "confidence"
-        //         });
-        //         const connectorAction2: ConnectorActions = {
-        //             type: "add",
-        //             newData: newConnectorData2,
-        //         };
-
-        //         actions.push(connectorAction,connectorAction2);
-        //         flowDataState.dispatch(actions);
-
-        //         fitView();
-
-        //     }, [], ">1.001")
-
-        //     .to({ text: "", id: "1", }, {
-        //         text: "Second Animated Text",
-        //         duration: 3,
-        //         onUpdate: onUpdate
-        //     })
-
-        //     .to({}, {
-        //         duration: 10,
-        //         onUpdate:function(this: any) {
-
-        //             flowDataState.dispatch([{
-        //                 type: "modify", newData: {
-        //                     id: "1",
-        //                     type: "claim",
-        //                     forceConfidence: this.progress(),
-        //                 }
-        //             }]);
-
-        //         } 
-        //     })
-
-
-        // let fitView = (seconds: number = 1) => {
-        //     setTimeout(() => {
-        //         refs.current.reactFlowInstance.fitView({ padding: 0.5, duration: seconds * 1000 });
-        //     }, 50);
-        // }
-
-        // tl.progress(sliderValue)
-
-
-
-        const newTimelineData = timelines.Test_Timeline({
-            dispatch: flowDataState.dispatch,
-            refs,
-            gsap,
-        })
-        newTimelineData.timeline.eventCallback("onUpdate", function (this:any) {
-            setsliderValue(this.progress());
-        })
-        timelineRef.current = newTimelineData.timeline;
-    }, { dependencies: [] });
-
-    function onUpdate(this: any) {
-        //  console.log("onUpdate", this.vars.text, this.progress())
-        const target = this.targets()[0];
-        target.text = this.vars.text.substring(0, this.progress() * this.vars.text.length);
-        // myObject.text = targetText.substring(0, length)
-        flowDataState.dispatch([{
-            type: "modify", newData: {
-                id: target.id,
-                type: "claim",
-                content: target.text,
-            }
-        }]);
-
-    }
+        timelineRef.current = newTimeline;
+        _setTimeline(newTimeline);
+    })
 
     const playTimeline = () => {
         timelineRef.current.play();
-        console.log("timelineRef.current", timelineRef.current)
     };
 
     const pauseTimeline = () => {
@@ -216,27 +100,32 @@ const TimelinePanel = () => {
                 }
             >
                 <div>
-                    <Button
-                        onClick={() => {
-
-
-                        }}
-                        style={buttonStyle}
+                    <select
+                        onChange={(e) => setTimeline(e.target.value)}
+                        style={{ margin: "10px", padding: "5px" }}
                     >
-                        Test
-                    </Button>
-                    <Button style={buttonStyle} onClick={playTimeline}>Play</Button>
-                    <Button style={buttonStyle} onClick={pauseTimeline}>Pause</Button>
-                    <Button style={buttonStyle} onClick={resetTimeline}>Reset</Button>
-                    <Button style={buttonStyle} onClick={reverseTimeline}>Reverse</Button>
-
+                        <option key="" value="">
+                            choose a timeline
+                        </option>
+                        {Object.values(timelines).map((tl) => (
+                            <option key={tl.id} value={tl.id}>
+                                {tl.name}
+                            </option>
+                        ))}
+                    </select>
+                    {timeline && <>
+                        <Button style={buttonStyle} onClick={playTimeline}>Play</Button>
+                        <Button style={buttonStyle} onClick={pauseTimeline}>Pause</Button>
+                        <Button style={buttonStyle} onClick={resetTimeline}>Reset</Button>
+                        <Button style={buttonStyle} onClick={reverseTimeline}>Reverse</Button>
+                    </>}
                 </div>
                 <div style={{ padding: '0 30px' }}>
                     <Slider
                         min={0}
-                        max={1}
-                        stepSize={0.01}
-                        onRelease={(value: number) => { timelineRef.current.progress(value) }}
+                        max={timeline?.duration() || 1}
+                        stepSize={0.1}
+                        onRelease={(value: number) => { timelineRef.current.time(value) }}
                         value={sliderValue}
                     // vertical={false}
                     />
