@@ -1,7 +1,9 @@
 import { ClaimActions, ConnectorActions } from "@/reasonScore/types/ActionTypes";
-import { newClaim } from "@/reasonScore/types/Claim";
+import { Claim, newClaim } from "@/reasonScore/types/Claim";
 import { newConnector } from "@/reasonScore/types/Connector";
 import { timelineMeta, TimelineProps } from "./_timelines"
+import { Debate } from "@/reasonScore/types/Debate";
+import { DebateData } from "@/reasonScore/types/DebateData";
 
 export const Fictional_City: timelineMeta = {
     name: "Fictional City",
@@ -9,16 +11,17 @@ export const Fictional_City: timelineMeta = {
     timelineConstructor: function (props: TimelineProps) {
         const { refs, gsap } = props
 
-        function onUpdate(this: any) {
+        function typeContent(this: any) {
             //  console.log("onUpdate", this.vars.text, this.progress())
             const target = this.targets()[0];
-            target.text = this.vars.text.substring(0, this.progress() * this.vars.text.length);
+            //target.text = this.vars.text.substring(0, this.progress() * this.vars.text.length);
             // myObject.text = targetText.substring(0, length)
             refs.current.flowDataState.dispatch([{
                 type: "modify", newData: {
                     id: target.id,
                     type: "claim",
-                    content: target.text,
+                    content: this.vars.content.substring(0, this.progress() * this.vars.content.length),
+                    forceConfidence: this.progress(),
                 }
             }]);
 
@@ -34,98 +37,145 @@ export const Fictional_City: timelineMeta = {
             paused: true,
         });
 
-        tl
-            // .to({ text: "", id: refs.current.flowDataState.debate.mainClaimId || "", }, {
-            //     text: "first text",
-            //     duration: 2,
-            //     onUpdate: onUpdate
-            // })
+        const timelineItems: (
+            { actionType: "debate", debate: Debate, debateData: DebateData } |
+            { actionType: "pause", duration: number, } |
+            ({ actionType: "updateClaim", duration: number, parentId?: string } & Partial<Claim>) |
+            ({ actionType: "createClaim", duration: number, parentId: string, zoom?:"fitView" } & Partial<Claim>)
+        )[] = [
+                {
+                    actionType: "debate",
+                    debate: { type: "debate", name: "", description: "", id: "Fictional_City", mainClaimId: "motion" },
+                    debateData: {
+                        claims: {
+                            "motion": { type: "claim", id: "motion", content: "", pol: "pro" }
+                        },
+                        connectors: {}
+                    }
+                },
+                {
+                    actionType: "updateClaim",
+                    content: "Would Fictional City benefit overall from converting Elm Street to pedestrian use only?",
+                    id: "motion",
+                    duration: 2,
+                },
+                {
+                    actionType: "createClaim",
+                    content: "test",
+                    id: "2", parentId: "motion", type: "claim", pol: "pro",
+                    duration: 2, zoom: "fitView",
+                },
+                {
+                    actionType: "createClaim",
+                    content: "The conversion will cost 2 Million dollars.",
+                    id: "cost", parentId: "motion", type: "claim", pol: "con",
+                    duration: 2, zoom: "fitView",
+                },
+                {
+                    actionType: "pause",
+                    duration: 2,
+                },
+                {
+                    actionType: "createClaim",
+                    content: "test",
+                    id: "3", parentId: "motion", type: "claim", pol: "pro",
+                    duration: 2, zoom: "fitView",
+                },
+            ]
 
-            .to({ text: "", id: refs.current.flowDataState.debate.mainClaimId || "", }, {
-                text: "Fictional City!",
-                duration: 2,
-                onUpdate: onUpdate
-            })
 
-            .call(function (this: any) {
-                // if (tl.progress() < lastProgress) {
-                if (tl.time() < this.startTime()) {
-                    refs.current.flowDataState.dispatch([
-                        { type: "delete", newData: { id: "1", type: "claim", } },
-                        { type: "delete", newData: { id: "l1", type: "connector", } },
-                        { type: "delete", newData: { id: "2", type: "claim", } },
-                        { type: "delete", newData: { id: "l2", type: "connector", } }
-                    ])
-                    fitView(.3);
-                    return;
-                }
+        timelineItems.forEach((item) => {
+            if (item.actionType === "debate") {
+                // ToDo , in the future we might need to do this at a particular time in the timeline and undo it , but for now we assume it only happens once at the beginning
+                refs.current.flowDataState.dispatchReset([], item.debateData, item.debate)
+                return;
+            }
 
-                let actions = [];
-                const newClaimData = newClaim({ content: "", id: "1" });
-                newClaimData.forceConfidence = 0;
-                const claimAction: ClaimActions = {
-                    type: "add",
-                    newData: { ...newClaimData, pol: "con" },
-                };
+            if (item.actionType === "pause") {
+                tl.to({}, { duration: item.duration })
+                return;
+            }
 
-                const newClaimData2 = newClaim({ content: "", id: "2" });
-                const claimAction2: ClaimActions = {
-                    type: "add",
-                    newData: { ...newClaimData2, pol: "pro" },
-                };
+            if (item.actionType === "updateClaim") {
+                tl.to({ content: "", id: item.id || "", }, {
+                    content: item.content,
+                    duration: item.duration,
+                    onUpdate: typeContent,
+                    onComplete: function (this: any) {
+                        const target = this.targets()[0];
+                        refs.current.flowDataState.dispatch([{
+                            type: "modify", newData: {
+                                id: target.id,
+                                type: "claim",
+                                content: this.vars.content,
+                                forceConfidence: undefined,
+                            }
+                        }]);
+                    }
+                })
+                return;
+            }
 
-                actions.push(claimAction, claimAction2);
+            if (item.actionType === "createClaim") {
 
-                const newConnectorData = newConnector({
-                    id: "l1",
-                    source: newClaimData.id,
-                    target: refs.current.flowDataState.debate.mainClaimId as string,
-                    proTarget: false,
-                    affects: "confidence"
-                });
-                const connectorAction: ConnectorActions = {
-                    type: "add",
-                    newData: newConnectorData,
-                };
-                const newConnectorData2 = newConnector({
-                    id: "l2",
-                    source: newClaimData2.id,
-                    target: refs.current.flowDataState.debate.mainClaimId as string,
-                    proTarget: true,
-                    affects: "confidence"
-                });
-                const connectorAction2: ConnectorActions = {
-                    type: "add",
-                    newData: newConnectorData2,
-                };
+                tl.to(item, {
+                    content: item.content,
+                    duration: item.duration,
+                    onUpdate: function (this: any) {
 
-                actions.push(connectorAction, connectorAction2);
-                refs.current.flowDataState.dispatch(actions);
-
-                fitView();
-
-            }, [], ">1.001")
-
-            .to({ text: "", id: "1", }, {
-                text: "Second Animated Text",
-                duration: 3,
-                onUpdate: onUpdate
-            })
-
-            .to({}, {
-                duration: 10,
-                onUpdate: function (this: any) {
-
-                    refs.current.flowDataState.dispatch([{
-                        type: "modify", newData: {
-                            id: "1",
-                            type: "claim",
-                            forceConfidence: this.progress(),
+                        // If the time is before then delete the claim
+                        if (tl.time() < this.startTime()) {
+                            refs.current.flowDataState.dispatch([
+                                { type: "delete", newData: { id: item.id || "", type: "claim", } },
+                                { type: "delete", newData: { id: "c-" + item.id || "", type: "connector", } },
+                            ])
+                            return;
                         }
-                    }]);
 
-                }
-            })
+                        // If the claim does not exist, then create the claim and the connector
+                        if (!refs.current.flowDataState.debateData.claims[item.id || ""]) {
+                            const newClaimData = newClaim({ content: "", id: item.id || "" });
+                            const claimAction: ClaimActions = {
+                                type: "add",
+                                newData: { ...newClaimData, pol: item.pol || "pro" },
+                            };
+                            const newConnectorData = newConnector({
+                                id: "c-" + item.id || "",
+                                source: item.id || "",
+                                target: item.parentId,
+                                proTarget: item.pol === "pro",
+                            });
+                            const connectorAction: ConnectorActions = {
+                                type: "add",
+                                newData: newConnectorData
+                            }
+                            refs.current.flowDataState.dispatch([claimAction, connectorAction])
+
+                            if (item.zoom === "fitView") {
+                                fitView();
+                            }
+                        }
+                        typeContent.bind(this)()
+
+                    },
+                    onComplete: function (this: any) {
+                        const target = this.targets()[0];
+                        refs.current.flowDataState.dispatch([{
+                            type: "modify", newData: {
+                                id: target.id,
+                                type: "claim",
+                                content: this.vars.content,
+                                forceConfidence: undefined,
+                            }
+                        }]);
+                    }
+                })
+            }
+            // Which direction are we going and is it a seek
+            // Does the claim need to be there or not
+            // If it needs to be there does it exist or do I need to create it?
+            // If it need to not be there does it not exist or do I need to delete it?
+        })
 
         return tl
     }
