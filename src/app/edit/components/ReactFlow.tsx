@@ -37,7 +37,7 @@ export default function Flow() {
 
                 <ScoreBoard score={mainScore?.reversibleConfidence} />
                 <ScoreVolume score={mainScore?.reversibleConfidence}
-                    style={{ width: "410px", height: "20px", top:'220px', left:'80px', position:'absolute' }}
+                    style={{ width: "410px", height: "50px", top:'220px', left:'80px', position:'absolute' }}
                  />
 
                 <Controls

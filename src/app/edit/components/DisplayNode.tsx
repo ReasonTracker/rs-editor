@@ -552,6 +552,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     </div>
                 </>
                 : <TextArea
+                    style={{ boxShadow: 'none' }}
                     className="node-text-area text-xs" // !p-0, but caused gap it main claim
                     value={data.claim.content}
                     onChange={(e) => handleChangeText(e, data.claim.id)}

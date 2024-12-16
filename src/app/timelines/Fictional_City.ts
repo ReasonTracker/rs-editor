@@ -41,7 +41,7 @@ export const Fictional_City: timelineMeta = {
             { actionType: "debate", debate: Debate, debateData: DebateData } |
             { actionType: "pause", duration: number, } |
             ({ actionType: "updateClaim", duration: number, parentId?: string } & Partial<Claim>) |
-            ({ actionType: "createClaim", duration: number, parentId: string, zoom?:"fitView" } & Partial<Claim>)
+            ({ actionType: "createClaim", duration: number, parentId: string, zoom?: "fitView", affects?: "relevance" } & Partial<Claim>)
         )[] = [
                 {
                     actionType: "debate",
@@ -59,26 +59,46 @@ export const Fictional_City: timelineMeta = {
                     id: "motion",
                     duration: 2,
                 },
+                { actionType: "pause", duration: 2, },
                 {
                     actionType: "createClaim",
-                    content: "test",
-                    id: "2", parentId: "motion", type: "claim", pol: "pro",
+                    content: "increase foot traffic to local shops by 12%",
+                    id: "footTraffic", parentId: "motion", type: "claim", pol: "pro",
                     duration: 2, zoom: "fitView",
                 },
+                { actionType: "pause", duration: 2, },
+                // {
+                //     content: "Costs 2 Million dollars.",
+                //     actionType: "createClaim",
+                //     id: "cost", parentId: "motion", type: "claim", pol: "con",
+                //     duration: 2, zoom: "fitView",
+                // },
+                { actionType: "pause", duration: 2, },
                 {
                     actionType: "createClaim",
-                    content: "The conversion will cost 2 Million dollars.",
-                    id: "cost", parentId: "motion", type: "claim", pol: "con",
+                    content: "divert traffic down residential streets",
+                    id: "traffic", parentId: "motion", type: "claim", pol: "con",
                     duration: 2, zoom: "fitView",
                 },
-                {
-                    actionType: "pause",
-                    duration: 2,
-                },
+                { actionType: "pause", duration: 2, },
                 {
                     actionType: "createClaim",
-                    content: "test",
-                    id: "3", parentId: "motion", type: "claim", pol: "pro",
+                    content: "Children safety is more important than profit for local shops.",
+                    id: "SafetyImportance", parentId: "traffic", type: "claim", pol: "con", affects: "relevance",
+                    duration: 2, zoom: "fitView",
+                },
+                { actionType: "pause", duration: 2, },
+                {
+                    actionType: "createClaim",
+                    content: "A set of railroad tracks are no longer in use and the City can convert that to a new street.",
+                    id: "railroad", parentId: "traffic", type: "claim", pol: "pro",
+                    duration: 2, zoom: "fitView",
+                },
+                { actionType: "pause", duration: 2, },
+                {
+                    actionType: "createClaim",
+                    content: "Costs 2 Million dollars.",
+                    id: "costs", parentId: "motion", type: "claim", pol: "con",
                     duration: 2, zoom: "fitView",
                 },
             ]
@@ -139,11 +159,15 @@ export const Fictional_City: timelineMeta = {
                                 type: "add",
                                 newData: { ...newClaimData, pol: item.pol || "pro" },
                             };
+
+                            const parent = refs.current.flowDataState.debateData.claims[item.parentId || ""]
+
                             const newConnectorData = newConnector({
                                 id: "c-" + item.id || "",
                                 source: item.id || "",
                                 target: item.parentId,
-                                proTarget: item.pol === "pro",
+                                proTarget: item.pol === parent.pol,
+                                affects: item.affects ?? "confidence"
                             });
                             const connectorAction: ConnectorActions = {
                                 type: "add",

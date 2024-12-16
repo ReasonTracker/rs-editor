@@ -11,7 +11,7 @@ export default function ScoreBoard({ score }: { score: number | undefined }) {
 
         async function effect() {
             setScoreString((oldScoreString) => {
-                let newScore = score===undefined? .99 : score;
+                let newScore = score === undefined ? .99 : score;
                 newScore = (newScore + 1) / 2;
                 if (newScore > .99) newScore = .99;
                 if (newScore < .01) newScore = .01;
@@ -331,7 +331,7 @@ export default function ScoreBoard({ score }: { score: number | undefined }) {
             </svg>
         </div>
 
-        <svg >
+        <svg style={{ width: 0, height: 0 }}>
             <defs>
                 <radialGradient id="orange">
                     <stop offset="10%" stopColor="hsl(30deg 100% 80%)" />

@@ -18,6 +18,8 @@ export default function ScoreVolume(
             style={{ 
                 flexDirection: "row", 
                 display: "flex", 
+                zIndex: 1001,
+                border: '5px solid #000',
                 ...props.style 
             }}
         >

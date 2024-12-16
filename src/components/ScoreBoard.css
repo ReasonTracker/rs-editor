@@ -19,9 +19,12 @@
     display: inline-block;
     line-height: 0.5;
     position: absolute;
-    top: 0;
-    left: 32px;
-    padding: 50px;
+    top: 30px;
+    left: 73px;
+    padding: 10px;
+    z-index: 1000;
+    background: #000000c9;
+    border-radius: 2rem;
 }
 
 .digits {

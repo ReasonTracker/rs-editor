@@ -186,7 +186,8 @@ button.react-flow__controls-button:hover{
     font-family: inherit;
     resize: none !important;
     overflow: hidden;
-    color: inherit
+    color: inherit;
+    box-shadow: none;
 }
 
 .node-text-area:focus {
