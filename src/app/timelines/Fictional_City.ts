@@ -29,7 +29,7 @@ export const Fictional_City: timelineMeta = {
 
         let fitView = (seconds: number = 1) => {
             setTimeout(() => {
-                refs.current.reactFlowInstance.fitView({ padding: 0.5, duration: seconds * 1000 });
+                refs.current.reactFlowInstance.fitView({ padding: 0.1, duration: seconds * 1000 });
             }, 50);
         }
 
