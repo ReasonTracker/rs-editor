@@ -1,17 +1,10 @@
-import React, { use, useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { FlowDataContext } from "./FlowDataProvider";
 import { Drawer, Button, Slider } from "@blueprintjs/core";
 import { useReactFlow } from "reactflow";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { newClaim } from "@/reasonScore/types/Claim";
-import { ClaimActions, ConnectorActions } from "@/reasonScore/types/ActionTypes";
-import { newConnector } from "@/reasonScore/types/Connector";
-import { time } from "console";
 import { timelines } from "@/app/timelines/_timelines";
-import { Test_Timeline } from "@/app/timelines/Test_Timeline";
-// import { TextPlugin } from "gsap/TextPlugin";
-// gsap.registerPlugin(TextPlugin)
 
 const buttonStyle = {
     // width: "min-content",
@@ -120,16 +113,23 @@ const TimelinePanel = () => {
                         <Button style={buttonStyle} onClick={reverseTimeline}>Reverse</Button>
                     </>}
                 </div>
-                <div style={{ padding: '0 30px' }}>
-                    <Slider
-                        min={0}
-                        max={timeline?.duration() || 1}
-                        stepSize={0.1}
-                        onRelease={(value: number) => { timelineRef.current.time(value) }}
-                        value={sliderValue}
-                    // vertical={false}
-                    />
-                </div>
+                {timeline && <>
+
+                    <div style={{ padding: '0 30px' }}>
+                        <Slider
+                            min={0}
+                            max={timeline?.duration() || 1}
+                            stepSize={0.1}
+                            onRelease={(value: number) => { timelineRef.current.time(value) }}
+                            value={sliderValue}
+                        // vertical={false}
+                        />
+                    </div>
+                </>}
+
+                {/* <div style={{ padding: '10px' }}>
+                    <p>{`${JSON.stringify(reactFlowInstance.getViewport())}`}</p>
+                </div> */}
 
             </Drawer>
         </div>
