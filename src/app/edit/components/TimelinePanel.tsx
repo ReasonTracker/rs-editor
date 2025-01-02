@@ -127,9 +127,9 @@ const TimelinePanel = () => {
                     </div>
                 </>}
 
-                {/* <div style={{ padding: '10px' }}>
+                <div style={{ padding: '10px' }}>
                     <p>{`${JSON.stringify(reactFlowInstance.getViewport())}`}</p>
-                </div> */}
+                </div>
 
             </Drawer>
         </div>

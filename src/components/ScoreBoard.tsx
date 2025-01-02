@@ -178,7 +178,7 @@ export default function ScoreBoard({ score }: { score: number | undefined }) {
             </svg>
         </div>
 
-        <span className="separator">&nbsp;</span>
+        <span className="separator"></span>
 
         <div className="digits">
             <svg className={`numDisplay d2 o${scoreString[2]}`} viewBox="0 0 100 180">

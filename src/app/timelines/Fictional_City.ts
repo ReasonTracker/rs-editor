@@ -40,8 +40,9 @@ export const Fictional_City: timelineMeta = {
         const timelineItems: (
             { actionType: "debate", debate: Debate, debateData: DebateData } |
             { actionType: "pause", duration: number, } |
-            ({ actionType: "updateClaim", duration: number, parentId?: string } & Partial<Claim>) |
-            ({ actionType: "createClaim", duration: number, parentId: string, zoom?: "fitView", affects?: "relevance" } & Partial<Claim>)
+            { actionType: "zoom", zoom?: "fitView", duration?: number } |
+            ({ actionType: "updateClaim", duration?: number, parentId?: string } & Partial<Claim>) |
+            ({ actionType: "createClaim", duration?: number, parentId: string, zoom?: "fitView", affects?: "relevance" } & Partial<Claim>)
         )[] = [
                 {
                     actionType: "debate",
@@ -53,18 +54,21 @@ export const Fictional_City: timelineMeta = {
                         connectors: {}
                     }
                 },
+                { actionType: "pause", duration: 1, },
+                { actionType: "zoom", zoom: "fitView", duration: 1 },
                 {
                     actionType: "updateClaim",
                     content: "Would Fictional City benefit overall from converting Elm Street to pedestrian use only?",
                     id: "motion",
-                    duration: 2,
+                    // duration: 2,
                 },
                 { actionType: "pause", duration: 2, },
                 {
                     actionType: "createClaim",
                     content: "increase foot traffic to local shops by 12%",
                     id: "footTraffic", parentId: "motion", type: "claim", pol: "pro",
-                    duration: 2, zoom: "fitView",
+                    // duration: 2,
+                    zoom: "fitView",
                 },
                 { actionType: "pause", duration: 2, },
                 // {
@@ -78,28 +82,32 @@ export const Fictional_City: timelineMeta = {
                     actionType: "createClaim",
                     content: "divert traffic down residential streets",
                     id: "traffic", parentId: "motion", type: "claim", pol: "con",
-                    duration: 2, zoom: "fitView",
+                    // duration: 2,
+                    zoom: "fitView",
                 },
                 { actionType: "pause", duration: 2, },
                 {
                     actionType: "createClaim",
                     content: "Children safety is more important than profit for local shops.",
                     id: "SafetyImportance", parentId: "traffic", type: "claim", pol: "con", affects: "relevance",
-                    duration: 2, zoom: "fitView",
+                    // duration: 2,
+                    zoom: "fitView",
                 },
                 { actionType: "pause", duration: 2, },
                 {
                     actionType: "createClaim",
                     content: "A set of railroad tracks are no longer in use and the City can convert that to a new street.",
                     id: "railroad", parentId: "traffic", type: "claim", pol: "pro",
-                    duration: 2, zoom: "fitView",
+                    // duration: 2,
+                    zoom: "fitView",
                 },
                 { actionType: "pause", duration: 2, },
                 {
                     actionType: "createClaim",
                     content: "Costs 2 Million dollars.",
                     id: "costs", parentId: "motion", type: "claim", pol: "con",
-                    duration: 2, zoom: "fitView",
+                    // duration: 2,
+                    zoom: "fitView",
                 },
             ]
 
@@ -119,7 +127,7 @@ export const Fictional_City: timelineMeta = {
             if (item.actionType === "updateClaim") {
                 tl.to({ content: "", id: item.id || "", }, {
                     content: item.content,
-                    duration: item.duration,
+                    duration: item.duration || (item?.content?.length || 30) / 15,
                     onUpdate: typeContent,
                     onComplete: function (this: any) {
                         const target = this.targets()[0];
@@ -194,6 +202,14 @@ export const Fictional_City: timelineMeta = {
                         }]);
                     }
                 })
+            }
+
+            if (item.actionType === "zoom") {
+                console.log("zoom", item.zoom)
+                if (item.zoom === "fitView") {
+                    console.log("fitView", item.duration)
+                    fitView(item.duration || 0);
+                }
             }
             // Which direction are we going and is it a seek
             // Does the claim need to be there or not

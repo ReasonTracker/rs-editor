@@ -92,7 +92,13 @@ const getLayoutedElements = <N extends Node, E extends Edge>(nodes: N[], edges: 
 
         return node;
     });
+    
+    const lastNode = nodes[nodes.length - 1];
+    const yOffset = lastNode.position.y;
 
+    nodes.forEach((node) => {
+        node.position.y -= yOffset;
+    });
     return { nodes, edges };
 };
 

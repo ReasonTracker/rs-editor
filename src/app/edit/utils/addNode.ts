@@ -12,6 +12,7 @@ const addNode = ({
     affects = "confidence",
     targetNodeData,
     claimId,
+    content = "-"
 }: {
     flowDataState: FlowDataState;
     sourceId?: string;
@@ -19,12 +20,14 @@ const addNode = ({
     isNewNodePro: boolean;
     targetNodeData?: DisplayNodeData
     claimId?: string;
+    content?: string;
 }) => {
     let actions = [];
 
     const newClaimData = newClaim({
-        content: "-", //generateSimpleAnimalClaim(),
-        id: claimId
+        content: content, //generateSimpleAnimalClaim(),
+        id: claimId,
+        forceConfidence: 0,
     });
 
     const pol = isNewNodePro ? "pro" : "con";
@@ -54,6 +57,29 @@ const addNode = ({
 
     actions.push(connectorAction);
     flowDataState.dispatch(actions);
+
+    //loop every tick to update the display
+    const startTime = Date.now();
+    const length = 5000
+    const update = () => {
+        flowDataState.dispatch([{
+            type: "modify", newData: {
+                id: newClaimData.id, type: "claim",
+                forceConfidence: (Date.now() - startTime) / length
+            }
+        }]);
+        if (Date.now() - startTime < length) {
+            requestAnimationFrame(update);
+        } else { 
+            flowDataState.dispatch([{
+                type: "modify", newData: {
+                    id: newClaimData.id, type: "claim",
+                    forceConfidence: undefined
+                }
+            }]);
+        }
+    };
+    requestAnimationFrame(update);
 };
 
 export default addNode;

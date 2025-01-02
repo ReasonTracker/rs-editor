@@ -33,11 +33,12 @@ export default function Flow() {
                 edgeTypes={edgeTypes}
                 fitView
                 minZoom={0.01}
+                maxZoom={10}
             >
 
                 <ScoreBoard score={mainScore?.reversibleConfidence} />
                 <ScoreVolume score={mainScore?.reversibleConfidence}
-                    style={{ width: "410px", height: "50px", top:'220px', left:'80px', position:'absolute' }}
+                    style={{ width: "75px", height: "360px", top:'30px', left:'80px', position:'absolute' }}
                  />
 
                 <Controls

@@ -161,8 +161,8 @@ button.react-flow__controls-button:hover{
     grid-template-areas:
         ".         .         scaleTo1Relevance              consolidateRelevance  incomingRelevance"
         "relevance cancelOut scaleTo1 consolidate           weightByConfidence"
-        "content   content   scaleTo1 consolidate           weightByConfidence"
-        "content   content   scaleTo1 consolidate           weightByConfidence";
+        "relevance   content   scaleTo1 consolidate           weightByConfidence"
+        "relevance   content   scaleTo1 consolidate           weightByConfidence";
 }
 
 .rsContent {
@@ -212,7 +212,7 @@ button.react-flow__controls-button:hover{
     border: 1px solid white;
     border-radius: 5px;
     margin: 10px;
-    transition: all 0.3s ease;
+    /* transition: all 0.3s ease; */
 }
 
 .main a:hover {
@@ -233,10 +233,13 @@ div.bp5-overlay.bp5-overlay-container.bp5-overlay-inline {
 
 .autoAnimate {
 
-    .react-flow__node-rsNode,
-    path {
-        transition: all 1s ease;
+    .react-flow__node-rsNode {
+        transition: all 0.3s ease;
     }
+
+    /* path {
+        transition: all 0.3s ease;
+    } */
 
     /* react-flow__edgelabel-renderer{
         transition: all 1s ease;

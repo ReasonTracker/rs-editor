@@ -7,7 +7,7 @@ import addNode from '../utils/addNode';
 import { stackSpace } from '@/utils/stackSpace';
 import { ActionTypes } from '@/reasonScore/types/ActionTypes';
 import { createConnectorsIndexes } from '@/reasonScore/scoring/TypeA/createConnectorsByTarget';
-import { Margarine } from 'next/font/google';
+import { newId } from '@/reasonScore/newId';
 
 const MAX_STROKE_WIDTH = 25
 const HALF_STROKE_WIDTH = MAX_STROKE_WIDTH / 2
@@ -585,8 +585,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         intent="primary"
                         style={buttonStyle}
                         onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence' });
-                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                            const claimId = newId()
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence',claimId });
+                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                            zoomToNew(claimId);
                         }}
                     />
                     <Button
@@ -597,8 +599,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         className="mb-1 !bg-con"
                         style={buttonStyle}
                         onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence' });
-                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                            const claimId = newId()
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence', claimId });
+                            zoomToNew(claimId);
+                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                         icon="plus"
                     />
@@ -619,8 +623,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         intent="primary"
 
                         onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance' })
-                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                            const claimId = newId()
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance', claimId })
+                            zoomToNew(claimId);
+                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                     />
                     <Button
@@ -633,8 +639,11 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         intent="primary"
 
                         onClick={() => {
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance' });
-                            reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                            const claimId = newId()
+                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance', claimId });
+                            zoomToNew(claimId);
+
+                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                         }}
                     /></div>
 
@@ -666,7 +675,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         deleteConnectorsAndClaims(id, connectorsIndex, actions);
 
                         flowDataState.dispatch(actions);
-                        reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                        // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
                     }}
                     icon="trash"
                 />
@@ -744,6 +753,12 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             />
         </div>
     );
+
+    function zoomToNew(claimId: string) {
+        setTimeout(() => {
+            reactFlowInstance.fitView({ padding: 0.1, duration: 1000, nodes: [{ id }, { id: claimId }] });
+        }, 100);
+    }
 }
 
 function deleteConnectorsAndClaims(id: string, connectorsIndex: any, actions: ActionTypes[]) {

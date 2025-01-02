@@ -193,6 +193,7 @@ export function flowDataReducer({
             newDisplayNodes.push({
                 id: score.id,
                 type: "rsNode",
+                dragHandle: '.rs-cancelOut',
                 position: { x: 0, y: 0 }, // position()
                 data: {
                     scoreId: score.id,
