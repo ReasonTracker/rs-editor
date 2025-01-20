@@ -204,12 +204,12 @@ export function flowDataReducer({
                     scoreNumber: 50, // TODO
                     cancelOutStacked: cancelOut(score.confidence),
                 },
+                style: { pointerEvents: 'none' }
             });
         }
 
 
         const { nodes, edges } = getLayoutedElements(newDisplayNodes, newDisplayEdges)
-
         setAnimating(true);
         setDisplayNodes(nodes);
         setDisplayEdges(edges);

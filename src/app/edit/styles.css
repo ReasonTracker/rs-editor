@@ -172,6 +172,10 @@ button.react-flow__controls-button:hover{
     /* border-top: 0; */
 }
 
+.rs-cancelOut, .rsContent {
+    pointer-events: all;
+}
+
 .rsCalc {
     display: grid;
     align-content: start;
