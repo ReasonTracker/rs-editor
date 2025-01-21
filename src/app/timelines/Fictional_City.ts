@@ -29,8 +29,41 @@ export const Fictional_City: timelineMeta = {
 
         let fitView = (seconds: number = 1) => {
             setTimeout(() => {
-                refs.current.reactFlowInstance.fitView({ padding: 0.1, duration: seconds * 1000 });
+                refs.current.reactFlowInstance.fitView({
+                    padding: 0.1,
+                    duration: seconds * 1000
+                });
             }, 50);
+        }
+
+        let zoomTo = (seconds: number = 1, ids: (string | undefined)[]) => {
+
+            setTimeout(() => {
+
+                const fitData = {
+                    padding: 0.1,
+                    duration: (seconds ? seconds * 1000 : 1000),
+                    nodes: ids.reduce((acc:{ id: string }[], id) => {
+                        if (id) {
+                            acc.push({ id });
+                        }
+                        return acc;
+                    }, [])
+                }
+
+                console.log("fitData", fitData)
+                
+                refs.current.reactFlowInstance.fitView(fitData);
+            }, 50);
+
+            // setTimeout(() => {
+            //     refs.current.reactFlowInstance.fitView({
+            //         padding: 0.1,
+            //         duration: seconds * 1000,
+            //         nodes: [{ id }, { id: claimId }]
+            //     });
+
+            // }, 50);
         }
 
         let tl = gsap.timeline({
@@ -42,7 +75,7 @@ export const Fictional_City: timelineMeta = {
             { actionType: "pause", duration: number, } |
             { actionType: "zoom", zoom?: "fitView", duration?: number } |
             ({ actionType: "updateClaim", duration?: number, parentId?: string } & Partial<Claim>) |
-            ({ actionType: "createClaim", duration?: number, parentId: string, zoom?: "fitView", affects?: "relevance" } & Partial<Claim>)
+            ({ actionType: "createClaim", duration?: number, parentId: string, zoom?: "fitView" | "zoomTo", affects?: "relevance" } & Partial<Claim>)
         )[] = [
                 {
                     actionType: "debate",
@@ -68,14 +101,14 @@ export const Fictional_City: timelineMeta = {
                     content: "increase foot traffic to local shops by 12%",
                     id: "footTraffic", parentId: "motion", type: "claim", pol: "pro",
                     // duration: 2,
-                    zoom: "fitView",
+                    zoom: "zoomTo",
                 },
                 { actionType: "pause", duration: 2, },
                 // {
                 //     content: "Costs 2 Million dollars.",
                 //     actionType: "createClaim",
                 //     id: "cost", parentId: "motion", type: "claim", pol: "con",
-                //     duration: 2, zoom: "fitView",
+                //     duration: 2, zoom: "zoomTo",
                 // },
                 { actionType: "pause", duration: 2, },
                 {
@@ -83,7 +116,7 @@ export const Fictional_City: timelineMeta = {
                     content: "divert traffic down residential streets",
                     id: "traffic", parentId: "motion", type: "claim", pol: "con",
                     // duration: 2,
-                    zoom: "fitView",
+                    zoom: "zoomTo",
                 },
                 { actionType: "pause", duration: 2, },
                 {
@@ -91,7 +124,7 @@ export const Fictional_City: timelineMeta = {
                     content: "Children safety is more important than profit for local shops.",
                     id: "SafetyImportance", parentId: "traffic", type: "claim", pol: "con", affects: "relevance",
                     // duration: 2,
-                    zoom: "fitView",
+                    zoom: "zoomTo",
                 },
                 { actionType: "pause", duration: 2, },
                 {
@@ -99,7 +132,7 @@ export const Fictional_City: timelineMeta = {
                     content: "A set of railroad tracks are no longer in use and the City can convert that to a new street.",
                     id: "railroad", parentId: "traffic", type: "claim", pol: "pro",
                     // duration: 2,
-                    zoom: "fitView",
+                    zoom: "zoomTo",
                 },
                 { actionType: "pause", duration: 2, },
                 {
@@ -107,7 +140,7 @@ export const Fictional_City: timelineMeta = {
                     content: "Costs 2 Million dollars.",
                     id: "costs", parentId: "motion", type: "claim", pol: "con",
                     // duration: 2,
-                    zoom: "fitView",
+                    zoom: "zoomTo",
                 },
             ]
 
@@ -186,6 +219,10 @@ export const Fictional_City: timelineMeta = {
                             if (item.zoom === "fitView") {
                                 fitView();
                             }
+
+                            if (item.zoom === "zoomTo") {
+                                zoomTo(item.duration || 0, [item.parentId, item.id]);
+                            }
                         }
                         typeContent.bind(this)()
 
@@ -207,7 +244,6 @@ export const Fictional_City: timelineMeta = {
             if (item.actionType === "zoom") {
                 console.log("zoom", item.zoom)
                 if (item.zoom === "fitView") {
-                    console.log("fitView", item.duration)
                     fitView(item.duration || 0);
                 }
             }
