@@ -1,0 +1,572 @@
+<style>
+    :root {
+        --lightness: 50;
+        --proColor: lab(calc(var(--lightness) - 1) 65 -65);
+        --conColor: lab(calc(var(--lightness) + 0) 40 65);
+        --neutralColor: lab(calc((var(--lightness) + 100) / 2) 0 0);
+        --background-color: black;
+        color: var(--neutralColor);
+        --markerThickness: 5px;
+    }
+
+    .v1 {
+        --scoreborder-width: 5px;
+        --scoreboarder-radius: 50px;
+        --padding: 10px;
+    }
+
+    .v2 {
+        --scoreborder-width: 10px;
+        --scoreboarder-radius: 50px;
+        --padding: 10px;
+    }
+
+    .v3 {
+        --scoreborder-width: 5px;
+        --scoreboarder-radius: 0px;
+        --padding: 10px;
+    }
+
+    .v4 {
+        --scoreborder-width: 10px;
+        --scoreboarder-radius: 0px;
+        --padding: 10px;
+    }
+
+    body {
+        background-color: black;
+        font-family: "Courier New", Courier, monospace;
+    }
+
+    .scoreboardMain {
+        margin: 20px;
+        display: grid;
+        overflow: hidden;
+        grid-template-columns: auto min-content;
+        grid-template-areas:
+            "volumeScoreCell proScoreCell"
+            "volumeScoreCell conScoreCell";
+        grid-gap: var(--scoreborder-width);
+        background-color: var(--neutralColor);
+        border-radius: var(--scoreboarder-radius);
+        border: var(--scoreborder-width) solid var(--neutralColor);
+        width: 400px;
+        height: 400px;
+
+        >div {
+            background-color: var(--background-color);
+        }
+
+        .volumeScoreCell {
+            position: relative;
+            grid-area: volumeScoreCell;
+            overflow: hidden;
+            display: grid;
+            grid-template-areas: "pile";
+            border-top-left-radius: calc(var(--scoreboarder-radius) - var(--scoreborder-width));
+            border-bottom-left-radius: calc(var(--scoreboarder-radius) - var(--scoreborder-width));
+            border: var(--padding) solid var(--background-color);
+        }
+    }
+
+    .volumeScorePro {
+        background-color: var(--proColor);
+        border-bottom: var(--markerThickness) solid var(--background-color);
+    }
+
+    .volumeScoreCon {
+        height: 100%;
+        background-color: var(--conColor);
+    }
+
+    .volumeScoreCell>* {
+        grid-area: pile;
+    }
+
+    .marker {
+        background-color: black;
+        position: absolute;
+        height: var(--markerThickness);
+        right: 0;
+        width: 50%;
+    }
+
+    /* @keyframes growShrink {
+
+        0%,
+        100% {
+            height: 1%;
+        }
+
+        50% {
+            height: 97%;
+        }
+    }
+
+    .volumeScorePro {
+        animation: growShrink 5s;
+    } */
+
+    .numCell {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        padding: var(--padding);
+    }
+
+    .proScoreCell {
+        grid-area: proScoreCell;
+        color: var(--proColor);
+    }
+
+    .conScoreCell {
+        grid-area: conScoreCell;
+        color: var(--conColor);
+    }
+</style>
+
+<div style="  
+display: flex;
+flex-wrap: wrap;
+">
+
+    <div class="scoreboardMain v1">
+        <div class="volumeScoreCell">
+            <div class="volumeScoreCon"></div>
+            <div class="volumeScorePro" style="height:19%;"></div>
+            <div class="marker" style="top: 25%;"></div>
+            <div class="marker" style="top: 50%;"></div>
+            <div class="marker" style="top: 75%;"></div>
+        </div>
+        <div class="proScoreCell numCell">
+            <svg class="numDisplay d0 o1" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+            <svg class="numDisplay d1 o9" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+        </div>
+        <div class="conScoreCell numCell">
+            <svg class="numDisplay d2 o8" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+            <svg class="numDisplay d3 o1" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="scoreboardMain v2">
+        <div class="volumeScoreCell">
+            <div class="volumeScoreCon"></div>
+            <div class="volumeScorePro" style="height:19%;"></div>
+            <div class="marker" style="top: 25%;"></div>
+            <div class="marker" style="top: 50%;"></div>
+            <div class="marker" style="top: 75%;"></div>
+        </div>
+        <div class="proScoreCell numCell">
+            <svg class="numDisplay d0 o1" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+            <svg class="numDisplay d1 o9" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+        </div>
+        <div class="conScoreCell numCell">
+            <svg class="numDisplay d2 o8" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+            <svg class="numDisplay d3 o1" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="scoreboardMain v3">
+        <div class="volumeScoreCell">
+            <div class="volumeScoreCon"></div>
+            <div class="volumeScorePro" style="height:19%;"></div>
+            <div class="marker" style="top: 25%;"></div>
+            <div class="marker" style="top: 50%;"></div>
+            <div class="marker" style="top: 75%;"></div>
+        </div>
+        <div class="proScoreCell numCell">
+            <svg class="numDisplay d0 o1" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+            <svg class="numDisplay d1 o9" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+        </div>
+        <div class="conScoreCell numCell">
+            <svg class="numDisplay d2 o8" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+            <svg class="numDisplay d3 o1" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="scoreboardMain v4">
+        <div class="volumeScoreCell">
+            <div class="volumeScoreCon"></div>
+            <div class="volumeScorePro" style="height:19%;"></div>
+            <div class="marker" style="top: 25%;"></div>
+            <div class="marker" style="top: 50%;"></div>
+            <div class="marker" style="top: 75%;"></div>
+        </div>
+        <div class="proScoreCell numCell">
+            <svg class="numDisplay d0 o1" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+            <svg class="numDisplay d1 o9" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+        </div>
+        <div class="conScoreCell numCell">
+            <svg class="numDisplay d2 o8" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+            <svg class="numDisplay d3 o1" viewBox="0 0 100 180">
+                <path class="seg s0 n0 n2 n3 n5 n6 n7 n8 n9"
+                    d="   M 15 10    L 20 5    L 80 5    L 85 10    L 67.5 27.5    L 32.5 27.5   Z   "></path>
+                <path class="seg s1 n0 n4 n5 n6 n8 n9"
+                    d="   M 10 15    L 5 20    L 5 77.5    L 10 85    L 27.5 75    L 27.5 32.5   Z   "></path>
+                <path class="seg s2 n0 n1 n2 n3 n4 n7 n8 n9"
+                    d="   M 90 15    L 95 20    L 95 77.5    L 90 85    L 72.5 75    L 72.5 32.5   Z   "></path>
+                <path class="seg s3 n2 n3 n4 n5 n6 n8 n9"
+                    d="   M 15 90    L 32.5 80    L 67.5 80    L 85 90    L 67.5 100    L 32.5 100    Z   "></path>
+                <path class="seg s4 n0 n2 n6 n8"
+                    d="   M 5 102.5    L 10 95    L 27.5 105    L 27.5 147.5    L 10 165    L 5 160   Z   "></path>
+                <path class="seg s5 n0 n2 n3 n5 n6 n8"
+                    d="   M 32.5 152.5    L 67.5 152.5    L 85 170    L 80 175    L 20 175    L 15 170   Z   ">
+                </path>
+                <path class="seg s6 n0 n1 n3 n4 n5 n6 n7 n8 n9"
+                    d="   M 95 102.5    L 90 95    L 72.5 105    L 72.5 147.5    L 90 165    L 95 160   Z   ">
+                </path>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<style>
+    .swatch {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
+<div style="display: flex; gap: 10px; margin-top: 20px;">
+    <div class="swatch" style="background-color: var(--proColor); color: white;">Test</div>
+    <div class="swatch" style="background-color: var(--conColor); color: white;">Test</div>
+    <div class="swatch" style="background-color: var(--proColor); color: black;">Test</div>
+    <div class="swatch" style="background-color: var(--conColor); color: black;">Test</div>
+</div>
+
+<div style="display: flex; gap: 10px; margin-top: 20px;">
+    <div class="swatch" style="background-color: #B13BE8; color: white;">Test</div>
+    <div class="swatch" style="background-color: #BF5700; color: white;">Test</div>
+    <div class="swatch" style="background-color: #B13BE8; color: black;">Test</div>
+    <div class="swatch" style="background-color: #BF5700; color: black;">Test</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<svg style="width: 0px; height: 0px;">
+    <defs>
+        <radialGradient id="orange">
+            <stop offset="10%" stop-color="hsl(30deg 100% 80%)"></stop>
+            <stop offset="95%" stop-color="hsl(30deg 100% 42%)"></stop>
+        </radialGradient>
+        <radialGradient id="purple">
+            <stop offset="10%" stop-color="hsl(276deg 100% 80%)"></stop>
+            <stop offset="95%" stop-color="hsl(276deg 100% 65%)"></stop>
+        </radialGradient>
+    </defs>
+</svg>
+<style>
+    .digits {
+        border-radius: 2rem;
+        display: inline-block;
+    }
+
+    .numDisplay {
+        vertical-align: middle;
+        display: inline-block;
+        fill: url(#grey);
+        stroke: rgb(255 255 255 / 20%);
+        stroke-width: 0.5;
+        stroke-linecap: round;
+        height: 100%;
+    }
+
+    .o0 .n0,
+    .o1 .n1,
+    .o2 .n2,
+    .o3 .n3,
+    .o4 .n4,
+    .o5 .n5,
+    .o6 .n6,
+    .o7 .n7,
+    .o8 .n8,
+    .o9 .n9 {
+        opacity: 1;
+        filter: saturate(1);
+    }
+
+    .d0 .seg,
+    .d1 .seg {
+        fill: url(#purple);
+    }
+
+    .d2 .seg,
+    .d3 .seg {
+        fill: url(#orange);
+    }
+
+    .seg {
+        /* transition: 0.2s; */
+        opacity: 0.3;
+        filter: saturate(0.3);
+    }
+</style>

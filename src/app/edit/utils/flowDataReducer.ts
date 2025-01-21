@@ -67,6 +67,8 @@ export function flowDataReducer({
         // Process Nodes
         // 
         const cancelOut = stackSpace();
+        const cancelOutRel = stackSpace();
+
         for (const score of Object.values(newScores)) {
             const claim = newDebateData.claims[score.id]
             if (!claim) {
@@ -203,6 +205,7 @@ export function flowDataReducer({
                     scoreNumberText: "scoreNumberText", // TODO
                     scoreNumber: 50, // TODO
                     cancelOutStacked: cancelOut(score.confidence),
+                    cancelOutRelStacked: cancelOutRel(.25),
                 },
                 style: { pointerEvents: 'none' }
             });
@@ -210,6 +213,7 @@ export function flowDataReducer({
 
 
         const { nodes, edges } = getLayoutedElements(newDisplayNodes, newDisplayEdges)
+
         setAnimating(true);
         setDisplayNodes(nodes);
         setDisplayEdges(edges);

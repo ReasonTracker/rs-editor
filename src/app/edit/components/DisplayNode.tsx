@@ -8,6 +8,14 @@ import { stackSpace } from '@/utils/stackSpace';
 import { ActionTypes } from '@/reasonScore/types/ActionTypes';
 import { createConnectorsIndexes } from '@/reasonScore/scoring/TypeA/createConnectorsByTarget';
 import { newId } from '@/reasonScore/newId';
+import { zoomToNew } from './zoomToNew';
+
+function divide(a: number, b: number): number {
+    if (b === 0) {
+        return 0;
+    }
+    return a / b;
+}
 
 const MAX_STROKE_WIDTH = 25
 const HALF_STROKE_WIDTH = MAX_STROKE_WIDTH / 2
@@ -74,6 +82,11 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         return acc + s.data.sourceScore.confidence;
     }, 0);
 
+    const totalRelevance = allRelevanceSources.reduce((acc, s) => {
+        if (!s.data?.sourceScore) return acc;
+        return acc + s.data.sourceScore.relevance;
+    }, 0);
+
     const relevanceHalf = data.score.relevance * HALF_STROKE_WIDTH
     const relevanceMax = data.score.relevance * MAX_STROKE_WIDTH
     const confidenceMax = data.score.confidence * MAX_STROKE_WIDTH
@@ -109,6 +122,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             </div>
         )}</>)
 
+    // ********** Cancel Out : cancelOut **********
     const cancelOutTop = data?.cancelOutStacked?.top ?? 0 * MAX_STROKE_WIDTH
     const cancelOutBottom = data?.cancelOutStacked?.bottom ?? 0 * MAX_STROKE_WIDTH
 
@@ -166,6 +180,48 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         </div>
     )
 
+    // ********** Cancel Out Relevance : cancelOutRel **********
+    const cancelOutRelTop = data?.cancelOutRelStacked?.top ?? 0 * MAX_STROKE_WIDTH
+    const cancelOutRelBottom = data?.cancelOutRelStacked?.bottom ?? 0 * MAX_STROKE_WIDTH
+
+    const cancelOutRel = ( <></>  // *** not working ***
+        // allRelevanceSources.length > 0 &&
+
+        // <div className="rsCalc rs-cancelOut" style={{ gridArea: 'cancelOutRel', position: "relative" }}>
+        //     <div style={{
+        //         opacity: .4,
+        //         backgroundColor: `var(--${data.pol})`,
+        //         height: `${MAX_STROKE_WIDTH}px`
+        //     }} />
+        //     <div style={{
+        //         backgroundColor: `var(--${data.pol})`,
+        //         height: `${relevanceMax}px`,
+        //         position: 'absolute', top: '0px', left: '0px',
+        //         width: '100%',
+        //         zIndex: 10
+        //     }} />
+
+        //     {allRelevanceSources.length > 0 && <>
+        //         <svg
+        //             style={{ position: 'absolute', right: '0px', top: '0px' }}
+        //             height={MAX_STROKE_WIDTH}
+        //             width={MAX_STROKE_WIDTH * 2}>
+        //             <polygon
+        //                 style={{ fill: `var(--${data.pol})` }}
+        //                 points={`
+        //                     0                       , ${cancelOutRelTop}
+        //                     0                       , ${cancelOutRelBottom}
+        //                     ${MAX_STROKE_WIDTH * 2} , ${cancelOutRelBottom}
+        //                     ${MAX_STROKE_WIDTH * 2} , ${cancelOutRelTop}
+        //                 `}
+        //             />
+        //         </svg>
+        //     </>}
+        // </div>
+    )
+
+
+    // ********** Scale to 1 : scaleTo1 **********
     const calculatedHeight = (
         (allSources[allSources.length - 1]?.data?.targetConfidenceTop || 1) +
         (allSources[allSources.length - 1]?.data?.maxImpact || 0)
@@ -176,7 +232,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         {allSources.map(s => {
             if (!s.data) return null;
 
-            const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
+            const percentOfWeight = divide((s.data.sourceScore?.confidence || 0),totalConfidence)
             const scaledTo1Stacked = scaledTo1Stack(percentOfWeight)
             const { consolidatedStacked } = s.data;
 
@@ -314,7 +370,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         [allRelevanceSources]
     );
 
-    const incomingRelevancePolygon = (
+    const incomingRelPolygon = (
         <>
             {allRelevanceSources.map((r, i) => {
                 if (!r.data) return null;
@@ -341,11 +397,11 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         </>
     );
 
-    const incomingRelevance = (
+    const incomingRel = (
         <div
-            className="rsCalc rs-incomingRelevance"
+            className="rsCalc rs-incomingRel"
             style={{
-                gridArea: "incomingRelevance",
+                gridArea: "incomingRel",
                 transform: `scaleY(-1)`,
             }}
         >
@@ -354,13 +410,13 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     height={calculatedRelevanceHeight}
                     width={MAX_STROKE_WIDTH}
                 >
-                    {incomingRelevancePolygon}
+                    {incomingRelPolygon}
                 </svg>
             </div>
         </div>
     );
 
-    const consolidateRelevancePolygon = (<>
+    const consolidateRelPolygon = (<>
         {allRelevanceSources.map(s => {
             if (!s.data) return null;
             const { maxImpactStackedRelevance, relevanceStacked } = s.data;
@@ -379,7 +435,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             });
 
             return (
-                <Fragment key={`consolidateRelevance-${s.id}`}>
+                <Fragment key={`consolidateRel-${s.id}`}>
                     <path
                         style={{
                             stroke: `var(--${s.data?.pol})`,
@@ -392,10 +448,10 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         }
         )}
     </>);
-    const consolidateRelevance = (
+    const consolidateRel = (
         <div
-            className="rsCalc rs-consolidateRelevance"
-            style={{ gridArea: "consolidateRelevance", transform: `scaleY(-1)` }}
+            className="rsCalc rs-consolidateRel"
+            style={{ gridArea: "consolidateRel", transform: `scaleY(-1)` }}
         >
             <div style={{ transform: `rotate(180deg)` }}>
                 <svg
@@ -403,7 +459,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                     width={"100px"}
                 // viewBox={`-10 -10 120 ${calculatedRelevanceHeight + 20}`}
                 >
-                    {consolidateRelevancePolygon}
+                    {consolidateRelPolygon}
                 </svg>
             </div>
         </div>
@@ -418,14 +474,13 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
     })
     const reSortedRelevanceSources = [...conTarget, ...proTarget]
 
-    const scaleTo1RelevancePolygon = (<>
+    const scaleTo1RelPolygon = (<>
         {reSortedRelevanceSources.map(s => {
             if (!s.data) return null;
 
-            const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
+            const percentOfWeight = divide((s.data.sourceScore?.confidence || 0),totalRelevance)
             const scaledTo1Stacked = scaledTo1StackRelevance(percentOfWeight)
             const { relevanceStacked } = s.data;
-
             const scaledBottom = calculatedRelevanceHeight - scaledTo1Stacked.top * MAX_STROKE_WIDTH
             const scaledTop = calculatedRelevanceHeight - scaledTo1Stacked.bottom * MAX_STROKE_WIDTH
             const consolidatedTop = relevanceStacked.top * MAX_STROKE_WIDTH
@@ -448,11 +503,12 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             );
         })}
     </>)
-    const scaleTo1Relevance = (
+
+    const scaleTo1Rel = (
         <div
-            className="rsCalc rs-scaleTo1Relevance"
+            className="rsCalc rs-scaleTo1Rel"
             style={{
-                gridArea: "scaleTo1Relevance",
+                gridArea: "scaleTo1Rel",
                 transform: `scaleY(-1)`
             }}
         >
@@ -460,7 +516,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 transform: `rotate(180deg)`
             }}>
                 <svg height={calculatedRelevanceHeight} width={"50px"}>
-                    {scaleTo1RelevancePolygon}
+                    {scaleTo1RelPolygon}
                 </svg>
             </div>
         </div>
@@ -506,7 +562,7 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                         // console.log("cancelOutStacked", cancelOutStacked)
                         // console.log("totalConfidence", totalConfidence)
 
-                        const percentOfWeight = (s.data.sourceScore?.confidence || 0) / totalConfidence
+                        const percentOfWeight = divide((s.data.sourceScore?.confidence || 0),totalConfidence)
                         const scaledTo1Stacked = stackSpace()(percentOfWeight)
                         console.log("percentOfWeight", percentOfWeight)
                         console.log("scaledTo1Stacked", scaledTo1Stacked)
@@ -561,96 +617,102 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
                 />
             }
             <div
-                className="absolute bottom-0 transform opacity-0 group-hover:opacity-100 transition flex flex-col"
+                className="absolute bottom-0 transform opacity-0 group-hover:opacity-100 transition flex flex-row"
                 style={{
                     scale: '.5',
-                    transformOrigin: 'bottom left',
-                    left: '100%',
-                    marginLeft: '.5rem',
+                    right: '0',
+                    top: '100%',
                     padding: '.5rem',
-                    width: '100px',
-                    backgroundColor: 'rgba(0, 0, 0, 0.6)'
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                    transformOrigin: 'top right',
+                    height: "fit-content",
+                    width: "fit-content",
+                    marginTop: "1px",
                 }}
             >
                 {dev.isDev ? devButtons : null}
 
-                <h1>Confidence</h1>
                 <div>
-                    <Button
-                        title="Add Pro"
-                        minimal
-                        small
-                        className="mb-1 !bg-pro"
-                        icon="plus"
-                        intent="primary"
-                        style={buttonStyle}
-                        onClick={() => {
-                            const claimId = newId()
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence',claimId });
-                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                            zoomToNew(claimId);
-                        }}
-                    />
-                    <Button
-                        title="Add Con"
-                        minimal
-                        small
-                        intent="primary"
-                        className="mb-1 !bg-con"
-                        style={buttonStyle}
-                        onClick={() => {
-                            const claimId = newId()
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence', claimId });
-                            zoomToNew(claimId);
-                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                        }}
-                        icon="plus"
-                    />
+                    <h1>Confidence</h1>
+                    <div className='flex flex-row'>
+                        <Button
+                            title="Add Pro"
+                            minimal
+                            small
+                            className="mb-1 !bg-pro"
+                            icon="plus"
+                            intent="primary"
+                            style={buttonStyle}
+                            onClick={() => {
+                                const claimId = newId()
+                                addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'confidence', claimId });
+                                // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                                zoomToNew(claimId,id,reactFlowInstance);
+                            }}
+                        />
+                        <Button
+                            title="Add Con"
+                            minimal
+                            small
+                            intent="primary"
+                            className="mb-1 !bg-con"
+                            style={buttonStyle}
+                            onClick={() => {
+                                const claimId = newId()
+                                addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'confidence', claimId });
+                                zoomToNew(claimId,id,reactFlowInstance);
+                                // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                            }}
+                            icon="plus"
+                        />
+                    </div>
                 </div>
 
-                <div
-                style={{marginTop: '1rem'}}
-                >Relevance</div>
+                <div style={{ padding: '1rem' }}> </div>
+
 
                 <div>
-                    <Button
-                        title="Add Pro Relevance"
-                        minimal
-                        small
-                        className="mb-1 !bg-pro"
-                        icon="plus"
-                        style={buttonStyle}
-                        intent="primary"
+                    <div>Relevance</div>
+                    <div className='flex flex-row'>
 
-                        onClick={() => {
-                            const claimId = newId()
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance', claimId })
-                            zoomToNew(claimId);
-                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                        }}
-                    />
-                    <Button
-                        title="Add Con Relevance"
-                        minimal
-                        small
-                        className="mb-1 !bg-con"
-                        icon="plus"
-                        style={buttonStyle}
-                        intent="primary"
+                        <Button
+                            title="Add Pro Relevance"
+                            minimal
+                            small
+                            className="mb-1 !bg-pro"
+                            icon="plus"
+                            style={buttonStyle}
+                            intent="primary"
 
-                        onClick={() => {
-                            const claimId = newId()
-                            addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance', claimId });
-                            zoomToNew(claimId);
+                            onClick={() => {
+                                const claimId = newId()
+                                addNode({ flowDataState, sourceId: id, isNewNodePro: true, targetNodeData: data, affects: 'relevance', claimId })
+                                zoomToNew(claimId,id,reactFlowInstance);
+                                // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                            }}
+                        />
+                        <Button
+                            title="Add Con Relevance"
+                            minimal
+                            small
+                            className="mb-1 !bg-con"
+                            icon="plus"
+                            style={buttonStyle}
+                            intent="primary"
 
-                            // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
-                        }}
-                    /></div>
+                            onClick={() => {
+                                const claimId = newId()
+                                addNode({ flowDataState, sourceId: id, isNewNodePro: false, targetNodeData: data, affects: 'relevance', claimId });
+                                zoomToNew(claimId,id,reactFlowInstance);
 
-<div
-                style={{marginTop: '1rem'}}
-                ></div>
-                
+                                // reactFlowInstance.fitView({ padding: 0.5, duration: 1000 });
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div style={{ padding: '1rem' }}> </div>
+
                 <Button
                     title="Delete"
                     minimal
@@ -715,11 +777,12 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
             <div className="rsNode" >
                 <div className="rsNodeGrid" style={{ minHeight: (allSources?.length || 1) * MAX_STROKE_WIDTH }}>
 
-                    {incomingRelevance}
-                    {consolidateRelevance}
-                    {scaleTo1Relevance}
+                    {incomingRel}
+                    {consolidateRel}
+                    {scaleTo1Rel}
                     {relevance}
                     {cancelOut}
+                    {cancelOutRel}
                     {scaleTo1}
                     {consolidate}
                     {weightByConfidence}
@@ -754,11 +817,11 @@ export default function DisplayNode(props: NodeProps<DisplayNodeData>) {
         </div>
     );
 
-    function zoomToNew(claimId: string) {
-        setTimeout(() => {
-            reactFlowInstance.fitView({ padding: 0.1, duration: 1000, nodes: [{ id }, { id: claimId }] });
-        }, 100);
-    }
+    // function zoomToNew(claimId: string) {
+    //     setTimeout(() => {
+    //         reactFlowInstance.fitView({ padding: 0.1, duration: 1000, nodes: [{ id }, { id: claimId }] });
+    //     }, 100);
+    // }
 }
 
 function deleteConnectorsAndClaims(id: string, connectorsIndex: any, actions: ActionTypes[]) {
@@ -772,3 +835,5 @@ function deleteConnectorsAndClaims(id: string, connectorsIndex: any, actions: Ac
         deleteConnectorsAndClaims(connector.source, connectorsIndex, actions);
     }
 }
+
+

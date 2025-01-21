@@ -16,6 +16,7 @@ export type DisplayNodeData = {
     scoreNumberText: string
     scoreNumber: number
     cancelOutStacked?: Stacked
+    cancelOutRelStacked?: Stacked
     collapsed?: boolean
 }
 
