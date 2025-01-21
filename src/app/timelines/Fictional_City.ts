@@ -4,6 +4,7 @@ import { newConnector } from "@/reasonScore/types/Connector";
 import { timelineMeta, TimelineProps } from "./_timelines"
 import { Debate } from "@/reasonScore/types/Debate";
 import { DebateData } from "@/reasonScore/types/DebateData";
+import { FitViewOptions } from "reactflow";
 
 export const Fictional_City: timelineMeta = {
     name: "Fictional City",
@@ -27,55 +28,46 @@ export const Fictional_City: timelineMeta = {
 
         }
 
-        let fitView = (seconds: number = 1) => {
+        type zoomActionToFitAll = { type: "fitAll", seconds?: number }
+        type zoomActionToNodes = { type: "nodes", seconds?: number, ids: (string | undefined)[] }
+
+        function zoom(action: zoomActionToFitAll | zoomActionToNodes): void {
+            const { type, seconds } = action
+
+            let fitData: FitViewOptions = {
+                padding: 0.1,
+                duration : (seconds || 1) * 1000
+            }
+
+            if (type === "nodes" ) {
+                fitData.nodes = action.ids.reduce((acc: { id: string; }[], id) => {
+                    if (id) {
+                        acc.push({ id });
+                    }
+                    return acc;
+                }, [])
+            }
+
+            console.log("fitData", fitData)
+
             setTimeout(() => {
-                refs.current.reactFlowInstance.fitView({
-                    padding: 0.1,
-                    duration: seconds * 1000
-                });
-            }, 50);
-        }
-
-        let zoomTo = (seconds: number = 1, ids: (string | undefined)[]) => {
-
-            setTimeout(() => {
-
-                const fitData = {
-                    padding: 0.1,
-                    duration: (seconds ? seconds * 1000 : 1000),
-                    nodes: ids.reduce((acc:{ id: string }[], id) => {
-                        if (id) {
-                            acc.push({ id });
-                        }
-                        return acc;
-                    }, [])
-                }
-
-                console.log("fitData", fitData)
-                
                 refs.current.reactFlowInstance.fitView(fitData);
             }, 50);
-
-            // setTimeout(() => {
-            //     refs.current.reactFlowInstance.fitView({
-            //         padding: 0.1,
-            //         duration: seconds * 1000,
-            //         nodes: [{ id }, { id: claimId }]
-            //     });
-
-            // }, 50);
         }
 
         let tl = gsap.timeline({
             paused: true,
         });
 
+
+        type zoomOptions = "fitView" | string[] | "none"
+
         const timelineItems: (
             { actionType: "debate", debate: Debate, debateData: DebateData } |
             { actionType: "pause", duration: number, } |
-            { actionType: "zoom", zoom?: "fitView", duration?: number } |
+            { actionType: "zoom", zoom?: zoomOptions, duration?: number } |
             ({ actionType: "updateClaim", duration?: number, parentId?: string } & Partial<Claim>) |
-            ({ actionType: "createClaim", duration?: number, parentId: string, zoom?: "fitView" | "zoomTo", affects?: "relevance" } & Partial<Claim>)
+            ({ actionType: "createClaim", duration?: number, parentId: string, zoom?: zoomOptions | "last", affects?: "relevance" } & Partial<Claim>)
         )[] = [
                 {
                     actionType: "debate",
@@ -101,7 +93,7 @@ export const Fictional_City: timelineMeta = {
                     content: "increase foot traffic to local shops by 12%",
                     id: "footTraffic", parentId: "motion", type: "claim", pol: "pro",
                     // duration: 2,
-                    zoom: "zoomTo",
+                    zoom: "last",
                 },
                 { actionType: "pause", duration: 2, },
                 // {
@@ -116,7 +108,7 @@ export const Fictional_City: timelineMeta = {
                     content: "divert traffic down residential streets",
                     id: "traffic", parentId: "motion", type: "claim", pol: "con",
                     // duration: 2,
-                    zoom: "zoomTo",
+                    zoom: "last",
                 },
                 { actionType: "pause", duration: 2, },
                 {
@@ -124,7 +116,7 @@ export const Fictional_City: timelineMeta = {
                     content: "Children safety is more important than profit for local shops.",
                     id: "SafetyImportance", parentId: "traffic", type: "claim", pol: "con", affects: "relevance",
                     // duration: 2,
-                    zoom: "zoomTo",
+                    zoom: "last",
                 },
                 { actionType: "pause", duration: 2, },
                 {
@@ -132,7 +124,7 @@ export const Fictional_City: timelineMeta = {
                     content: "A set of railroad tracks are no longer in use and the City can convert that to a new street.",
                     id: "railroad", parentId: "traffic", type: "claim", pol: "pro",
                     // duration: 2,
-                    zoom: "zoomTo",
+                    zoom: "last",
                 },
                 { actionType: "pause", duration: 2, },
                 {
@@ -140,7 +132,7 @@ export const Fictional_City: timelineMeta = {
                     content: "Costs 2 Million dollars.",
                     id: "costs", parentId: "motion", type: "claim", pol: "con",
                     // duration: 2,
-                    zoom: "zoomTo",
+                    zoom: "last",
                 },
             ]
 
@@ -217,11 +209,11 @@ export const Fictional_City: timelineMeta = {
                             refs.current.flowDataState.dispatch([claimAction, connectorAction])
 
                             if (item.zoom === "fitView") {
-                                fitView();
+                                zoom({ type: "fitAll", seconds: item.duration});
                             }
 
-                            if (item.zoom === "zoomTo") {
-                                zoomTo(item.duration || 0, [item.parentId, item.id]);
+                            if (item.zoom === "last") {
+                                zoom({ type: "nodes", seconds: item.duration, ids: [item.parentId, item.id] });
                             }
                         }
                         typeContent.bind(this)()
@@ -242,9 +234,14 @@ export const Fictional_City: timelineMeta = {
             }
 
             if (item.actionType === "zoom") {
-                console.log("zoom", item.zoom)
                 if (item.zoom === "fitView") {
-                    fitView(item.duration || 0);
+                    zoom({ type: "fitAll", seconds: item.duration });
+                }
+                if (item.zoom === "none") {
+                    return;
+                }
+                if (Array.isArray(item.zoom)) {
+                    zoom({ type: "nodes", seconds: item.duration, ids: item.zoom });
                 }
             }
             // Which direction are we going and is it a seek
